@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글RTB 배너</title>
+	<style>
+		/* 1. 웹 폰트 */
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		/* 2. 배너 & 이미지 규격 */
+		:root {
+			--width: 320px;
+			--height: 50px;
+		}
+
+		/* 3. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		/* 4. 해당 사이즈 배너 */
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "pretendard";
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			display: flex;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.img {
+			flex-shrink: 0;
+			width: var(--height);
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.bg {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 5px;
+			min-width: 0;
+			background-color: #121214;
+			padding: 0 10px;
+		}
+
+		.text_wrap {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			row-gap: 1px;
+			min-width: 0;
+		}
+
+		.pnm {
+			font-size: 11px;
+			font-weight: 500;
+			letter-spacing: -0.24px;
+			color: #d8d4cd;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.price_box {
+			display: flex;
+			align-items: baseline;
+			column-gap: 5px;
+		}
+
+		.sale .sale_rate,
+		.sale .sale_price {
+			display: block;
+		}
+
+		.sale .original_price {
+			font-size: 10px;
+			font-weight: 500;
+			color: #7d7871;
+			text-decoration: line-through;
+		}
+
+		.sale_rate {
+			display: none;
+			font-size: 13px;
+			font-weight: bold;
+			letter-spacing: -0.6px;
+			color: #e8c66a;
+		}
+
+		.sale_rate span {
+			font-size: 10px;
+		}
+
+		.sale_price {
+			display: none;
+			font-size: 14px;
+			letter-spacing: -0.6px;
+			font-weight: bold;
+			color: #ffffff;
+		}
+
+		.original_price {
+			font-size: 14px;
+			letter-spacing: -0.6px;
+			font-weight: bold;
+			color: #ffffff;
+			text-decoration: none;
+		}
+
+		.shop_btn {
+			position: relative;
+			flex-shrink: 0;
+			height: 20px;
+			font-family: inherit;
+			font-size: 10px;
+			font-weight: 500;
+			color: #f0e2b8;
+			border: 1px solid #e8c66a;
+			background-color: transparent;
+			padding: 0 6px;
+			overflow: hidden;
+			cursor: pointer;
+		}
+
+		.shop_btn::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: -40px;
+			width: 20px;
+			pointer-events: none;
+			background: linear-gradient(100deg,
+					rgba(255, 255, 255, 0) 0%,
+					rgba(255, 255, 255, 0.28) 50%,
+					rgba(255, 255, 255, 0) 100%);
+			animation: shine 2.8s ease-in-out infinite;
+		}
+
+		@keyframes shine {
+			0% {
+				left: -40px;
+			}
+
+			55%,
+			100% {
+				left: 100%;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="mobon_banner">
+			<img class="img" src="https://www.dabagirl.co.kr/web/product/big/202105/04ff60dbb9fa51e3c47fc8e4bdc27c08.jpg"
+				alt="배너이미지">
+			<div class="bg">
+				<div class="text_wrap">
+					<p class="pnm">쿨링 썸머 카라넥 원피스</p>
+					<!-- 할인 상품인 경우 .price_box에 .sale 추가 -->
+					<div class="price_box sale">
+						<div class="sale_rate">32<span>%</span></div>
+						<div class="sale_price">39,900원</div>
+						<div class="original_price">49,900원</div>
+					</div>
+				</div>
+				<button type="button" class="shop_btn">최저가 구매</button>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

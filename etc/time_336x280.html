@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글RTB 배너</title>
+</head>
+<style>
+	/* font */
+	@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+	:root {
+		--width: 336px;
+		--height: 280px;
+	}
+
+	/* Normalize */
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	.mobon_reset {
+		width: var(--width);
+		height: var(--height);
+		font-family: "pretendard";
+		overflow: hidden;
+		cursor: pointer;
+	}
+
+	.mobon_banner {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
+	#mobonLogo {
+		position: absolute;
+		top: 2px;
+		right: 2px;
+		width: 11px;
+		height: 11px;
+		background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+		background-size: 11px 11px;
+		opacity: 0.8;
+		z-index: 99999;
+		cursor: pointer;
+	}
+
+	#mobonLogo:hover {
+		background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+		background-size: 73px 15px;
+		width: 73px;
+		height: 15px;
+	}
+
+	.img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.badge {
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		font-size: 11px;
+		font-weight: 500;
+		color: #ffffff;
+		border-radius: 25px;
+		background-color: rgba(18, 18, 20, 0.85);
+		padding: 5px 10px;
+		z-index: 2;
+	}
+
+	.dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background-color: #ff3b30;
+		margin-bottom: 1px;
+		animation: blink 1s infinite;
+	}
+
+	@keyframes blink {
+
+		0%,
+		100% {
+			opacity: 1;
+		}
+
+		50% {
+			opacity: 0;
+		}
+	}
+
+	.bg {
+		position: absolute;
+		bottom: 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		width: 100%;
+		background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 70%, rgba(0, 0, 0, 0.5) 90%, rgba(0, 0, 0, 0) 100%);
+		z-index: 1;
+		padding: 20px 16px 16px;
+	}
+
+	.info_top {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 6px;
+	}
+
+	.pnm {
+		flex: 1;
+		font-size: 13px;
+		font-weight: 500;
+		letter-spacing: -0.24px;
+		color: #d8d4cd;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		margin-right: 10px;
+	}
+
+	.time_box {
+		font-size: 12px;
+		font-weight: 600;
+		color: #e8c66a;
+		letter-spacing: -0.24px;
+		white-space: nowrap;
+	}
+
+	.gauge_wrap {
+		width: 100%;
+		height: 4px;
+		background-color: #3a3a3a;
+		border-radius: 2px;
+	}
+
+	.gauge_bar {
+		width: 75%;
+		height: 100%;
+		background-color: #ff3b30;
+		border-radius: 2px;
+		transition: width 1s linear;
+	}
+
+	.price_box {
+		display: flex;
+		align-items: baseline;
+		column-gap: 8px;
+		margin-top: 5px;
+	}
+
+	.sale .sale_rate,
+	.sale .sale_price {
+		display: block;
+	}
+
+	.sale .original_price {
+		font-size: 12px;
+		font-weight: 500;
+		color: #7d7871;
+		text-decoration: line-through;
+	}
+
+	.sale_rate {
+		display: none;
+		font-size: 22px;
+		font-weight: bold;
+		letter-spacing: -0.6px;
+		color: #e8c66a;
+	}
+
+	.sale_price {
+		display: none;
+		font-size: 24px;
+		letter-spacing: -0.6px;
+		font-weight: bold;
+		color: #ffffff;
+	}
+
+	.original_price {
+		font-size: 24px;
+		letter-spacing: -0.6px;
+		font-weight: bold;
+		color: #ffffff;
+		text-decoration: none;
+	}
+
+	.original_price span {
+		font-size: 12px;
+	}
+
+	.shop_btn {
+		position: relative;
+		width: 100%;
+		height: 40px;
+		font-family: inherit;
+		font-size: 14px;
+		font-weight: 500;
+		color: #f0e2b8;
+		border: 1px solid #e8c66a;
+		background-color: #0d0d0f;
+		margin-top: 10px;
+		overflow: hidden;
+	}
+
+	.shop_btn::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: -40px;
+		width: 40px;
+		pointer-events: none;
+		background: linear-gradient(100deg,
+				rgba(255, 255, 255, 0) 0%,
+				rgba(255, 255, 255, 0.28) 50%,
+				rgba(255, 255, 255, 0) 100%);
+		animation: shine 2.8s ease-in-out infinite;
+	}
+
+	@keyframes shine {
+		0% {
+			left: -40px;
+		}
+
+		55%,
+		100% {
+			left: 100%;
+		}
+	}
+</style>
+
+<body>
+	<div class="mobon_reset">
+		<div class="mobon_banner">
+			<div id="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+			<img class="img" src="https://www.dabagirl.co.kr/web/product/big/202105/04ff60dbb9fa51e3c47fc8e4bdc27c08.jpg"
+				alt="배너이미지">
+			<div class="badge"><span class="dot"></span>오늘 마감</div>
+			<div class="bg">
+				<div class="info_top">
+					<p class="pnm">쿨링 썸머 카라넥 원피스 </p>
+					<div class="time_box">마감 임박 <span id="countdownText">45:00</span></div>
+				</div>
+				<div class="gauge_wrap">
+					<div class="gauge_bar" id="gaugeBar"></div>
+				</div>
+				<!-- 할인 상품인 경우 .price_box에 .sale 추가 -->
+				<div class="price_box sale">
+					<div class="sale_rate">32<span>%</span></div>
+					<div class="sale_price">39,900원</div>
+					<div class="original_price">49,900원</div>
+				</div>
+				<button type="button" class="shop_btn">최저가로 구매하기</button>
+			</div>
+		</div>
+	</div>
+	<script>
+		let totalSeconds = 60 * 60;
+		let currentSeconds = 45 * 60;
+		
+		const countdownText = document.getElementById('countdownText');
+		const gaugeBar = document.getElementById('gaugeBar');
+
+		function updateTimer() {
+			currentSeconds--;
+			if (currentSeconds < 0) {
+				currentSeconds = 0;
+			}
+
+			const m = Math.floor(currentSeconds / 60);
+			const s = currentSeconds % 60;
+
+			const formattedTime = 
+				String(m).padStart(2, '0') + ':' + 
+				String(s).padStart(2, '0');
+			
+			if (countdownText) countdownText.textContent = formattedTime;
+
+			const percentage = (currentSeconds / totalSeconds) * 100;
+			if (gaugeBar) gaugeBar.style.width = percentage + '%';
+
+			if (currentSeconds > 0) {
+				setTimeout(updateTimer, 1000);
+			}
+		}
+
+		setTimeout(updateTimer, 1000);
+	</script>
+</body>
+
+</html>
