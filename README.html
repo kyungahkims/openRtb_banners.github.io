@@ -1,261 +1,412 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Google Frame RTB (Dev) - README</title>
-<style>
-  body {
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-    line-height: 1.6;
-    color: #c9d1d9;
-    background-color: #0d1117;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 32px;
-  }
-	a {color: #e6edf3;}
-  h1, h2, h3 { margin-top: 24px; margin-bottom: 16px; font-weight: 600; line-height: 1.25; border-bottom: 1px solid #21262d; padding-bottom: .3em; color: #c9d1d9; }
-  h1 { font-size: 2em; }
-  h2 { font-size: 1.5em; }
-  p, ul, table, pre { margin-top: 0; margin-bottom: 16px; }
-  ul { padding-left: 2em; }
-  li { margin-top: 0.25em; }
-  strong { font-weight: 600; color: #e6edf3; }
-  code {
-    padding: .2em .4em;
-    margin: 0;
-    font-size: 85%;
-    background-color: rgba(240,246,252,0.15);
-    border-radius: 6px;
-    font-family: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
-  }
-  pre {
-    padding: 16px;
-    overflow: auto;
-    font-size: 85%;
-    line-height: 1.45;
-    background-color: #161b22;
-    border-radius: 6px;
-  }
-  pre code {
-    background-color: transparent;
-    padding: 0;
-  }
-  table {
-    border-spacing: 0;
-    border-collapse: collapse;
-    width: 100%;
-    margin-bottom: 16px;
-    display: block;
-    overflow-x: auto;
-  }
-  table th, table td {
-    padding: 10px 16px;
-    border: 1px solid #30363d;
-  }
-  table th:nth-child(1), table td:nth-child(1),
-  table th:nth-child(2), table td:nth-child(2) {
-    white-space: nowrap;
-  }
-  table th { font-weight: 600; background-color: #161b22; }
-  table tr {
-    background-color: #0d1117;
-    border-top: 1px solid #21262d;
-  }
-  table tr:nth-child(2n) {
-    background-color: #161b22;
-  }
-  hr {
-    height: .25em;
-    padding: 0;
-    margin: 24px 0;
-    background-color: #30363d;
-    border: 0;
-  }
-  @media (max-width: 768px) {
-    body {
-      padding: 16px;
-    }
-    h1 { font-size: 1.5em; }
-    h2 { font-size: 1.25em; }
-    table th, table td {
-      padding: 8px 12px;
-    }
-    pre {
-      padding: 12px;
-    }
-  }
-</style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Google Frame RTB - README</title>
+	<style>
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+			line-height: 1.6;
+			color: #c9d1d9;
+			background-color: #0d1117;
+			max-width: 1100px;
+			margin: 0 auto;
+			padding: 32px;
+		}
+
+		a {
+			color: #e6edf3;
+		}
+
+		h1,
+		h2,
+		h3 {
+			margin-top: 24px;
+			margin-bottom: 16px;
+			font-weight: 600;
+			line-height: 1.25;
+			border-bottom: 1px solid #21262d;
+			padding-bottom: .3em;
+			color: #c9d1d9;
+		}
+
+		h1 {
+			font-size: 2em;
+		}
+
+		h2 {
+			font-size: 1.5em;
+		}
+
+		p,
+		ul,
+		table,
+		pre {
+			margin-top: 0;
+			margin-bottom: 16px;
+		}
+
+		pre {
+			margin-top: 10px;
+		}
+
+		ul {
+			padding-left: 2em;
+		}
+
+		li {
+			margin-top: 0.25em;
+		}
+
+		strong {
+			font-weight: 600;
+			color: #e6edf3;
+		}
+
+		code {
+			padding: .2em .4em;
+			margin: 0;
+			font-size: 85%;
+			background-color: rgba(240, 246, 252, 0.15);
+			border-radius: 6px;
+			font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+		}
+
+		pre {
+			padding: 16px;
+			overflow: auto;
+			font-size: 85%;
+			line-height: 1.45;
+			background-color: #161b22;
+			border-radius: 6px;
+		}
+
+		pre code {
+			background-color: transparent;
+			padding: 0;
+		}
+
+		table {
+			border-spacing: 0;
+			border-collapse: collapse;
+			width: 100%;
+			margin-bottom: 16px;
+			display: block;
+			overflow-x: auto;
+		}
+
+		table th,
+		table td {
+			padding: 10px 16px;
+			border: 1px solid #30363d;
+		}
+
+		table th:nth-child(1),
+		table td:nth-child(1),
+		table th:nth-child(2),
+		table td:nth-child(2) {
+			white-space: nowrap;
+		}
+
+		table th {
+			font-weight: 600;
+			background-color: #161b22;
+		}
+
+		table tr {
+			background-color: #0d1117;
+			border-top: 1px solid #21262d;
+		}
+
+		table tr:nth-child(2n) {
+			background-color: #161b22;
+		}
+
+		hr {
+			height: .25em;
+			padding: 0;
+			margin: 24px 0;
+			background-color: #30363d;
+			border: 0;
+		}
+
+		@media (max-width: 768px) {
+			body {
+				padding: 16px;
+			}
+
+			h1 {
+				font-size: 1.5em;
+			}
+
+			h2 {
+				font-size: 1.25em;
+			}
+
+			table th,
+			table td {
+				padding: 8px 12px;
+			}
+
+			pre {
+				padding: 12px;
+			}
+		}
+	</style>
 </head>
+
 <body>
 
-<h1>Google Frame RTB (Dev)</h1>
-<p>이 프로젝트는 구글 프레임 RTB(Real-Time Bidding) 광고 배너 개발을 위한 표준 템플릿 및 가이드입니다.</p>
+	<h1>Google Frame RTB</h1>
+	<p>이 프로젝트는 구글 프레임 RTB(Real-Time Bidding) 광고 배너 개발을 위한 표준 템플릿 및 가이드입니다.</p>
 
-<h2>📝 주요 특징</h2>
-<ul>
-<li><strong>통합 파일 관리</strong>: 할인 상품과 비할인 상품을 하나의 HTML 파일로 통합하여 관리합니다.</li>
-<li><strong>배너 사이즈 변수 분리</strong>: 각 배너 파일의 상단 CSS <code>:root</code>에 해당 배너의 고정 규격(<code>--width</code>, <code>--height</code>)을 명시적으로 분리하여, 사이즈 정보를 한눈에 파악하고 관리하기 쉽도록 구성했습니다.</li>
-<li><strong>비상품 배너의 유연한 대응</strong>: 비상품(브랜드/프로모션) 배너에 들어갈 이미지는 백단에서 조건 및 우선순위에 따라 동적으로 결정되어 주입됩니다. <code>contain</code> 속성을 통해 이미지 비율이 배너 규격과 맞지 않아도 잘림 없이 여백과 함께 온전하게 노출됩니다.</li>
-<li><strong>에러 방어 로직</strong>: 상품 이미지 로드 실패 시 전체 배너를 대체 배너로 전환하여 빈 화면(엑스박스)이 노출되는 것을 방지합니다.</li>
-</ul>
+	<h2>📝 주요 특징</h2>
+	<ul>
+		<li><strong>통합 파일 관리</strong>: 할인 상품과 비할인 상품을 하나의 HTML 파일로 통합하여 관리합니다.</li>
+		<li><strong>배너 사이즈 변수 분리</strong>: 각 배너 파일의 상단 CSS <code>:root</code>에 해당 배너의 고정 규격(<code>--width</code>,
+			<code>--height</code>)을 명시적으로 분리하여, 사이즈 정보를 한눈에 파악하고 관리하기 쉽도록 구성했습니다.</li>
+		<li><strong>비상품 배너의 유연한 대응</strong>: 비상품(브랜드/프로모션) 배너에 들어갈 이미지는 백단에서 조건 및 우선순위에 따라 동적으로 결정되어 주입됩니다.
+			<code>contain</code> 속성을 통해 이미지 비율이 배너 규격과 맞지 않아도 잘림 없이 여백과 함께 온전하게 노출됩니다.</li>
+		<li><strong>에러 방어 로직</strong>: 상품 이미지 로드 실패 시 전체 배너를 대체 배너로 전환하여 빈 화면(엑스박스)이 노출되는 것을 방지합니다.</li>
+	</ul>
 
-<hr>
+	<hr>
 
-<h2>🎨 1. 상품 배너 변수명 정의</h2>
-<p>광고 서버에서 치환해 주는 템플릿 변수 목록입니다.</p>
-<table>
-<thead>
-<tr>
-<th>항목</th>
-<th>변수명</th>
-<th>설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>로고</strong></td>
-<td><code>{{logo}}</code></td>
-<td>브랜드 또는 상점 로고 이미지 URL (클릭 시 <code>{{purl1}}</code>로 이동)</td>
-</tr>
-<tr>
-<td><strong>상품 클릭 URL</strong></td>
-<td><code>{{purl1}}</code>, <code>{{purl2}}</code> ...</td>
-<td>개별 상품 클릭 시 이동할 랜딩 페이지 URL</td>
-</tr>
-<tr>
-<td><strong>상품 이미지</strong></td>
-<td><code>{{img1}}</code>, <code>{{img2}}</code> ...</td>
-<td>상품 이미지 URL</td>
-</tr>
-<tr>
-<td><strong>상품명</strong></td>
-<td><code>{{pnm1}}</code>, <code>{{pnm2}}</code> ...</td>
-<td>상품 이름</td>
-</tr>
-<tr>
-<td><strong>원가</strong></td>
-<td><code>{{price1}}</code>, <code>{{price2}}</code> ...</td>
-<td>상품의 원래 가격</td>
-</tr>
-<tr>
-<td><strong>할인가</strong></td>
-<td><code>{{price2_1}}</code>, <code>{{price2_2}}</code> ...</td>
-<td>할인된 상품 가격</td>
-</tr>
-<tr>
-<td><strong>할인율</strong></td>
-<td><code>{{discount1}}</code>, <code>{{discount2}}</code> ...</td>
-<td>상품 할인율 (%)</td>
-</tr>
-<tr>
-<td><strong>상품 고유 코드</strong></td>
-<td><code>{{pcode1}}</code>, <code>{{pcode2}}</code> ...</td>
-<td>상품의 고유 식별 코드 (주로 에러 트래킹용으로 사용)</td>
-</tr>
-<tr>
-<td><strong>가격 영역 클래스</strong></td>
-<td><code>{{box1}}</code>, <code>{{box2}}</code> ...</td>
-<td>일반가/할인가 여부에 따라 가격 영역(<code>.price_box</code>)의 디자인을 분기하기 위한 CSS 클래스명</td>
-</tr>
-<tr>
-<td><strong>노출 추적 태그</strong></td>
-<td><code>{{wp_imgtag}}</code></td>
-<td>배너 노출(Impression) 트래킹을 위한 이미지 픽셀 태그</td>
-</tr>
-<tr>
-<td><strong>시스템 변수</strong></td>
-<td><code>{{HTTP}}</code>, <code>{{HTTP_DR}}</code>, <code>{{UUID}}</code>, <code>{{USER}}</code>, <code>{{ITL_TP_CODE}}</code></td>
-<td>에러 로깅 및 모비온 인포 로고(<code>linfo.php</code>) 링크 등에 사용되는 광고 서버 시스템 변수</td>
-</tr>
-</tbody>
-</table>
+	<h2>🎨 1. 상품 배너</h2>
+	<ul>
+		<li><strong>이미지 핏(Fit)</strong>: 상품 이미지는 <code>object-fit: cover;</code>가 적용되어 있어, 지정된 영역을 빈틈없이 꽉 채우도록 렌더링됩니다.</li>
+		<li><strong>웹 폰트</strong>: 배너 내 텍스트는 <code>Pretendard</code> 폰트(<code>v1.3.9</code> CDN)를 기본으로 사용합니다.</li>
+		<li><strong>상품 배너 변수</strong>:
+	</ul>
+	<br><br>
+	<table>
+		<thead>
+			<tr>
+				<th>항목</th>
+				<th>변수명</th>
+				<th>설명</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><strong>로고</strong></td>
+				<td><code>{{logo}}</code></td>
+				<td>브랜드 또는 상점 로고 이미지 URL (클릭 시 <code>{{purl1}}</code>로 이동)</td>
+			</tr>
+			<tr>
+				<td><strong>상품 클릭 URL</strong></td>
+				<td><code>{{purl1}}</code>, <code>{{purl2}}</code> ...</td>
+				<td>개별 상품 클릭 시 이동할 랜딩 페이지 URL</td>
+			</tr>
+			<tr>
+				<td><strong>상품 이미지</strong></td>
+				<td><code>{{img1}}</code>, <code>{{img2}}</code> ...</td>
+				<td>상품 이미지 URL</td>
+			</tr>
+			<tr>
+				<td><strong>상품명</strong></td>
+				<td><code>{{pnm1}}</code>, <code>{{pnm2}}</code> ...</td>
+				<td>상품 이름</td>
+			</tr>
+			<tr>
+				<td><strong>원가</strong></td>
+				<td><code>{{price1}}</code>, <code>{{price2}}</code> ...</td>
+				<td>상품의 원래 가격</td>
+			</tr>
+			<tr>
+				<td><strong>할인가</strong></td>
+				<td><code>{{price2_1}}</code>, <code>{{price2_2}}</code> ...</td>
+				<td>할인된 상품 가격</td>
+			</tr>
+			<tr>
+				<td><strong>할인율</strong></td>
+				<td><code>{{discount1}}</code>, <code>{{discount2}}</code> ...</td>
+				<td>상품 할인율 (%)</td>
+			</tr>
+			<tr>
+				<td><strong>상품 고유 코드</strong></td>
+				<td><code>{{pcode1}}</code>, <code>{{pcode2}}</code> ...</td>
+				<td>상품의 고유 식별 코드 (주로 에러 트래킹용으로 사용)</td>
+			</tr>
+			<tr>
+				<td><strong>가격 영역 클래스</strong></td>
+				<td><code>{{box1}}</code>, <code>{{box2}}</code> ...</td>
+				<td>일반가/할인가 여부에 따라 가격 영역(<code>.price_box</code>)의 디자인을 분기하기 위한 CSS 클래스명</td>
+			</tr>
+			<tr>
+				<td><strong>노출 추적 태그</strong></td>
+				<td><code>{{wp_imgtag}}</code></td>
+				<td>배너 노출(Impression) 트래킹을 위한 이미지 픽셀 태그</td>
+			</tr>
+			<tr>
+				<td><strong>시스템 변수</strong></td>
+				<td><code>{{HTTP}}</code>, <code>{{HTTP_DR}}</code>, <code>{{UUID}}</code>, <code>{{USER}}</code>,
+					<code>{{ITL_TP_CODE}}</code></td>
+				<td>에러 로깅 및 모비온 인포 로고(<code>linfo.php</code>) 링크 등에 사용되는 광고 서버 시스템 변수</td>
+			</tr>
+		</tbody>
+	</table>
 
-<hr>
+	<hr>
 
-<h2>🖼️ 2. 비상품 배너 Auto 형식 & 변수명 정의</h2>
-<p>상품 데이터를 보여주지 않는 비상품 배너의 경우, 하나의 HTML 파일로 관리하며(Auto 형식) 사이즈 변수만 변경하여 다양한 규격을 대응합니다.</p>
+	<h2>🖼️ 2. 비상품 배너 (Auto 형식)</h2>
+	<p>상품 데이터를 보여주지 않는 비상품 배너의 경우, 하나의 HTML 파일로 관리하며(Auto 형식) 사이즈 변수만 변경하여 다양한 규격을 대응합니다.</p>
 
-<ul>
-<li><strong>동적 이미지 주입</strong>: 백단(서버) 로직에서 조건(우선순위 등)에 따라 배너에 노출될 <strong>이미지</strong>가 동적으로 결정되어 주입됩니다.</li>
-<li><strong>이미지 핏(Fit)</strong>: 이미지는 <code>object-fit: contain;</code> 처리되어 있어, 백단에서 주입된 이미지의 실제 사이즈(비율)가 배너의 고정 규격과 맞지 않더라도 이미지가 잘리지 않고 여백을 남긴 채로 온전히 노출됩니다.</li>
-<li><strong>비상품 배너 변수</strong>:
-<br><br>
-<table>
-<thead>
-<tr>
-<th>항목</th>
-<th>변수명</th>
-<th>설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>배너 클릭 URL</strong></td>
-<td><code>{{purl}}</code></td>
-<td>배너 클릭 시 이동할 랜딩 페이지 URL</td>
-</tr>
-<tr>
-<td><strong>배너 이미지</strong></td>
-<td><code>{{img}}</code></td>
-<td>비상품 배너 이미지 URL</td>
-</tr>
-</tbody>
-</table>
-</li>
-<li><strong>설정 예시</strong>:
-<pre><code>:root {
+	<ul>
+		<li><strong>동적 이미지 주입</strong>: 백단(서버) 로직에서 조건(우선순위 등)에 따라 배너에 노출될 <strong>이미지</strong>가 동적으로 결정되어 주입됩니다.</li>
+		<li><strong>이미지 핏(Fit)</strong>: 이미지는 <code>object-fit: contain;</code> 처리되어 있어, 백단에서 주입된 이미지의 실제 사이즈(비율)가 배너의 고정
+			규격과 맞지 않더라도 이미지가 잘리지 않고 여백을 남긴 채로 온전히 노출됩니다.</li>
+		<li><strong>비상품 배너 변수</strong>:
+			<br><br>
+			<table>
+				<thead>
+					<tr>
+						<th>항목</th>
+						<th>변수명</th>
+						<th>설명</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>배너 클릭 URL</strong></td>
+						<td><code>{{purl}}</code></td>
+						<td>배너 클릭 시 이동할 랜딩 페이지 URL</td>
+					</tr>
+					<tr>
+						<td><strong>배너 이미지</strong></td>
+						<td><code>{{img}}</code></td>
+						<td>비상품 배너 이미지 URL</td>
+					</tr>
+				</tbody>
+			</table>
+		</li>
+		<li><strong>설정 예시</strong>:
+			<pre><code>:root {
     --width: 300px;
     --height: 250px;
 }</code></pre>
-</li>
-</ul>
+		</li>
+	</ul>
 
-<hr>
+	<hr>
 
-<h2>⚠️ 3. 에러 처리 (Fallback Logic)</h2>
-<p>네트워크 문제 등으로 <strong>상품 이미지</strong>가 1개라도 정상적으로 로드되지 않을 경우, 광고 지면의 퀄리티를 유지하기 위해 배너 전체를 <strong>대체 배너(모비온 광고)</strong>로 전환합니다.<br>
-또한, <strong>브랜드 로고</strong>(<code>{{logo}}</code>) 이미지 로드에 실패할 경우 빈 공간이나 엑스박스 대신 <strong>모비온 로고</strong>가 대체 노출되도록 처리되어 있습니다.</p>
+	<h2>🤖 3. 상품 배너 오토 프레임</h2>
+	<p>여러 사이즈별로 개별 파일을 만들지 않고, <strong>하나의 파일(openRtbAuto.html)</strong>로 모든 광고 규격에 대응하는 다이내믹 오토 템플릿입니다.</p>
 
-<ul>
-<li><strong>테스트 방법</strong>: 브라우저 개발자 도구(Console)에서 아래 스크립트를 실행하여 이미지 로드 에러 상황을 강제로 발생시킬 수 있습니다.
-<pre><code>document.querySelector('.img').dispatchEvent(new Event('error'));</code></pre>
-</li>
-<li><strong>트래킹</strong>: 에러 발생 시 <code>{{pcode}}</code> 변수를 활용하여 어떤 상품에서 에러가 발생했는지 로깅 및 추적합니다.</li>
-<li><strong>대체 배너 이미지 경로</strong>: 대체 배너로 전환 시 노출되는 배경 이미지는 각 템플릿의 규격에 맞춰 <code>{{HTTP}}/servlet/image/mobon/사이즈명.png</code> (예: <code>300x250.png</code>) 형태로 구성해야 합니다.</li>
-</ul>
+	<ul>
+		<li><strong>웹 폰트</strong>: 배너 내 텍스트는 <code>Archivo</code> 폰트(Google Fonts CDN)를 기본으로 사용합니다.</li>
+		<li><strong>자동 레이아웃 변환</strong>: 광고 서버에서 넘어오는 가로(<code>{{w}}</code>), 세로(<code>{{h}}</code>) 사이즈와 비율을 스크립트가 스스로
+			계산하여, 그에 맞는 최적의 클래스(<code>layout_square (정방형)</code>, <code>layout_mobile (모바일형)</code>, <code>layout_horizontal
+				(가로형)</code>,
+			<code>layout_vertical (세로형)</code>)를 부여해 레이아웃을 자동 변환합니다.</li>
+		<li><strong>이미지 패닝(Panning) 효과</strong>: 상품 이미지의 비율과 배너 규격이 심하게 맞지 않아 이미지가 크게 잘릴 경우(비율 차이 30% 이상), 이미지가 좌우 또는 상하로
+			부드럽게 움직이는 <strong>패닝 애니메이션</strong>이 자동으로 작동하여 상품의 전체적인 형태를 보여줍니다.</li>
+		<li><strong>노출 상품 개수 유연성</strong>: 배너의 비율에 따라 상품 1~2개가 자동 노출됩니다. 스크립트 내부의 주석 처리를 통해 1개만 고정으로 나오게 하거나, 비율에 따라 1~2개가
+			나오도록 손쉽게 설정할 수 있습니다.</li>
+		<li><strong>오토 프레임 전용 변수</strong>:
+			<br><br>
+			<table>
+				<thead>
+					<tr>
+						<th>항목</th>
+						<th>변수명</th>
+						<th>설명</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>배너 가로 사이즈</strong></td>
+						<td><code>{{w}}</code></td>
+						<td>현재 노출될 배너의 동적 가로(Width) 픽셀 크기 (예: 300)</td>
+					</tr>
+					<tr>
+						<td><strong>배너 세로 사이즈</strong></td>
+						<td><code>{{h}}</code></td>
+						<td>현재 노출될 배너의 동적 세로(Height) 픽셀 크기 (예: 250)</td>
+					</tr>
+					<tr>
+						<td><strong>상품 데이터 배열</strong></td>
+						<td><code>{{productList}}</code></td>
+						<td>스크립트에서 동적 렌더링을 위해 서버에서 주입해주는 JSON 객체 배열 데이터입니다.<br>
+							<small style="display:inline-block; margin-top:8px; line-height:1.6; color:#a5d6ff;">
+								<strong>[배열 내부 주요 속성(Property) 명세]</strong><br>
+								• <code>img</code> : 상품 이미지 URL<br>
+								• <code>purl</code> : 상품 클릭 이동 URL<br>
+								• <code>pnm</code> : 상품명<br>
+								• <code>price</code> : 원래 가격 (일반 배너의 <code>{{price1}}</code>에 대응)<br>
+								• <code>prdt_prmct</code> : 할인 가격 (일반 배너의 <code>{{price2_1}}</code>에 대응)<br>
+								• <code>dc_rate</code> : 할인율 (일반 배너의 <code>{{discount1}}</code>에 대응)<br>
+								• <code>pcode</code> : 상품 고유 코드<br>
+								• <code>advrtsReplcCode</code> : 가격 영역 대체 텍스트 표기 코드 (01, 02, 03)<br>
+								• <code>advrtsReplcNm</code> : 대체 표기될 텍스트명
+							</small>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<small>※ 기타 시스템 변수(<code>{{wp_imgtag}}</code>, <code>{{HTTP}}</code>, <code>{{UUID}}</code> 등)는 상단 일반 배너와 동일하게
+				사용됩니다.</small>
+		</li>
+	</ul>
 
-<hr>
+	<hr>
 
-<h2>💅 4. 상품 노출 타입 (할인 / 일반)</h2>
-<p>유지보수의 편의성을 위해 <strong>할인 상품</strong>과 <strong>일반 상품</strong>의 파일은 <strong>하나로 통합</strong>되어 있습니다.<br>
-상태에 따른 UI 분기는 CSS 클래스를 통해 제어합니다.</p>
+	<h2>⚠️ 4. 이미지 에러 처리</h2>
+	<p>네트워크 문제 등으로 <strong>상품 이미지</strong>가 1개라도 정상적으로 로드되지 않을 경우, 광고 지면의 퀄리티를 유지하기 위해 배너 전체를 <strong>대체 배너(모비온
+			광고)</strong>로 전환합니다.<br>
+		또한, <strong>브랜드 로고</strong>(<code>{{logo}}</code>) 이미지 로드에 실패할 경우 빈 공간이나 엑스박스 대신 <strong>모비온 로고</strong>가 대체 노출되도록
+		처리되어 있습니다.</p>
 
-<ul>
-<li><strong>이미지 핏(Fit)</strong>: 상품 이미지는 <code>object-fit: cover;</code>가 적용되어 있어, 지정된 영역을 빈틈없이 꽉 채우도록 렌더링됩니다.</li>
-<li><strong>UI 확인 방법</strong>: 디자인(UI) 확인 시 할인 상품인 경우, 상품 가격을 감싸는 최상위 요소(<code>.price_box</code>)에 <code>.sale</code> 클래스를 추가합니다.
-<pre><code>&lt;!-- 일반 상품의 경우 --&gt;
+	<ul>
+		<li><strong>테스트 방법</strong>: 브라우저 개발자 도구(Console)에서 아래 스크립트를 실행하여 이미지 로드 에러 상황을 강제로 발생시킬 수 있습니다.
+			<pre><code>document.querySelector('.img').dispatchEvent(new Event('error'));</code></pre>
+		</li>
+		<li><strong>트래킹</strong>: 에러 발생 시 <code>{{pcode}}</code> 변수를 활용하여 어떤 상품에서 에러가 발생했는지 로깅 및 추적합니다.</li>
+		<li><strong>대체 배너 이미지 경로</strong>: 대체 배너로 전환 시 노출되는 배경 이미지는 각 템플릿의 규격에 맞춰
+			<code>{{HTTP}}/servlet/image/mobon/사이즈명.png</code> (예: <code>300x250.png</code>) 형태로 구성해야 합니다.</li>
+	</ul>
+
+	<hr>
+
+	<h2>💅 5. 할인 상품과 일반 상품</h2>
+	<p>유지보수의 편의성을 위해 <strong>할인 상품</strong>과 <strong>일반 상품</strong>의 파일은 <strong>하나로 통합</strong>되어 있습니다.<br>
+		상태에 따른 UI 분기는 CSS 클래스를 통해 제어합니다.</p>
+
+	<ul>
+		<li><strong>UI 수동 확인 방법 (일반 배너)</strong>: 할인 상품인 경우, 상품 가격을 감싸는 최상위 요소(<code>.price_box</code>)에 수동으로
+			<code>.sale</code> 클래스를 추가하여 확인합니다.
+			<pre><code>&lt;!-- 일반 상품의 경우 --&gt;
 &lt;div class="price_box"&gt;...&lt;/div&gt;
 
 &lt;!-- 할인 상품의 경우 (.sale 추가) --&gt;
 &lt;div class="price_box sale"&gt;...&lt;/div&gt;</code></pre>
-</li>
-</ul>
+		</li>
+		<li><strong>동적 클래스 부여 (오토 프레임)</strong>: 할인가(<code>prdt_prmct</code>)
+			데이터 존재 여부에 따라 <code>${isSale}</code> 변수를 통해 자동으로 <code>.sale</code> 클래스를 렌더링합니다.
+			<pre><code>// 스크립트 내부 자동 분기 로직
+const isSale = item.prdt_prmct ? "sale" : "";
 
-<hr>
+// HTML 템플릿에 동적 바인딩
+&lt;div class="price_box ${isSale}"&gt;...&lt;/div&gt;</code></pre>
+		</li>
+	</ul>
 
-<h2>✨ 5. 기타 공통 사항</h2>
-<ul>
-<li><strong>배너 규격 명시 (CSS 변수)</strong>: 모든 HTML 파일 최상단 <code>:root</code>에 <code>--width</code>와 <code>--height</code> 변수가 선언되어 있습니다. 이는 임의로 변경하여 크기를 조절하기 위함이 아니라, 각 파일이 담당하는 배너 사이즈 규격을 명확하게 분리하여 관리하기 위한 목적입니다.
-<pre><code>/* 설정 예시 */
+	<hr>
+
+	<h2>✨ 6. 기타 공통 사항</h2>
+	<ul>
+		<li><strong>배너 규격 명시 (CSS 변수)</strong>: 모든 HTML 파일 최상단 <code>:root</code>에 <code>--width</code>와
+			<code>--height</code> 변수가 선언되어 있습니다. 이는 임의로 변경하여 크기를 조절하기 위함이 아니라, 각 파일이 담당하는 배너 사이즈 규격을 명확하게 분리하여 관리하기 위한 목적입니다.
+			<pre><code>/* 설정 예시 */
 :root {
     --width: 234px;
     --height: 60px;
 }</code></pre>
-</li>
-<li><strong>웹 폰트</strong>: 배너 내 텍스트는 <code>Pretendard</code> 폰트(<code>v1.3.9</code> CDN)를 기본으로 사용합니다.</li>
-</ul>
+		</li>
+	</ul>
 
 </body>
+
 </html>

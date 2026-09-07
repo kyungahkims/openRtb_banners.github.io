@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>All Google RTB Banners Dev Preview</title>
+	<style>
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: "pretendard";
+			background-color: #f4f5f7;
+			padding: 50px;
+		}
+
+		.control-panel {
+			position: sticky;
+			top: 0;
+			background: rgba(255, 255, 255, 0.75);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			padding: 16px 40px;
+			margin: -50px -50px 40px -50px;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+			z-index: 100;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.readme-btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 10px 18px;
+			background-color: #1a1a1a;
+			color: #ffffff;
+			text-decoration: none;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 600;
+			transition: background-color 0.2s ease, transform 0.1s ease;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.readme-btn:hover {
+			background-color: #333333;
+			transform: translateY(-2px);
+			box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+		}
+
+		.toggle-switch {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			cursor: pointer;
+			gap: 12px;
+		}
+
+		.toggle-switch input[type="checkbox"] {
+			opacity: 0;
+			width: 0;
+			height: 0;
+			position: absolute;
+		}
+
+		.toggle-switch .slider {
+			position: relative;
+			width: 52px;
+			height: 28px;
+			background-color: #d1d5db;
+			border-radius: 34px;
+			transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		.toggle-switch .slider:before {
+			position: absolute;
+			content: "";
+			height: 22px;
+			width: 22px;
+			left: 3px;
+			bottom: 3px;
+			background-color: white;
+			border-radius: 50%;
+			transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+		}
+
+		.toggle-switch input[type="checkbox"]:checked+.slider {
+			background: linear-gradient(135deg, #FF416C, #FF4B2B);
+			box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		.toggle-switch input[type="checkbox"]:checked+.slider:before {
+			transform: translateX(24px);
+		}
+
+		.toggle-switch .label-text {
+			font-size: 15px;
+			font-weight: 700;
+			color: #1a1a1a;
+			user-select: none;
+			letter-spacing: -0.3px;
+		}
+
+		.section {
+			margin-bottom: 60px;
+			scroll-margin-top: 115px;
+			min-height: 100vh;
+		}
+
+		.section-title {
+			font-size: 20px;
+			font-weight: 800;
+			color: #1a1a1a;
+			margin-bottom: 30px;
+			padding-bottom: 12px;
+			border-bottom: 1px solid #e0e0e0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.group-title {
+			font-size: 16px;
+			font-weight: 700;
+			color: #495057;
+			margin: 30px 0 15px;
+			padding-left: 10px;
+			border-left: 4px solid #1a1a1a;
+			line-height: 1.2;
+		}
+
+		.tooltip-wrap {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.tooltip-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: #e0e0e0;
+			color: #666;
+			font-size: 14px;
+			font-weight: bold;
+		}
+
+		.tooltip-wrap:hover .tooltip-icon {
+			background-color: #666;
+			color: #fff;
+		}
+
+		.tooltip-content {
+			display: none;
+			position: absolute;
+			left: 100%;
+			top: 50%;
+			transform: translateY(-50%);
+			margin-left: 10px;
+			background-color: #333;
+			color: #fff;
+			padding: 8px 12px;
+			border-radius: 6px;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 1.7;
+			white-space: nowrap;
+			z-index: 10;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.tooltip-content::before {
+			content: '';
+			position: absolute;
+			right: 100%;
+			top: 50%;
+			transform: translateY(-50%);
+			border-width: 5px;
+			border-style: solid;
+			border-color: transparent #333 transparent transparent;
+		}
+
+		.tooltip-wrap:hover .tooltip-content {
+			display: block;
+		}
+
+		.banner-grid {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 40px;
+			justify-content: flex-start;
+			align-items: flex-start;
+			margin-bottom: 20px;
+		}
+
+		.banner-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background: #ffffff;
+			padding: 30px;
+			border-radius: 16px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+			transition: transform 0.2s ease;
+		}
+
+		.banner-container:hover {
+			transform: translateY(-5px);
+		}
+
+		.banner-title {
+			font-size: 18px;
+			font-weight: 700;
+			margin-bottom: 20px;
+			color: #1a1a1a;
+			letter-spacing: -0.5px;
+		}
+
+		.banner-title span {
+			font-size: 12px;
+			font-weight: 600;
+			color: #717171;
+			letter-spacing: -0.5px;
+		}
+
+		iframe {
+			box-sizing: content-box;
+			display: block;
+			border: 1px solid #e6e6e6;
+			/* border-radius: 4px; */
+			background-color: #fff;
+		}
+
+		.side-nav {
+			position: fixed;
+			bottom: 30px;
+			right: 20px;
+			background: rgba(255, 255, 255, 0.85);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+			padding: 24px;
+			border-radius: 16px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+			z-index: 90;
+			border: 1px solid rgba(0, 0, 0, 0.05);
+		}
+
+		.side-nav h3 {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 15px;
+			font-weight: 800;
+			color: #1a1a1a;
+			margin-bottom: 16px;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.menu-icon {
+			color: #FF416C;
+			animation: pulse-glow 2s infinite ease-in-out;
+		}
+
+		@keyframes pulse-glow {
+			0% {
+				transform: scale(1) rotate(0deg);
+				filter: drop-shadow(0 0 2px rgba(255, 65, 108, 0.4));
+			}
+
+			50% {
+				transform: scale(1.15) rotate(10deg);
+				filter: drop-shadow(0 0 8px rgba(255, 65, 108, 0.9));
+			}
+
+			100% {
+				transform: scale(1) rotate(0deg);
+				filter: drop-shadow(0 0 2px rgba(255, 65, 108, 0.4));
+			}
+		}
+
+		.side-nav ul {
+			list-style: none;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		.side-nav a {
+			text-decoration: none;
+			color: #717171;
+			font-weight: 600;
+			font-size: 14px;
+			transition: all 0.2s ease;
+			display: block;
+			padding-left: 12px;
+			border-left: 3px solid transparent;
+		}
+
+		.side-nav a:hover {
+			color: #1a1a1a;
+			border-left: 3px solid #1a1a1a;
+		}
+
+		.side-nav a.active {
+			color: #FF416C;
+			font-weight: 800;
+			border-left: 3px solid #FF416C;
+		}
+
+		@media (max-width: 1400px) {
+			.side-nav {
+				display: none;
+			}
+		}
+
+		/* Responsive styling for Mobile */
+		@media (max-width: 600px) {
+			body {
+				padding: 20px 10px;
+			}
+
+			.section {
+				margin-bottom: 40px;
+			}
+
+			.section-title {
+				width: 100%;
+				font-size: 15px;
+				margin-bottom: 20px;
+				padding-bottom: 10px;
+				line-height: 1.4;
+			}
+
+			.tooltip-wrap {
+				display: none;
+			}
+
+			.banner-grid {
+				gap: 20px;
+			}
+
+			.banner-container {
+				width: 100%;
+				max-width: 100%;
+				padding: 30px 0;
+			}
+
+			.banner-title {
+				font-size: 14px;
+				margin-bottom: 15px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="control-panel">
+		<div style="display: flex; align-items: center; gap: 24px;">
+			<h1 style="font-size: 22px; font-weight: 800; color: #1a1a1a; margin: 0; letter-spacing: -0.5px;">Auto
+				Banner Viewer</h1>
+		</div>
+		<label class="toggle-switch">
+			<input type="checkbox" id="toggle-sale" checked>
+			<span class="slider"></span>
+			<div style="display: flex; flex-direction: column; gap: 3px; margin-left: 4px;">
+				<span class="label-text" style="line-height: 1.2;">할인 상품(.Sale) UI로 보기</span>
+				<span style="font-size: 12px; color: #717171; font-weight: 500; letter-spacing: -0.3px;">스위치를 끄면 정가 상품
+					UI로 변경됩니다.</span>
+			</div>
+		</label>
+	</div>
+
+	<div class="section" id="section-auto">
+		<h2 class="section-title">
+			오토프레임 (openRtbAuto_view_new.html) 미리보기
+			<div class="tooltip-wrap">
+				<span class="tooltip-icon">?</span>
+				<div class="tooltip-content">- 반응형 오토 배너를 각 사이즈별로 렌더링합니다.</div>
+			</div>
+		</h2>
+
+		<h3 class="group-title">정방형 / 사각형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">336 x 280</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="336"
+					height="280" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">300 x 250</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="300"
+					height="250" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">250 x 250</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="250"
+					height="250" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">200 x 200</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="200"
+					height="200" scrolling="no"></iframe>
+			</div>
+		</div>
+
+		<h3 class="group-title">가로형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">970 x 250</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="970"
+					height="250" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">728 x 90</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="728"
+					height="90" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">320 x 100</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="320"
+					height="100" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">300 x 100</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="300"
+					height="100" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">320 x 50</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="320"
+					height="50" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">300 x 50</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="300"
+					height="50" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">234 x 60</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="234"
+					height="60" scrolling="no"></iframe>
+			</div>
+		</div>
+
+		<h3 class="group-title">세로형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">300 x 600</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="300"
+					height="600" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">160 x 600</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="160"
+					height="600" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">120 x 600</div><iframe data-dev-src="auto/dev/openRtbAuto_red.html" width="120"
+					height="600" scrolling="no"></iframe>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const toggleSale = document.getElementById('toggle-sale');
+			const iframes = document.querySelectorAll('iframe');
+
+			async function loadDevBanner(iframe) {
+				const devSrc = iframe.getAttribute('data-dev-src');
+				if (!devSrc) return;
+
+				const w = iframe.getAttribute('width');
+				const h = iframe.getAttribute('height');
+				const isSale = toggleSale.checked;
+
+				const mockProductList = `
+                    {
+                        pcode: "test-pcode1",
+                        pnm: "오토프레임 카라넥 원피스",
+                        price: "49,900",
+                        prdt_prmct: "${isSale ? '39,900' : ''}",
+                        dc_rate: "${isSale ? '32' : ''}",
+                        img: "https://www.dabagirl.co.kr/web/product/big/202105/04ff60dbb9fa51e3c47fc8e4bdc27c08.jpg",
+                        purl: "javascript:void(0)",
+                        advrtsReplcCode: "01",
+                        advrtsReplcNm: ""
+                    },
+                    {
+                        pcode: "test-pcode2",
+                        pnm: "베이직 코튼 반팔 티셔츠",
+                        price: "19,000",
+                        prdt_prmct: "${isSale ? '15,900' : ''}",
+                        dc_rate: "${isSale ? '15' : ''}",
+                        img: "https://www.dabagirl.co.kr/web/product/big/202105/04ff60dbb9fa51e3c47fc8e4bdc27c08.jpg",
+                        purl: "javascript:void(0)",
+                        advrtsReplcCode: "01",
+                        advrtsReplcNm: ""
+                    }
+                `;
+
+				try {
+					const response = await fetch(devSrc);
+					let content = await response.text();
+
+					const mockData = {
+						'{{w}}': w,
+						'{{h}}': h,
+						'{{productList}}': mockProductList,
+						'{{HTTP}}': 'https://img.mobon.net',
+						'{{HTTP_DR}}': 'https://img.mobon.net',
+						'{{wp_imgtag}}': '',
+						'{{UUID}}': 'test-uuid',
+						'{{USER}}': 'test-user',
+						'{{ITL_TP_CODE}}': 'test-code'
+					};
+
+					for (const [key, value] of Object.entries(mockData)) {
+						content = content.split(key).join(value);
+					}
+
+					iframe.srcdoc = content;
+				} catch (e) {
+					console.error("Failed to load dev file:", devSrc, e);
+				}
+			}
+
+			function updateAllIframes() {
+				iframes.forEach(iframe => {
+					loadDevBanner(iframe);
+				});
+			}
+
+			toggleSale.addEventListener('change', updateAllIframes);
+			updateAllIframes();
+		});
+	</script>
+</body>
+
+</html>
