@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>배너 사이즈 테스터</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: sans-serif;
+            background: #f0f0f0;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .controls label {
+            font-weight: bold;
+        }
+
+        .controls input {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .preview-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .preview-btns button {
+            padding: 6px 15px;
+            cursor: pointer;
+            background: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .preview-btns button:hover {
+            background: #222;
+        }
+
+        .iframe-container {
+            background-image: linear-gradient(45deg, #e0e0e0 25%, transparent 25%),
+                linear-gradient(-45deg, #e0e0e0 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #e0e0e0 75%),
+                linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+        }
+
+        iframe {
+            border: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="controls">
+            <label for="w">W</label>
+            <input type="number" id="w" value="500">
+            <label for="h">H</label>
+            <input type="number" id="h" value="50">
+        </div>
+        <div class="preview-btns">
+            <!-- 새 창으로 dev_openRtbAuto_view.html 열기 -->
+            <button onclick="window.open('dev_openRtbAuto_view.html', '_blank')">오토프레임 미리보기</button>
+        </div>
+    </div>
+
+    <div class="iframe-container">
+        <iframe id="bannerFrame" src="auto/ui/openRtbAuto_red_ui_tester.html" width="500" height="50"></iframe>
+    </div>
+
+    <script>
+        const wInput = document.getElementById('w');
+        const hInput = document.getElementById('h');
+        const frame = document.getElementById('bannerFrame');
+
+        // 사이즈 변경 로직
+        function updateSize() {
+            const w = wInput.value || 500;
+            const h = hInput.value || 50;
+
+            frame.style.width = w + 'px';
+            frame.style.height = h + 'px';
+            frame.width = w;
+            frame.height = h;
+
+            const currentSrc = frame.src.split('?')[0];
+            frame.src = currentSrc + '?t=' + new Date().getTime();
+        }
+
+        let debounceTimer;
+        function handleInput() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(updateSize, 300);
+        }
+
+        wInput.addEventListener('input', handleInput);
+        hInput.addEventListener('input', handleInput);
+    </script>
+</body>
+
+</html>
