@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>오토프레임</title>
+	<style>
+		/* 1. 웹 폰트 */
+		@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+
+		/* 2. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		.mobon_reset {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			font-family: "Archivo Black", sans-serif;
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			position: relative;
+			display: flex;
+			width: 100%;
+			height: 100%;
+			background-color: #f5f4f0;
+			cursor: pointer;
+			overflow: hidden;
+		}
+
+		.img_wrap {
+			overflow: hidden;
+		}
+
+		.img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+		}
+
+		.img.is-panning {
+			object-position: left top;
+			animation: panImage 5s ease-in-out infinite alternate;
+		}
+
+		@keyframes panImage {
+			0% {
+				object-position: left top;
+			}
+
+			100% {
+				object-position: right bottom;
+			}
+		}
+
+		.text_wrap {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			flex: 1;
+			min-width: 0;
+			color: #201e1d;
+			container-type: inline-size;
+		}
+
+		.pnm {
+			min-width: 0;
+			font-size: clamp(13px, 3.26cqw, 20px);
+			font-weight: 500;
+			line-height: 1.25;
+			color: #717171;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			margin-bottom: 4px;
+		}
+
+		.price_box {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			column-gap: 4px;
+			line-height: 1.2;
+		}
+
+		.sale .sale_rate,
+		.sale .sale_price {
+			display: block;
+		}
+
+		.sale .original_price {
+			display: none;
+		}
+
+		.sale_rate {
+			display: none;
+			font-size: clamp(16px, 6.65cqw, 24px);
+			font-weight: 800;
+			letter-spacing: -0.03em;
+			color: #e6192b;
+		}
+
+		.sale_price {
+			display: none;
+			font-size: clamp(14px, 6.21cqw, 22px);
+			font-weight: 900;
+			letter-spacing: -0.02em;
+		}
+
+		.original_price {
+			font-size: clamp(14px, 6.21cqw, 22px);
+			font-weight: 900;
+			letter-spacing: -0.02em;
+			text-decoration: none;
+		}
+
+		.shop_btn {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			max-width: max-content;
+			font-size: clamp(11px, 2.52cqw, 13px);
+			font-weight: 900;
+			line-height: 1;
+			border: none;
+			border-radius: 0;
+			color: #ffffff;
+			background: #fa3538;
+			padding: clamp(8px, 1.2cqw, 6px) clamp(10px, 2.5cqw, 14px);
+			cursor: pointer;
+		}
+
+
+		/********** 정방형 **********/
+		.mobon_reset.layout_square .img_wrap {
+			width: 100%;
+			max-width: 100%;
+			height: 100%;
+			border: none;
+		}
+
+		.mobon_reset.layout_square .text_wrap {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			justify-content: flex-end;
+			width: 100%;
+			height: auto;
+			color: #ffffff;
+			background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 60%, rgba(0, 0, 0, 0) 100%);
+			padding: 25% 4% 4% 4%;
+			z-index: 1;
+		}
+
+		.mobon_reset.layout_square .pnm {
+			font-size: clamp(13px, 4.5cqw, 20px);
+			font-weight: 600;
+			color: #ffffff;
+		}
+
+		.mobon_reset.layout_square .price_box {
+			margin: 2px 0 10px;
+		}
+
+		.mobon_reset.layout_square .sale_rate {
+			font-size: clamp(15px, 5cqw, 24px);
+		}
+
+		.mobon_reset.layout_square .sale_price {
+			font-size: clamp(12px, 7cqw, 20px);
+			color: #ffffff;
+		}
+
+		.mobon_reset.layout_square .original_price {
+			font-size: clamp(12px, 7cqw, 20px);
+			color: #ffffff;
+		}
+
+		.mobon_reset.layout_square .shop_btn {
+			width: 100%;
+			max-width: 100%;
+			font-size: clamp(12px, 3.5cqw, 16px);
+			border-radius: 6px;
+			padding: clamp(10px, 2.5cqw, 12px);
+		}
+
+		/********** 모바일형 **********/
+		.mobon_reset.layout_mobile .img_wrap {
+			max-width: 25%;
+			flex: 0 0 25%;
+		}
+
+		.mobon_reset.layout_mobile .text_wrap {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.mobon_reset.layout_mobile .flex {
+			padding: 0 6px;
+			flex: 1;
+			min-width: 0;
+		}
+
+		.mobon_reset.layout_mobile .pnm {
+			font-size: 12px;
+		}
+
+		.mobon_reset.layout_mobile .sale_rate {
+			font-size: 13px;
+		}
+
+		.mobon_reset.layout_mobile .sale_price,
+		.mobon_reset.layout_mobile .original_price {
+			font-size: 13px;
+		}
+
+		.mobon_reset.layout_mobile .shop_btn {
+			flex-shrink: 0;
+			height: 100%;
+			padding: 0 5px;
+		}
+
+		/********** 가로형 **********/
+		.mobon_reset.layout_horizontal .img_wrap {
+			max-width: 45%;
+			flex: 0 0 45%;
+		}
+
+		.mobon_reset.layout_horizontal .text_wrap {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.mobon_reset.layout_horizontal .flex {
+			padding: 0 16px;
+			flex: 1;
+			min-width: 0;
+		}
+
+		.mobon_reset.layout_horizontal .shop_btn {
+			flex-shrink: 0;
+			height: 100%;
+			padding: 0 7px;
+		}
+
+		/********** 세로형 **********/
+		.mobon_reset.layout_vertical .mobon_banner {
+			flex-direction: column;
+		}
+
+		.mobon_reset.layout_vertical .img_wrap {
+			flex: 1;
+			max-width: 100%;
+			height: 100%;
+		}
+
+		.mobon_reset.layout_vertical .text_wrap {
+			flex: none;
+		}
+
+		.mobon_reset.layout_vertical .flex {
+			padding: 20px 10px;
+		}
+
+		.mobon_reset.layout_vertical .pnm {
+			font-weight: 600;
+			margin-bottom: 16px;
+		}
+
+		.mobon_reset.layout_vertical .sale_rate {
+			font-size: 30px;
+			margin-bottom: 8px;
+		}
+
+		.mobon_reset.layout_vertical .sale_price,
+		.mobon_reset.layout_vertical .original_price {
+			font-size: 16px;
+		}
+
+		.mobon_reset.layout_vertical .price_box {
+			flex-direction: column;
+		}
+
+		.mobon_reset.layout_vertical .shop_btn {
+			flex-shrink: 0;
+			min-width: 100%;
+			font-size: 14px;
+			padding: 16px 0;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- layout_horizontal, layout_vertical, layout_mobile, layout_square -->
+	<div class="mobon_reset">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+	</div>
+
+	<script>
+		(() => {
+			const frameWidth = window.innerWidth;
+			const frameHeight = window.innerHeight;
+			const allProducts = [
+				{
+					pcode: "test-pcode1",
+					pnm: "무선 블루투스 이어버드무선 블루투스 이어버드",
+					price: "9,939,000",
+					prdt_prmct: "9,923,400",
+					dc_rate: "40",
+					img: "https://www.dabagirl.co.kr/web/product/big/202105/04ff60dbb9fa51e3c47fc8e4bdc27c08.jpg",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					pcode: "test-pcode2",
+					pnm: "최고급 프리미엄 블루투스 헤드셋",
+					price: "15,000,000",
+					prdt_prmct: "12,000,000",
+					dc_rate: "20",
+					img: "https://www.dabagirl.co.kr/web/product/big/202105/04ff60dbb9fa51e3c47fc8e4bdc27c08.jpg",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				}
+			];
+
+			/* 상품 노출 수 */
+			let maxDisplayCount = 1;
+
+			/* 상품 노출 수 2개 */
+			if (frameWidth > frameHeight) {
+				if ((frameWidth / frameHeight > 1.5) || (frameHeight <= 150 && frameHeight > 50)) maxDisplayCount = 2;
+			} else if (frameHeight > frameWidth) {
+				maxDisplayCount = 2;
+			}
+			if (frameHeight <= 50 || frameWidth === frameHeight) maxDisplayCount = 1;
+			if (frameWidth <= 450 && frameHeight <= 150) maxDisplayCount = 1;
+			if (frameWidth <= 400 && frameWidth <= 900 || frameHeight <= 250) maxDisplayCount = 1;
+			if (frameWidth >= 800) maxDisplayCount = 2;
+			/* 상품 노출 수 1개 경우 상단 상품 노출 수 2개 부분 전체 주석 */
+
+			const products = allProducts.slice(0, maxDisplayCount);
+			const mainBanner = document.querySelector('.mobon_reset');
+
+			if (!mainBanner || products.length === 0) return;
+
+			/* HTML 렌더링 */
+			const renderProducts = () => {
+				const htmlStr = products.map(item => {
+					const isSale = item.prdt_prmct ? "sale" : "";
+
+					let priceText = `${item.price}원`;
+					if (item.advrtsReplcCode === "02") {
+						priceText = item.advrtsReplcNm;
+					} else if (item.advrtsReplcCode === "03") {
+						priceText = `${item.advrtsReplcNm}${item.price}원`;
+					}
+
+					return `
+            <div class="mobon_banner" onclick="window.open('${item.purl}')">
+                <div class="img_wrap">
+                    <img class="img" src="${item.img}" data-pcode="${item.pcode}" alt="${item.pnm}">
+                </div>
+                <div class="text_wrap">
+                    <div class="flex">
+                        <p class="pnm">${item.pnm}</p>
+                        <div class="price_box ${isSale}">
+                          ${item.dc_rate ? `<div class="sale_rate">${item.dc_rate}<span>%</span></div>` : ''}
+                            ${item.prdt_prmct ? `<div class="sale_price">${item.prdt_prmct}원</div>` : ''}
+                            <div class="original_price">${priceText}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="shop_btn">특가확인</button>
+                </div>
+            </div>`;
+				}).join('');
+
+				mainBanner.insertAdjacentHTML('beforeend', htmlStr);
+			};
+
+			/* 레이아웃 및 화면 분할 설정 */
+			const setupLayout = () => {
+				mainBanner.style.width = `${frameWidth}px`;
+				mainBanner.style.height = `${frameHeight}px`;
+
+				const productCount = products.length;
+				let cellWidth = frameWidth;
+				let cellHeight = frameHeight;
+
+				if (productCount > 1) {
+					mainBanner.style.display = 'grid';
+					mainBanner.style.gap = '2px';
+
+					if (frameWidth > frameHeight) {
+						mainBanner.style.gridTemplateColumns = `repeat(${productCount}, 1fr)`;
+						mainBanner.style.gridTemplateRows = '1fr';
+						cellWidth = frameWidth / productCount;
+					} else {
+						mainBanner.style.gridTemplateColumns = '1fr';
+						mainBanner.style.gridTemplateRows = `repeat(${productCount}, 1fr)`;
+						cellHeight = frameHeight / productCount;
+					}
+				} else {
+					mainBanner.style.display = 'flex';
+				}
+
+				const cellRatio = cellWidth / cellHeight;
+
+				mainBanner.classList.remove('layout_square', 'layout_mobile', 'layout_horizontal', 'layout_vertical');
+				if (productCount === 1 && cellHeight <= 150 && cellWidth <= 450 && cellRatio >= 1.5) {
+					mainBanner.classList.add('layout_mobile');
+				} else if (cellRatio >= 1.9) {
+					mainBanner.classList.add('layout_horizontal');
+				} else if (cellRatio <= 0.7) {
+					mainBanner.classList.add('layout_vertical');
+				} else {
+					mainBanner.classList.add('layout_square');
+				}
+			};
+
+			/* 이미지 패닝 애니메이션 */
+			const initPanning = () => {
+				const images = document.querySelectorAll('.img');
+
+				const checkPanning = (img) => {
+					const wrap = img.parentElement;
+					if (!wrap.clientWidth || !wrap.clientHeight) return;
+
+					const wrapRatio = wrap.clientWidth / wrap.clientHeight;
+					const imgRatio = img.naturalWidth / img.naturalHeight;
+
+					const overflowRatio = imgRatio > wrapRatio ?
+						((wrap.clientHeight * imgRatio) - wrap.clientWidth) / wrap.clientWidth :
+						((wrap.clientWidth / imgRatio) - wrap.clientHeight) / wrap.clientHeight;
+
+					img.classList.toggle('is-panning', overflowRatio > 0.3);
+				};
+
+				images.forEach(img => {
+					if (img.complete && img.naturalWidth > 0) {
+						checkPanning(img);
+					} else {
+						img.addEventListener('load', () => checkPanning(img), {
+							once: true
+						});
+					}
+				});
+			};
+
+			/* 로직 실행 */
+			renderProducts();
+			setupLayout();
+			initPanning();
+		})();
+	</script>
+</body>
+
+</html>
