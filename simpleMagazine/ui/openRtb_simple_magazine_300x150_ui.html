@@ -379,8 +379,10 @@
 			totalIdxEl.textContent = totalImages;
 
 			if (totalImages <= 1) {
-				sliderControls.style.display = 'none';
-				priceBoxEl.style.marginTop = 'auto';
+				const paginationWrap = document.querySelector('.pagination_wrap');
+				if (paginationWrap) paginationWrap.style.display = 'none';
+				const sliderControls = document.querySelector('.slider_controls');
+				if (sliderControls) sliderControls.style.justifyContent = 'flex-end';
 			}
 
 			const checkPanning = (img) => {

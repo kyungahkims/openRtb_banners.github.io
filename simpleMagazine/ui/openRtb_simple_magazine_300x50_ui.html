@@ -328,10 +328,6 @@
 			let intervalId;
 			const progressFill = document.querySelector('.progress_fill');
 
-			if (totalImages <= 1) {
-				priceBoxEl.style.marginTop = 'auto';
-			}
-
 			const checkPanning = (img) => {
 				const wrap = img.parentElement;
 				if (!wrap.clientWidth || !wrap.clientHeight) return;
