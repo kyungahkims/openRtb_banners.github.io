@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글RTB 배너</title>
+	<style>
+		/* 1. 웹 폰트 */
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		/* 2. 배너 & 이미지 규격 */
+		:root {
+			--width: 250px;
+			--height: 250px;
+		}
+
+		/* 3. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		/* 4. 해당 사이즈 배너 */
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "pretendard";
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			display: flex;
+			width: 100%;
+			height: 100%;
+			background-color: #fff;
+			cursor: pointer;
+		}
+
+		.slider_wrap {
+			position: relative;
+			flex-shrink: 0;
+			width: 112px;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		.img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+			opacity: 0;
+			transition: opacity 0.5s ease;
+		}
+
+		.img.active {
+			opacity: 1;
+		}
+
+		.img.is-panning {
+			object-position: left top;
+			animation: panImage 5s ease-in-out infinite alternate;
+		}
+
+		@keyframes panImage {
+			0% {
+				object-position: left top;
+			}
+
+			100% {
+				object-position: right bottom;
+			}
+		}
+
+		.bg {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			min-width: 0;
+			padding: 10px 10px 20px;
+			z-index: 1;
+		}
+
+		.shop_logo {
+			max-width: 80%;
+			max-height: 40px;
+		}
+
+		.shop_logo img {
+			max-width: 100%;
+			max-height: 100%;
+			cursor: pointer;
+		}
+
+		.pnm {
+			font-size: 15px;
+			font-weight: 400;
+			line-height: 1.4;
+			letter-spacing: -0.5px;
+			color: #201e1d;
+			word-break: keep-all;
+			overflow-wrap: break-word;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			margin-top: 5px;
+		}
+
+		.slider_controls {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-top: auto;
+			padding-bottom: 12px;
+		}
+
+		.slider_btns {
+			display: flex;
+			gap: 4px;
+		}
+
+		.slider_btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 16px;
+			height: 16px;
+			color: #201e1d;
+			border: 1px solid #201e1d;
+			background-color: #fff;
+			transition: all 0.2s ease;
+			cursor: pointer;
+		}
+
+		.slider_btn:hover {
+			color: #fff;
+			background-color: #201e1d;
+		}
+
+		.slider_pagination {
+			font-size: 11px;
+			letter-spacing: 0.5px;
+			color: #666;
+		}
+
+		.price_box {
+			display: flex;
+			column-gap: 6px;
+			align-items: baseline;
+			border-top: 1px solid #ddd;
+			padding-top: 10px;
+		}
+
+		.sale .sale_rate,
+		.sale .sale_price {
+			display: block;
+		}
+
+		.sale .original_price {
+			display: none;
+		}
+
+		.sale_rate {
+			display: none;
+			font-size: 12px;
+			font-weight: bold;
+			letter-spacing: -0.5px;
+			color: #ff2a2a;
+		}
+
+		.sale_price {
+			display: none;
+			font-size: 15px;
+			letter-spacing: -0.5px;
+			font-weight: 600;
+			color: #000;
+		}
+
+		.original_price {
+			display: block;
+			font-size: 15px;
+			letter-spacing: -0.5px;
+			font-weight: 600;
+			color: #000;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="mobon_banner">
+			<div class="slider_wrap">
+			</div>
+
+			<div class="bg">
+				<div class="shop_logo"><img src="https://manage.mobon.net/ad/imgfile//20240125140913-H2Gm0AL5jB-logo.png"
+						alt="로고"></div>
+				<p class="pnm">쿨링 썸머 카라넥 원피스</p>
+
+				<div class="slider_controls">
+					<div class="slider_btns">
+						<button type="button" class="slider_btn prev_btn">
+							<svg width="10" height="102" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round">
+								<polyline points="15 18 9 12 15 6"></polyline>
+							</svg>
+						</button>
+						<button type="button" class="slider_btn next_btn">
+							<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" stroke-linejoin="round">
+								<polyline points="9 18 15 12 9 6"></polyline>
+							</svg>
+						</button>
+					</div>
+					<div class="slider_pagination"><span class="current_idx">1</span> / <span class="total_idx">4</span>
+					</div>
+				</div>
+
+				<!-- 할인 상품인 경우 .price_box에 .sale 추가 -->
+				<div class="price_box sale">
+					<div class="sale_rate">32<span>%</span></div>
+					<div class="sale_price">9,939,900원</div>
+					<div class="original_price">49,900원</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const sliderWrap = document.querySelector('.slider_wrap');
+			const prevBtn = document.querySelector('.prev_btn');
+			const nextBtn = document.querySelector('.next_btn');
+			const currentIdxEl = document.querySelector('.current_idx');
+			const totalIdxEl = document.querySelector('.total_idx');
+			const pnmEl = document.querySelector('.pnm');
+			const priceBoxEl = document.querySelector('.price_box');
+			const saleRateEl = document.querySelector('.sale_rate');
+			const salePriceEl = document.querySelector('.sale_price');
+			const originalPriceEl = document.querySelector('.original_price');
+
+			const allProducts = [{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp",
+					pnm: "코튼 벨티드 원피스",
+					dc_rate: "25",
+					prdt_prmct: "9,989,900",
+					price: "198,000",
+					pcode: "test1",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/34d5572c55d7962dc09e3688c031d90e.jpg",
+					pnm: "베이직 라운드 반팔 티셔츠",
+					dc_rate: "15",
+					prdt_prmct: "15,900",
+					price: "19,000",
+					pcode: "test2",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/228785c2d74d7238046842d7afaab05b.webp",
+					pnm: "와이드 핏 데님 팬츠",
+					dc_rate: "20",
+					prdt_prmct: "29,900",
+					price: "38,000",
+					pcode: "test3",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg",
+					pnm: "여름 린넨 밴딩 쇼츠",
+					dc_rate: "",
+					prdt_prmct: "",
+					price: "28,000",
+					pcode: "test4",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				}
+			];
+
+			const urlParams = new URLSearchParams(window.location.search);
+			const itemsCount = urlParams.get('items');
+			if(itemsCount) {
+				allProducts.length = Math.min(allProducts.length, parseInt(itemsCount, 10));
+			}
+
+			const imageHtml = allProducts.map((item, index) => {
+				const activeClass = index === 0 ? 'active' : '';
+				return `<img class="img ${activeClass}" src="${item.img}" data-pcode="${item.pcode}" alt="${item.pnm}">`;
+			}).join('');
+
+			sliderWrap.innerHTML = imageHtml;
+
+			const images = document.querySelectorAll('.slider_wrap .img');
+
+			const sliderControls = document.querySelector('.slider_controls');
+			let currentIndex = 0;
+			const totalImages = images.length;
+			let intervalId;
+
+			totalIdxEl.textContent = totalImages;
+
+			if (totalImages <= 1) {
+				sliderControls.style.display = 'none';
+				priceBoxEl.style.marginTop = 'auto';
+			}
+
+			const checkPanning = (img) => {
+				const wrap = img.parentElement;
+				if (!wrap.clientWidth || !wrap.clientHeight) return;
+
+				const wrapRatio = wrap.clientWidth / wrap.clientHeight;
+				const imgRatio = img.naturalWidth / img.naturalHeight;
+
+				const overflowPx = imgRatio > wrapRatio ?
+					(wrap.clientHeight * imgRatio) - wrap.clientWidth :
+					(wrap.clientWidth / imgRatio) - wrap.clientHeight;
+
+				const overflowRatio = imgRatio > wrapRatio ?
+					overflowPx / wrap.clientWidth :
+					overflowPx / wrap.clientHeight;
+
+				if (overflowRatio > 0.3) {
+					img.classList.add('is-panning');
+					img.style.animationDuration = overflowPx <= 40 ? '3s' : '5s';
+				} else {
+					img.classList.remove('is-panning');
+					img.style.animationDuration = '';
+				}
+			};
+
+			function showImage(index) {
+				images.forEach(img => img.classList.remove('active'));
+				if (images[index]) {
+					images[index].classList.add('active');
+					
+					if (images[index].complete && images[index].naturalWidth > 0) {
+						checkPanning(images[index]);
+					} else {
+						images[index].addEventListener('load', () => checkPanning(images[index]), { once: true });
+					}
+				}
+				currentIdxEl.textContent = index + 1;
+
+				const product = allProducts[index];
+				if (product) {
+					pnmEl.textContent = product.pnm;
+
+					let priceText = `${product.price}원`;
+
+					if (product.prdt_prmct) {
+						priceBoxEl.classList.add('sale');
+						saleRateEl.innerHTML = (product.dc_rate ? product.dc_rate + '<span>%</span>' : '');
+						salePriceEl.textContent = `${product.prdt_prmct}원`;
+						originalPriceEl.textContent = priceText;
+					} else {
+						priceBoxEl.classList.remove('sale');
+						saleRateEl.innerHTML = '';
+						salePriceEl.textContent = '';
+						originalPriceEl.textContent = priceText;
+					}
+				}
+			}
+
+			function nextImage() {
+				currentIndex = (currentIndex + 1) % totalImages;
+				showImage(currentIndex);
+			}
+
+			function prevImage() {
+				currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+				showImage(currentIndex);
+			}
+
+			function startSlider() {
+				if (totalImages <= 1) return;
+				stopSlider();
+				/* 3초 마다 */
+				intervalId = setInterval(nextImage, 3000);
+			}
+
+			function stopSlider() {
+				clearInterval(intervalId);
+			}
+
+			const bannerContainer = document.querySelector('.mobon_banner');
+			bannerContainer.addEventListener('mouseenter', stopSlider);
+			bannerContainer.addEventListener('mouseleave', startSlider);
+
+			prevBtn.addEventListener('click', (e) => {
+				e.stopPropagation();
+				prevImage();
+			});
+
+			nextBtn.addEventListener('click', (e) => {
+				e.stopPropagation();
+				nextImage();
+			});
+
+			showImage(currentIndex);
+
+			startSlider();
+		});
+	</script>
+</body>
+
+</html>
