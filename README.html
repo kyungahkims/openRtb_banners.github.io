@@ -251,7 +251,60 @@
 
 	<hr>
 
-	<h2>🖼️ 2. 비상품 배너 (Auto 형식)</h2>
+	<h2>✨ 2. 상품 배너 (Simple Magazine 동적 배너)</h2>
+	<p>기존에 정적으로 고정되었던 상품 개수의 제약을 풀고, <strong>사이즈별 레이아웃에 맞춰 최소 1개부터 다수의 상품까지 동적(Dynamic)으로 대응</strong>하는 심플 매거진(Simple Magazine) 배너 템플릿입니다.</p>
+
+	<ul>
+		<li><strong>동적 JSON 파싱</strong>: 각 배너별 고정 변수(<code>{{img1}}</code> 등)를 쓰지 않고 <code>{{productList}}</code>라는 배열 형태의 데이터를 반복문으로 렌더링하여 데이터 변동성에 강력하게 대응합니다.</li>
+		<li><strong>자동 상품 개수 방어</strong>: 썸네일 구조를 갖춘 일부 규격(예: 970x250, 728x90, 468x60, 300x600, 160x600, 120x600)은 디자인 한계상 최대 4개까지만 노출 가능합니다. 데이터가 5개 이상 들어와도 스크립트 단에서 자동으로 4개까지만 잘라내어 UI 붕괴를 원천 차단합니다.</li>
+		<li><strong>1개 상품 UI 자동 변환</strong>: 상품이 단 1개만 전달되었을 경우, 불필요한 썸네일 영역을 자동으로 숨기고 메인 영역이 100% 꽉 차도록(<code>flex: 100%</code>, <code>width: 500px</code> 등) 스타일을 동적 변환하여 빈 여백이 남지 않습니다.</li>
+		<li><strong>사용자 상호작용 및 애니메이션</strong>: 상단 브랜드 로고 클릭 시 현재 화면에 노출 중인(Active) 상품의 <code>purl</code>로 정확하게 연결되며, "SNS 핫템 보기" 유도 문구에 애니메이션을 적용하여 효율을 높였습니다.</li>
+		<li><strong>심플 매거진 전용 변수</strong>:
+			<br><br>
+			<table>
+				<thead>
+					<tr>
+						<th>항목</th>
+						<th>변수명</th>
+						<th>설명</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>배너 가로/세로 사이즈</strong></td>
+						<td><code>{{w}}</code>, <code>{{h}}</code></td>
+						<td>배너 규격(Width, Height)이며, 주로 엑스박스 감지 시 대체 배너 크기를 제어하는 데 사용됩니다.</td>
+					</tr>
+					<tr>
+						<td><strong>로고</strong></td>
+						<td><code>{{logo}}</code></td>
+						<td>상점 로고 이미지 URL</td>
+					</tr>
+					<tr>
+						<td><strong>상품 데이터 배열</strong></td>
+						<td><code>{{productList}}</code></td>
+						<td>스크립트에서 동적 렌더링을 위해 서버에서 주입해주는 JSON 객체 배열 데이터입니다.<br>
+							<small style="display:inline-block; margin-top:8px; line-height:1.6; color:#a5d6ff;">
+								<strong>[배열 내부 속성(Property) 명세]</strong><br>
+								• <code>img</code> : 상품 이미지 URL<br>
+								• <code>purl</code> : 상품 클릭 이동 URL<br>
+								• <code>pnm</code> : 상품명<br>
+								• <code>price</code> : 원가<br>
+								• <code>prdt_prmct</code> : 할인가<br>
+								• <code>dc_rate</code> : 할인율<br>
+								• <code>pcode</code> : 상품 고유 코드
+							</small>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<small>※ 기타 시스템 노출 추적 변수(<code>{{wp_imgtag}}</code>, <code>{{HTTP}}</code>, <code>{{UUID}}</code> 등)는 상단 일반 배너와 동일하게 사용됩니다.</small>
+		</li>
+	</ul>
+
+	<hr>
+
+	<h2>🖼️ 3. 비상품 배너 (Auto 형식)</h2>
 	<p>상품 데이터를 보여주지 않는 비상품 배너의 경우, 하나의 HTML 파일로 관리하며(Auto 형식) 사이즈 변수만 변경하여 다양한 규격을 대응합니다.</p>
 
 	<ul>
@@ -292,7 +345,7 @@
 
 	<hr>
 
-	<h2>🤖 3. 상품 배너 오토 프레임</h2>
+	<h2>🤖 4. 상품 배너 오토 프레임</h2>
 	<p>여러 사이즈별로 개별 파일을 만들지 않고, <strong>하나의 파일(openRtbAuto.html)</strong>로 모든 광고 규격에 대응하는 다이내믹 오토 템플릿입니다.</p>
 
 	<ul>
