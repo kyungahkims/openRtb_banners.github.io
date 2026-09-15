@@ -102,7 +102,6 @@
 			line-height: 1.4;
 			letter-spacing: -0.5px;
 			color: #222;
-			word-break: keep-all;
 			display: -webkit-box;
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
@@ -262,7 +261,7 @@
 					advrtsReplcNm: ""
 				}
 			];
-
+			if (allProducts.length > 4) allProducts.length = 4;
 			// 썸네일 요소 생성
 			mobonBannerWrap.innerHTML = (function(){
 				const urlParams = new URLSearchParams(window.location.search);
@@ -282,6 +281,9 @@
 
 			let currentIndex = 0;
 			const totalImages = allProducts.length;
+			if (totalImages <= 1) {
+				mobonBannerWrap.style.display = 'none';
+			}
 			let intervalId;
 
 			const checkPanning = (img) => {
@@ -307,6 +309,18 @@
 					img.style.animationDuration = '';
 				}
 			};
+
+			// 썸네일 이미지 패닝 체크
+			mobonBanners.forEach(banner => {
+				const thumbImg = banner.querySelector('.img');
+				if (thumbImg) {
+					if (thumbImg.complete && thumbImg.naturalWidth > 0) {
+						checkPanning(thumbImg);
+					} else {
+						thumbImg.addEventListener('load', () => checkPanning(thumbImg), { once: true });
+					}
+				}
+			});
 
 			function showProduct(index) {
 				mobonBanners.forEach(t => t.classList.remove('active'));

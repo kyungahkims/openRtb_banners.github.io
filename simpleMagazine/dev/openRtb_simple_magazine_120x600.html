@@ -11,7 +11,7 @@
 
 		/* 2. 배너 & 이미지 규격 */
 		:root {
-			--width: 160px;
+			--width: 120px;
 			--height: 600px;
 			--active-banner-height: 200px;
 		}
@@ -107,7 +107,7 @@
 			font-weight: 700;
 			color: #fff;
 			background-color: #f23e2e;
-			padding: 4px 5px;
+			padding: 2px 4px;
 			z-index: 2;
 		}
 
@@ -157,17 +157,17 @@
 		.mobon_banner_wrap .mobon_banner.active .bg {
 			height: auto;
 			opacity: 1;
-			padding: 8px 6px;
+			padding: 8px 5px;
 		}
 
 		.pnm {
-			font-size: 14px;
+			font-size: 13px;
 			font-weight: 400;
 			color: #201e1d;
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			overflow: hidden;
-			margin-bottom: 6px;
+			margin-bottom: 5px;
 		}
 
 		.price_box {
@@ -187,32 +187,56 @@
 
 		.sale_rate {
 			display: none;
-			font-size: 11px;
+			font-size: 10px;
 			font-weight: bold;
 			color: #ff2a2a;
 		}
 
 		.sale_price {
 			display: none;
-			font-size: 14px;
+			font-size: 11px;
 			font-weight: 600;
 			color: #000;
 		}
 
 		.original_price {
 			display: block;
-			font-size: 14px;
+			font-size: 11px;
 			font-weight: 600;
 			color: #000;
+		}
+
+		/* 대체 배너 */
+		.fallback_banner {
+			display: none;
+			position: relative;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		.fallback_link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.fallback_banner img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			background-position: center center;
 		}
 	</style>
 </head>
 
 <body>
-	<div class="mobon_reset">
+	<div class="mobon_reset" id="noHiddenMobon">
 		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
 
-		<div class="shop_logo"><img src="https://manage.mobon.net/ad/imgfile//20240125140913-H2Gm0AL5jB-logo.png" alt="로고">
+		<div class="shop_logo">
+			<img src="{{logo}}" alt="로고" onerror="this.onerror=null; this.src='{{HTTP}}/rtb/images/mobon.jpg'">
 		</div>
 
 		<div class="mobon_banner_wrap">
@@ -220,63 +244,38 @@
 		</div>
 	</div>
 
+
+	<!-- 노출 추적 태그 -->
+	{{wp_imgtag}}
+
+	<!-- 대체 배너 영역 -->
+	<div class="fallback_banner" id="hiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="fallback_link" onclick="window.open('https://mobon.net/bridge/')">
+			<img src="{{HTTP}}/servlet/image/mobon/120x600.png" alt="대체배너">
+		</div>
+	</div>
+
 	<script>
 		document.addEventListener('DOMContentLoaded', () => {
+			const frameWidth = {{w}};
+			const frameHeight = {{h}};
+			const mainBanner = document.getElementById('noHiddenMobon');
+			const fallbackBanner = document.getElementById('hiddenMobon');
 			const mobonBannerWrap = document.querySelector('.mobon_banner_wrap');
 			const mobonReset = document.querySelector('.mobon_reset');
-
-			// 테스트용 상품 데이터
-			const allProducts = [{
-					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp",
-					pnm: "[핫딜] 쿨링 썸머 카라넥 원피스",
-					dc_rate: "40",
-					prdt_prmct: "9,989,900",
-					price: "58,000",
-					purl: "javascript:void(0)"
-				},
-				{
-					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/34d5572c55d7962dc09e3688c031d90e.jpg",
-					pnm: "베이직 라운드 반팔 티셔츠",
-					dc_rate: "15",
-					prdt_prmct: "15,900",
-					price: "19,000",
-					purl: "javascript:void(0)"
-				},
-				{
-					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/228785c2d74d7238046842d7afaab05b.webp",
-					pnm: "와이드 핏 데님 팬츠",
-					dc_rate: "20",
-					prdt_prmct: "29,900",
-					price: "38,000",
-					purl: "javascript:void(0)"
-				},
-				{
-					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg",
-					pnm: "여름 린넨 밴딩 쇼츠",
-					dc_rate: "",
-					prdt_prmct: "",
-					price: "28,000",
-					purl: "javascript:void(0)"
-				}
+			const allProducts = [
+				{{productList}}
 			];
-
-
 			if (allProducts.length > 4) allProducts.length = 4;
-			// 카드 요소 생성
-			mobonBannerWrap.innerHTML = (function(){
-				const urlParams = new URLSearchParams(window.location.search);
-				const itemsCount = urlParams.get('items');
-				if(itemsCount) {
-					allProducts.length = Math.min(allProducts.length, parseInt(itemsCount, 10));
-				}
-				return allProducts;
-			})().map((item, index) => {
+			// 썸네일 요소 생성
+			mobonBannerWrap.innerHTML = allProducts.map((item, index) => {
 				const isSale = item.prdt_prmct ? "sale" : "";
 				let priceText = `${item.price}원`;
 
 				return `
 					<div class="mobon_banner ${index === 0 ? 'active' : ''}" data-index="${index}">
-						<div class="badge">SNS 핫템</div>
+						<div class="badge">핫템</div>
 						<div class="slider_wrap">
 							<img class="img" src="${item.img}" alt="${item.pnm}">
 						</div>
@@ -413,6 +412,35 @@
 			// 초기화
 			updatePanningForAll();
 			startSlider();
+
+			const handleImageErrors = () => {
+				const allBannerImages = document.querySelectorAll('img:not(.mobonLogo):not([alt="대체배너"]):not([alt="로고"])');
+				let isFallbackTriggered = false;
+				const handleImageError = (event) => {
+					if (isFallbackTriggered) return;
+					isFallbackTriggered = true;
+					const pcode = event.target.dataset.pcode || '';
+					if (mainBanner) mainBanner.style.display = 'none';
+					if (fallbackBanner) {
+						fallbackBanner.style.display = 'block';
+						fallbackBanner.style.width = `${frameWidth}px`;
+						fallbackBanner.style.height = `${frameHeight}px`;
+					}
+					const errorUrl =
+						`{{HTTP_DR}}/rtbShop?uid=${encodeURIComponent("{{UUID}}")}&u={{USER}}&pc=${pcode}&itlTpCode={{ITL_TP_CODE}}`;
+					(new Image()).src = errorUrl;
+				};
+				allBannerImages.forEach(img => {
+					if (img.complete && img.naturalHeight === 0) {
+						handleImageError({
+							target: img
+						});
+					} else {
+						img.addEventListener('error', handleImageError);
+					}
+				});
+			};
+			handleImageErrors();
 		});
 	</script>
 </body>

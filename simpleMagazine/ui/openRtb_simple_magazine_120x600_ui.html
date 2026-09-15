@@ -260,6 +260,8 @@
 				}
 			];
 
+
+			if (allProducts.length > 4) allProducts.length = 4;
 			// 카드 요소 생성
 			mobonBannerWrap.innerHTML = (function(){
 				const urlParams = new URLSearchParams(window.location.search);
@@ -292,6 +294,12 @@
 
 			const mobonBanners = document.querySelectorAll('.mobon_banner_wrap .mobon_banner');
 			const totalCards = mobonBanners.length;
+			if (totalCards <= 1) {
+				const activeBanner = document.querySelector('.mobon_banner.active');
+				if (activeBanner) {
+					activeBanner.style.flex = '0 0 100%';
+				}
+			}
 			let currentIndex = 0;
 			let intervalId;
 
@@ -388,6 +396,19 @@
 
 			mobonReset.addEventListener('mouseenter', stopSlider);
 			mobonReset.addEventListener('mouseleave', startSlider);
+
+
+			const shopLogo = document.querySelector('.shop_logo');
+			if (shopLogo) {
+				shopLogo.style.cursor = 'pointer';
+				shopLogo.addEventListener('click', (e) => {
+					e.stopPropagation();
+					const purl = allProducts[currentIndex].purl;
+					if (purl && purl !== "javascript:void(0)") {
+						window.open(purl, '_blank');
+					}
+				});
+			}
 
 			// 초기화
 			updatePanningForAll();

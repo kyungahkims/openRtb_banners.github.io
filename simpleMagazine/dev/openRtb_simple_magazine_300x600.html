@@ -11,8 +11,8 @@
 
 		/* 2. 배너 & 이미지 규격 */
 		:root {
-			--width: 336px;
-			--height: 280px;
+			--width: 300px;
+			--height: 600px;
 		}
 
 		/* 3. 공통사항 */
@@ -53,6 +53,7 @@
 
 		.mobon_banner {
 			display: flex;
+			flex-direction: column;
 			width: 100%;
 			height: 100%;
 			background-color: #fff;
@@ -62,25 +63,28 @@
 		.slider_wrap {
 			position: relative;
 			flex-shrink: 0;
-			width: 150px;
-			height: 100%;
-			overflow: hidden;
+			width: 100%;
+			height: 300px;
 		}
 
-		.img {
+		.badge {
 			position: absolute;
 			top: 0;
 			left: 0;
+			font-size: 14px;
+			font-weight: 700;
+			letter-spacing: -0.5px;
+			color: #fff;
+			background-color: #f23e2e;
+			padding: 6px 8px;
+			z-index: 2;
+		}
+
+		.img {
 			width: 100%;
 			height: 100%;
 			object-fit: cover;
 			object-position: center;
-			opacity: 0;
-			transition: opacity 0.5s ease;
-		}
-
-		.img.active {
-			opacity: 1;
 		}
 
 		.img.is-panning {
@@ -99,18 +103,19 @@
 		}
 
 		.bg {
-			position: relative;
 			display: flex;
 			flex-direction: column;
 			flex: 1;
+			flex-shrink: 0;
 			min-width: 0;
-			padding: 15px 15px 30px;
-			z-index: 1;
+			border-top: 2px solid #111;
+			padding: 16px;
 		}
 
 		.shop_logo {
-			max-width: 80%;
+			max-width: 60%;
 			max-height: 40px;
+			margin-bottom: 20px;
 		}
 
 		.shop_logo img {
@@ -124,59 +129,20 @@
 			font-weight: 400;
 			line-height: 1.4;
 			letter-spacing: -0.5px;
-			color: #201e1d;
+			color: #222;
 			word-break: keep-all;
 			overflow-wrap: break-word;
 			display: -webkit-box;
 			-webkit-line-clamp: 2;
 			-webkit-box-orient: vertical;
 			overflow: hidden;
-			margin-top: 6px;
-		}
-
-		.slider_controls {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			margin-top: auto;
-			padding-bottom: 12px;
-		}
-
-		.slider_btns {
-			display: flex;
-			gap: 4px;
-		}
-
-		.slider_btn {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 18px;
-			height: 18px;
-			color: #201e1d;
-			border: 1px solid #201e1d;
-			background-color: #fff;
-			transition: all 0.2s ease;
-			cursor: pointer;
-		}
-
-		.slider_btn:hover {
-			color: #fff;
-			background-color: #201e1d;
-		}
-
-		.slider_pagination {
-			font-size: 11px;
-			letter-spacing: 0.5px;
-			color: #666;
 		}
 
 		.price_box {
 			display: flex;
-			column-gap: 6px;
 			align-items: baseline;
-			border-top: 1px solid #ddd;
-			padding-top: 10px;
+			gap: 8px;
+			margin-top: auto;
 		}
 
 		.sale .sale_rate,
@@ -190,7 +156,7 @@
 
 		.sale_rate {
 			display: none;
-			font-size: 13px;
+			font-size: 16px;
 			font-weight: bold;
 			letter-spacing: -0.5px;
 			color: #ff2a2a;
@@ -198,20 +164,45 @@
 
 		.sale_price {
 			display: none;
-			font-size: 18px;
-			letter-spacing: -0.5px;
+			font-size: 24px;
 			font-weight: 600;
+			letter-spacing: -0.5px;
 			color: #000;
 		}
 
 		.original_price {
 			display: block;
-			font-size: 18px;
-			letter-spacing: -0.5px;
+			font-size: 24px;
 			font-weight: 600;
+			letter-spacing: -0.5px;
 			color: #000;
 		}
 
+		.mobon_banner_wrap {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 6px;
+			padding: 0 16px 16px;
+		}
+
+		.mobon_banner_wrap .mobon_banner {
+			position: relative;
+			flex: 1;
+			width: auto;
+			height: 84px;
+			border: 1px solid #e0e0e0;
+			cursor: pointer;
+		}
+
+		.mobon_banner_wrap .mobon_banner.active {
+			border: 2px solid #ff2a2a;
+		}
+
+		.mobon_banner_wrap .mobon_banner .img {
+			box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px;
+		}
+	
 		/* 대체 배너 */
 		.fallback_banner {
 			display: none;
@@ -241,45 +232,36 @@
 	<div class="mobon_reset" id="noHiddenMobon">
 		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
 		<div class="mobon_banner">
+
+			<!-- 메인 이미지 영역 -->
 			<div class="slider_wrap">
+				<div class="badge">SNS 핫템</div>
+				<img class="img" src="" alt="메인 이미지">
 			</div>
 
+			<!-- 텍스트 정보 영역 -->
 			<div class="bg">
 				<div class="shop_logo">
 					<img src="{{logo}}" alt="로고" onerror="this.onerror=null; this.src='{{HTTP}}/rtb/images/mobon.jpg'">
 				</div>
-				<p class="pnm">쿨링 썸머 카라넥 원피스</p>
+				<p class="pnm"></p>
 
-				<div class="slider_controls">
-					<div class="slider_btns">
-						<button type="button" class="slider_btn prev_btn">
-							<svg width="10" height="102" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-								stroke-linecap="round" stroke-linejoin="round">
-								<polyline points="15 18 9 12 15 6"></polyline>
-							</svg>
-						</button>
-						<button type="button" class="slider_btn next_btn">
-							<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-								stroke-linecap="round" stroke-linejoin="round">
-								<polyline points="9 18 15 12 9 6"></polyline>
-							</svg>
-						</button>
-					</div>
-					<div class="slider_pagination"><span class="current_idx">1</span> / <span class="total_idx">4</span>
-					</div>
-				</div>
-
-				<!-- 할인 상품인 경우 .price_box에 .sale 추가 -->
 				<div class="price_box sale">
-					<div class="sale_rate">32<span>%</span></div>
-					<div class="sale_price">9,939,900원</div>
-					<div class="original_price">49,900원</div>
+					<div class="sale_rate"></div>
+					<div class="sale_price"></div>
+					<div class="original_price"></div>
 				</div>
 			</div>
+
+			<!-- 우측 썸네일 리스트 영역 -->
+			<div class="mobon_banner_wrap">
+				<!-- 썸네일 동적 생성 -->
+			</div>
+
 		</div>
 	</div>
 
-
+	
 	<!-- 노출 추적 태그 -->
 	{{wp_imgtag}}
 
@@ -287,7 +269,7 @@
 	<div class="fallback_banner" id="hiddenMobon">
 		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
 		<div class="fallback_link" onclick="window.open('https://mobon.net/bridge/')">
-			<img src="{{HTTP}}/servlet/image/mobon/336x280.png" alt="대체배너">
+			<img src="{{HTTP}}/servlet/image/mobon/300x600.png" alt="대체배너">
 		</div>
 	</div>
 
@@ -297,69 +279,35 @@
 			const frameHeight = {{h}};
 			const mainBanner = document.getElementById('noHiddenMobon');
 			const fallbackBanner = document.getElementById('hiddenMobon');
-			const sliderWrap = document.querySelector('.slider_wrap');
-			const prevBtn = document.querySelector('.prev_btn');
-			const nextBtn = document.querySelector('.next_btn');
-			const currentIdxEl = document.querySelector('.current_idx');
-			const totalIdxEl = document.querySelector('.total_idx');
+			const mainImgEl = document.querySelector('.img');
 			const pnmEl = document.querySelector('.pnm');
 			const priceBoxEl = document.querySelector('.price_box');
 			const saleRateEl = document.querySelector('.sale_rate');
 			const salePriceEl = document.querySelector('.sale_price');
 			const originalPriceEl = document.querySelector('.original_price');
+			const mobonBannerWrap = document.querySelector('.mobon_banner_wrap');
+
+			// 테스트용 상품 데이터
 			const allProducts = [
 				{{productList}}
 			];
-
-			const imageHtml = allProducts.map((item, index) => {
-				const activeClass = index === 0 ? 'active' : '';
-				return `<img class="img ${activeClass}" src="${item.img}" data-pcode="${item.pcode}" alt="${item.pnm}">`;
+			if (allProducts.length > 4) allProducts.length = 4;
+			// 썸네일 요소 생성
+			mobonBannerWrap.innerHTML = allProducts.map((item, index) => {
+				return `<div class="mobon_banner" data-index="${index}">
+							<img class="img" src="${item.img}" alt="${item.pnm}">
+						</div>`;
 			}).join('');
 
-			sliderWrap.innerHTML = imageHtml;
+			const mobonBanners = document.querySelectorAll('.mobon_banner_wrap .mobon_banner');
+			const mobonBanner = document.querySelector('.mobon_banner');
 
-			const images = document.querySelectorAll('.slider_wrap .img');
-
-			const handleImageErrors = () => {
-				let isFallbackTriggered = false;
-				const handleImageError = (event) => {
-					if (isFallbackTriggered) return;
-					isFallbackTriggered = true;
-					const pcode = event.target.dataset.pcode || '';
-					if (mainBanner) mainBanner.style.display = 'none';
-					if (fallbackBanner) {
-						fallbackBanner.style.display = 'block';
-						fallbackBanner.style.width = `${frameWidth}px`;
-						fallbackBanner.style.height = `${frameHeight}px`;
-					}
-					const errorUrl =
-						`{{HTTP_DR}}/rtbShop?uid=${encodeURIComponent("{{UUID}}")}&u={{USER}}&pc=${pcode}&itlTpCode={{ITL_TP_CODE}}`;
-					(new Image()).src = errorUrl;
-				};
-				images.forEach(img => {
-					if (img.complete && img.naturalHeight === 0) {
-						handleImageError({
-							target: img
-						});
-					} else {
-						img.addEventListener('error', handleImageError);
-					}
-				});
-			};
-			handleImageErrors();
-
-
-			const sliderControls = document.querySelector('.slider_controls');
 			let currentIndex = 0;
-			const totalImages = images.length;
-			let intervalId;
-
-			totalIdxEl.textContent = totalImages;
-
+			const totalImages = allProducts.length;
 			if (totalImages <= 1) {
-				sliderControls.style.display = 'none';
-				priceBoxEl.style.marginTop = 'auto';
+				mobonBannerWrap.style.display = 'none';
 			}
+			let intervalId;
 
 			const checkPanning = (img) => {
 				const wrap = img.parentElement;
@@ -385,23 +333,36 @@
 				}
 			};
 
-			function showImage(index) {
-				images.forEach(img => img.classList.remove('active'));
-				if (images[index]) {
-					images[index].classList.add('active');
-
-					if (images[index].complete && images[index].naturalWidth > 0) {
-						checkPanning(images[index]);
+			// 썸네일 이미지 패닝 체크
+			mobonBanners.forEach(banner => {
+				const thumbImg = banner.querySelector('.img');
+				if (thumbImg) {
+					if (thumbImg.complete && thumbImg.naturalWidth > 0) {
+						checkPanning(thumbImg);
 					} else {
-						images[index].addEventListener('load', () => checkPanning(images[index]), {
-							once: true
-						});
+						thumbImg.addEventListener('load', () => checkPanning(thumbImg), { once: true });
 					}
 				}
-				currentIdxEl.textContent = index + 1;
+			});
+
+			function showProduct(index) {
+				mobonBanners.forEach(t => t.classList.remove('active'));
+				if (mobonBanners[index]) {
+					mobonBanners[index].classList.add('active');
+				}
 
 				const product = allProducts[index];
 				if (product) {
+					mainImgEl.src = product.img;
+
+					if (mainImgEl.complete && mainImgEl.naturalWidth > 0) {
+						checkPanning(mainImgEl);
+					} else {
+						mainImgEl.addEventListener('load', () => checkPanning(mainImgEl), {
+							once: true
+						});
+					}
+
 					pnmEl.textContent = product.pnm;
 
 					let priceText = `${product.price}원`;
@@ -409,7 +370,7 @@
 					if (product.prdt_prmct) {
 						priceBoxEl.classList.add('sale');
 						saleRateEl.innerHTML = (product.dc_rate ? product.dc_rate + '<span>%</span>' : '');
-						salePriceEl.textContent = `${product.prdt_prmct}원`;
+						salePriceEl.innerHTML = `${product.prdt_prmct}원`;
 						originalPriceEl.textContent = priceText;
 					} else {
 						priceBoxEl.classList.remove('sale');
@@ -420,50 +381,81 @@
 				}
 			}
 
-			function nextImage() {
+			function nextProduct() {
 				currentIndex = (currentIndex + 1) % totalImages;
-				showImage(currentIndex);
-			}
-
-			function prevImage() {
-				currentIndex = (currentIndex - 1 + totalImages) % totalImages;
-				showImage(currentIndex);
+				showProduct(currentIndex);
 			}
 
 			function startSlider() {
 				if (totalImages <= 1) return;
 				stopSlider();
-				/* 3초 마다 */
-				intervalId = setInterval(nextImage, 3000);
+				intervalId = setInterval(nextProduct, 3000);
 			}
 
 			function stopSlider() {
 				clearInterval(intervalId);
 			}
 
-			const bannerContainer = document.querySelector('.mobon_banner');
-			bannerContainer.addEventListener('mouseenter', stopSlider);
-			bannerContainer.addEventListener('mouseleave', startSlider);
-			bannerContainer.addEventListener('click', () => {
-				const product = allProducts[currentIndex];
-				if (product && product.purl) {
-					window.open(product.purl);
+			// 배너 전체 영역 호버 시 자동 롤링 멈춤 / 재개
+			mobonBanner.addEventListener('mouseenter', stopSlider);
+			mobonBanner.addEventListener('mouseleave', startSlider);
+
+			// 썸네일 호버 및 클릭 이벤트
+			mobonBanners.forEach(thumb => {
+				thumb.addEventListener('mouseenter', () => {
+					currentIndex = parseInt(thumb.getAttribute('data-index'));
+					showProduct(currentIndex);
+				});
+
+				thumb.addEventListener('click', (e) => {
+					e.stopPropagation(); // 부모 요소(나머지 영역)로 클릭 이벤트가 전달되는 것을 막음
+					const index = parseInt(thumb.getAttribute('data-index'));
+					const purl = allProducts[index].purl;
+					if (purl && purl !== "javascript:void(0)") {
+						window.open(purl, '_blank');
+					}
+				});
+			});
+
+			// 나머지 영역(메인 이미지 및 텍스트 영역) 클릭 이벤트
+			mobonBanner.addEventListener('click', () => {
+				// 현재 화면에 보여지고 있는 메인 상품의 URL로 이동
+				// (무조건 첫 번째 상품으로 고정하고 싶다면 allProducts[0].purl 로 변경 가능)
+				const purl = allProducts[currentIndex].purl;
+				if (purl && purl !== "javascript:void(0)") {
+					window.open(purl, '_blank');
 				}
 			});
 
-			prevBtn.addEventListener('click', (e) => {
-				e.stopPropagation();
-				prevImage();
-			});
-
-			nextBtn.addEventListener('click', (e) => {
-				e.stopPropagation();
-				nextImage();
-			});
-
-			showImage(currentIndex);
-
+			// 초기화
+			showProduct(currentIndex);
 			startSlider();
+		
+			const handleImageErrors = () => {
+				const allBannerImages = document.querySelectorAll('img:not(.mobonLogo):not([alt="대체배너"]):not([alt="로고"])');
+				let isFallbackTriggered = false;
+				const handleImageError = (event) => {
+					if (isFallbackTriggered) return;
+					isFallbackTriggered = true;
+					const pcode = event.target.dataset.pcode || '';
+					if (mainBanner) mainBanner.style.display = 'none';
+					if (fallbackBanner) {
+						fallbackBanner.style.display = 'block';
+						fallbackBanner.style.width = `${frameWidth}px`;
+						fallbackBanner.style.height = `${frameHeight}px`;
+					}
+					const errorUrl = `{{HTTP_DR}}/rtbShop?uid=${encodeURIComponent("{{UUID}}")}&u={{USER}}&pc=${pcode}&itlTpCode={{ITL_TP_CODE}}`;
+					(new Image()).src = errorUrl;
+				};
+				allBannerImages.forEach(img => {
+					if (img.complete && img.naturalHeight === 0) {
+						handleImageError({ target: img });
+					} else {
+						img.addEventListener('error', handleImageError);
+					}
+				});
+			};
+			handleImageErrors();
 		});
 	</script>
 </body>
