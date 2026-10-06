@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글RTB 배너</title>
+	<style>
+		/* 1. 웹 폰트 */
+		@import url("https://fonts.googleapis.com/css2?family=Anton&family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700;900&display=swap");
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		/* 2. 배너 & 이미지 규격 */
+		:root {
+			--width: 468px;
+			--height: 60px;
+		}
+
+		/* 3. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		/* 4. 해당 사이즈 배너 */
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "Noto Sans KR", sans-serif;
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			height: 100%;
+			color: #fff;
+			background-color: #d90f27;
+			cursor: pointer;
+		}
+
+		.ticker {
+			display: none;
+			align-items: center;
+			flex-shrink: 0;
+			height: 24px;
+			background-color: #111;
+			overflow: hidden;
+		}
+
+		.ticker_track {
+			display: flex;
+			font-family: "Anton", "Noto Sans KR", sans-serif;
+			font-size: 13px;
+			letter-spacing: 1px;
+			white-space: nowrap;
+			color: #ffe600;
+			animation: tickerMove 7s linear infinite;
+		}
+
+		.ticker_track span {
+			padding-right: 24px;
+		}
+
+		.ticker_track i {
+			position: relative;
+			top: -1px;
+			font-style: normal;
+		}
+
+		@keyframes tickerMove {
+			0% {
+				transform: translateX(0);
+			}
+
+			100% {
+				transform: translateX(-50%);
+			}
+		}
+
+		.content {
+			position: relative;
+			display: flex;
+			flex: 1;
+			min-height: 0;
+		}
+
+		.slider_wrap {
+			position: relative;
+			flex-shrink: 0;
+			width: 64px;
+			height: 100%;
+			border-right: 3px solid #ffe600;
+			overflow: hidden;
+		}
+
+		.img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+			opacity: 0;
+			transition: opacity 0.5s ease;
+		}
+
+		.img.active {
+			opacity: 1;
+		}
+
+		.img.is-panning {
+			object-position: left top;
+			animation: panImage 5s ease-in-out infinite alternate;
+		}
+
+		@keyframes panImage {
+			0% {
+				object-position: left top;
+			}
+
+			100% {
+				object-position: right bottom;
+			}
+		}
+
+		.bg {
+			position: relative;
+			display: flex;
+			align-items: center;
+			flex: 1;
+			min-width: 0;
+			padding: 0 6px 0 8px;
+			z-index: 1;
+		}
+
+		.head {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			flex-shrink: 0;
+			padding-right: 8px;
+		}
+
+		.title {
+			font-family: "Anton", sans-serif;
+			font-size: 14px;
+			line-height: 1;
+			white-space: nowrap;
+			color: #ffe600;
+			text-shadow: 2px 2px 0 #111;
+			animation: titleFlash 0.8s steps(2) infinite;
+		}
+
+		@keyframes titleFlash {
+
+			0%,
+			100% {
+				opacity: 1;
+			}
+
+			50% {
+				opacity: 0.4;
+			}
+		}
+
+		.pick_tag {
+			font-size: 8px;
+			font-weight: 700;
+			background-color: #111;
+			margin-top: 5px;
+			padding: 1px 5px;
+		}
+
+		.info {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-self: stretch;
+			flex: 1;
+			min-width: 0;
+			border-left: 2px dashed rgba(255, 255, 255, 0.65);
+			padding-left: 8px;
+		}
+
+		.info::after,
+		.info::before {
+			content: "";
+			position: absolute;
+			left: -5px;
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background-color: #111;
+		}
+
+		.info::after {
+			top: -4px;
+		}
+
+		.info::before {
+			bottom: -4px;
+		}
+
+		.pnm {
+			font-family: "pretendard", sans-serif;
+			font-size: 11px;
+			font-weight: 900;
+			line-height: 1.25;
+			letter-spacing: -0.5px;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.price_box {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			white-space: nowrap;
+			margin-top: 2px;
+		}
+
+		.sale .sale_rate,
+		.sale .sale_price {
+			display: block;
+		}
+
+		.sale .original_price {
+			display: none;
+		}
+
+		.sale .sale_rate:empty {
+			display: none;
+		}
+
+		.sale_rate {
+			display: none;
+			flex-shrink: 0;
+			width: 30px;
+			height: 30px;
+			font-family: "Anton", sans-serif;
+			font-size: 11px;
+			line-height: 1;
+			text-align: center;
+			color: #111;
+			background-color: #ffe600;
+			padding-top: 7px;
+			clip-path: polygon(50.0% 0.0%, 58.4% 7.8%, 69.1% 3.8%, 73.9% 14.2%, 85.4% 14.6%, 85.8% 26.1%, 96.2% 30.9%, 92.2% 41.6%, 100.0% 50.0%, 92.2% 58.4%, 96.2% 69.1%, 85.8% 73.9%, 85.4% 85.4%, 73.9% 85.8%, 69.1% 96.2%, 58.4% 92.2%, 50.0% 100.0%, 41.6% 92.2%, 30.9% 96.2%, 26.1% 85.8%, 14.6% 85.4%, 14.2% 73.9%, 3.8% 69.1%, 7.8% 58.4%, 0.0% 50.0%, 7.8% 41.6%, 3.8% 30.9%, 14.2% 26.1%, 14.6% 14.6%, 26.1% 14.2%, 30.9% 3.8%, 41.6% 7.8%);
+			transform: rotate(-10deg);
+		}
+
+		.sale_rate::after {
+			content: "OFF";
+			display: block;
+			font-size: 7px;
+			letter-spacing: 0.5px;
+		}
+
+		.sale_price,
+		.original_price {
+			font-family: "Anton", sans-serif;
+			font-size: 14px;
+			text-shadow: 2px 2px 0 #111;
+			transform-origin: left bottom;
+		}
+
+		.sale_price {
+			display: none;
+		}
+
+		.original_price {
+			display: block;
+		}
+
+		.sale_price span,
+		.original_price span {
+			margin-left: 3px;
+			font-family: "Noto Sans KR", sans-serif;
+			font-size: 9px;
+			font-weight: 900;
+		}
+
+		.price_box.pop .sale_price,
+		.price_box.pop .original_price {
+			animation: pricePop 0.45s ease-out;
+		}
+
+		.price_box.pop .sale_rate {
+			animation: ratePop 0.5s ease-out;
+		}
+
+		@keyframes pricePop {
+			0% {
+				transform: scale(0.8);
+				opacity: 0;
+			}
+
+			60% {
+				transform: scale(1.08);
+				opacity: 1;
+			}
+
+			100% {
+				transform: scale(1);
+			}
+		}
+
+		@keyframes ratePop {
+			0% {
+				transform: rotate(-40deg) scale(0.4);
+				opacity: 0;
+			}
+
+			60% {
+				transform: rotate(0deg) scale(1.15);
+				opacity: 1;
+			}
+
+			100% {
+				transform: rotate(-10deg) scale(1);
+			}
+		}
+
+		.thumb_wrap {
+			display: flex;
+			align-items: center;
+			flex-shrink: 0;
+			gap: 4px;
+			height: 100%;
+			border-left: 3px solid #ffe600;
+			background-color: #111;
+			padding: 4px;
+		}
+
+		.thumb {
+			position: relative;
+			width: 40px;
+			height: 100%;
+			border: 2px solid transparent;
+			opacity: 0.85;
+			transition: opacity 0.2s ease, border-color 0.2s ease;
+			overflow: hidden;
+			cursor: pointer;
+		}
+
+		.thumb.active {
+			border-color: #ffe600;
+			opacity: 1;
+		}
+
+		.thumb img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+		}
+		/* 29초에 스크립트가 .is-anim-stopped 추가 → 티커·타이틀 애니메이션 정지 (구글 규정 : 30초 내 정지) */
+		.is-anim-stopped .ticker_track {
+			animation-play-state: paused;
+		}
+
+		.is-anim-stopped .title {
+			animation: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="mobon_banner">
+			<div class="ticker">
+				<div class="ticker_track">
+					<span>TODAY'S PICK <i>✦ 오늘의 추천 ✦</i> TODAY'S PICK <i>✦ 오늘의 추천 ✦</i> TODAY'S PICK <i>✦ 오늘의 추천 ✦</i></span>
+					<span>TODAY'S PICK <i>✦ 오늘의 추천 ✦</i> TODAY'S PICK <i>✦ 오늘의 추천 ✦</i> TODAY'S PICK <i>✦ 오늘의 추천 ✦</i></span>
+				</div>
+			</div>
+
+			<div class="content">
+				<div class="slider_wrap">
+				</div>
+
+				<div class="bg">
+					<div class="head">
+						<p class="title">TODAY'S PICK</p>
+						<p class="pick_tag">SNS 핫템</p>
+					</div>
+					<div class="info">
+						<p class="pnm"></p>
+
+						<!-- 할인 상품인 경우 .price_box에 .sale 추가 -->
+						<div class="price_box sale">
+							<div class="sale_rate"></div>
+							<div class="sale_price"></div>
+							<div class="original_price"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="thumb_wrap">
+					<!-- 썸네일 동적 생성 -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const sliderWrap = document.querySelector('.slider_wrap');
+			const thumbWrap = document.querySelector('.thumb_wrap');
+			const pnmEl = document.querySelector('.pnm');
+			const priceBoxEl = document.querySelector('.price_box');
+			const saleRateEl = document.querySelector('.sale_rate');
+			const salePriceEl = document.querySelector('.sale_price');
+			const originalPriceEl = document.querySelector('.original_price');
+
+			const allProducts = [{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp",
+					pnm: "코튼 벨티드 원피스",
+					dc_rate: "25",
+					prdt_prmct: "9,989,900",
+					price: "198,000",
+					pcode: "test1",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/34d5572c55d7962dc09e3688c031d90e.jpg",
+					pnm: "베이직 라운드 반팔 티셔츠",
+					dc_rate: "15",
+					prdt_prmct: "15,900",
+					price: "19,000",
+					pcode: "test2",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/228785c2d74d7238046842d7afaab05b.webp",
+					pnm: "와이드 핏 데님 팬츠",
+					dc_rate: "20",
+					prdt_prmct: "29,900",
+					price: "38,000",
+					pcode: "test3",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg",
+					pnm: "여름 린넨 밴딩 쇼츠",
+					dc_rate: "",
+					prdt_prmct: "",
+					price: "28,000",
+					pcode: "test4",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				}
+			];
+
+			if (allProducts.length > 4) allProducts.length = 4;
+			const urlParams = new URLSearchParams(window.location.search);
+			const itemsCount = urlParams.get('items');
+			if (itemsCount) {
+				allProducts.length = Math.min(allProducts.length, parseInt(itemsCount, 10));
+			}
+
+			sliderWrap.innerHTML = allProducts.map((item, index) => {
+				const activeClass = index === 0 ? 'active' : '';
+				return `<img class="img ${activeClass}" src="${item.img}" data-pcode="${item.pcode}" alt="${item.pnm}">`;
+			}).join('');
+
+			thumbWrap.innerHTML = allProducts.map((item, index) => {
+				const activeClass = index === 0 ? 'active' : '';
+				return `<div class="thumb ${activeClass}" data-index="${index}">
+							<img src="${item.img}" alt="${item.pnm}" fetchpriority="${index === 0 ? 'high' : 'low'}" decoding="async">
+						</div>`;
+			}).join('');
+
+			const images = sliderWrap.querySelectorAll('.img');
+			const thumbs = thumbWrap.querySelectorAll('.thumb');
+
+			let currentIndex = 0;
+			const totalImages = images.length;
+			let intervalId;
+
+			if (totalImages <= 1) {
+				thumbWrap.style.display = 'none';
+			}
+
+			const checkPanning = (img) => {
+				const wrap = img.parentElement;
+				if (!wrap.clientWidth || !wrap.clientHeight) return;
+
+				const wrapRatio = wrap.clientWidth / wrap.clientHeight;
+				const imgRatio = img.naturalWidth / img.naturalHeight;
+
+				const overflowPx = imgRatio > wrapRatio ?
+					(wrap.clientHeight * imgRatio) - wrap.clientWidth :
+					(wrap.clientWidth / imgRatio) - wrap.clientHeight;
+
+				const overflowRatio = imgRatio > wrapRatio ?
+					overflowPx / wrap.clientWidth :
+					overflowPx / wrap.clientHeight;
+
+				if (overflowRatio > 0.3) {
+					img.classList.add('is-panning');
+					img.style.animationDuration = overflowPx <= 40 ? '3s' : '5s';
+				} else {
+					img.classList.remove('is-panning');
+					img.style.animationDuration = '';
+				}
+			};
+
+			function showImage(index) {
+				images.forEach(img => img.classList.remove('active'));
+				thumbs.forEach(thumb => thumb.classList.remove('active'));
+
+				if (images[index]) {
+					images[index].classList.add('active');
+
+					if (images[index].complete && images[index].naturalWidth > 0) {
+						checkPanning(images[index]);
+					} else {
+						images[index].addEventListener('load', () => checkPanning(images[index]), {
+							once: true
+						});
+					}
+				}
+				if (thumbs[index]) {
+					thumbs[index].classList.add('active');
+				}
+
+				priceBoxEl.classList.remove('pop');
+				void priceBoxEl.offsetWidth;
+				priceBoxEl.classList.add('pop');
+
+				const product = allProducts[index];
+				if (product) {
+					const isSale = Boolean(product.prdt_prmct);
+
+					pnmEl.textContent = product.pnm;
+					priceBoxEl.classList.toggle('sale', isSale);
+					saleRateEl.innerHTML = isSale && product.dc_rate ? `${product.dc_rate}<span>%</span>` : '';
+					salePriceEl.innerHTML = isSale ? `${product.prdt_prmct}<span>원</span>` : '';
+					originalPriceEl.innerHTML = `${product.price}<span>원</span>`;
+				}
+			}
+
+			function nextImage() {
+				currentIndex = (currentIndex + 1) % totalImages;
+				showImage(currentIndex);
+			}
+
+			function startSlider() {
+				if (totalImages <= 1) return;
+				stopSlider();
+				/* 3초 마다 */
+				intervalId = setInterval(nextImage, 3000);
+			}
+
+			function stopSlider() {
+				clearInterval(intervalId);
+			}
+
+			const bannerContainer = document.querySelector('.mobon_banner');
+			bannerContainer.addEventListener('mouseenter', stopSlider);
+			bannerContainer.addEventListener('mouseleave', startSlider);
+
+			thumbs.forEach(thumb => {
+				thumb.addEventListener('mouseenter', () => {
+					currentIndex = parseInt(thumb.getAttribute('data-index'), 10);
+					showImage(currentIndex);
+				});
+
+				thumb.addEventListener('click', (e) => {
+					e.stopPropagation();
+					const index = parseInt(thumb.getAttribute('data-index'), 10);
+					const purl = allProducts[index].purl;
+					if (purl && purl !== "javascript:void(0)") {
+						window.open(purl, '_blank');
+					}
+				});
+			});
+
+			bannerContainer.addEventListener('click', () => {
+				const purl = allProducts[currentIndex].purl;
+				if (purl && purl !== "javascript:void(0)") {
+					window.open(purl, '_blank');
+				}
+			});
+
+			showImage(currentIndex);
+
+			startSlider();
+		});
+	</script>
+	<script>
+		/* 구글 규정 : 30초 내 애니메이션 정지 → 29초에 티커·타이틀 정지 */
+		setTimeout(() => {
+			document.documentElement.classList.add('is-anim-stopped');
+		}, 29000);
+	</script>
+</body>
+
+</html>

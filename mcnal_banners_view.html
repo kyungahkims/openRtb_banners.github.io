@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MCNAL Banners Preview</title>
+	<style>
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: "pretendard";
+			background-color: #f4f5f7;
+			padding: 50px;
+		}
+
+		.control-panel {
+			position: sticky;
+			top: 0;
+			background: rgba(255, 255, 255, 0.75);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			padding: 16px 40px;
+			margin: -50px -50px 40px -50px;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+			z-index: 100;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.control-panel h1 {
+			font-size: 22px;
+			font-weight: 800;
+			color: #1a1a1a;
+			letter-spacing: -0.5px;
+		}
+
+		.item-tab {
+			padding: 8px 16px;
+			border: 1px solid #d1d5db;
+			background-color: #fff;
+			color: #495057;
+			font-size: 14px;
+			font-weight: 600;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.item-tab:hover {
+			background-color: #f8f9fa;
+		}
+
+		.item-tab.active {
+			background-color: #1a1a1a;
+			color: #fff;
+			border-color: #1a1a1a;
+		}
+
+		.section {
+			margin-bottom: 60px;
+			scroll-margin-top: 115px;
+		}
+
+		.section-title {
+			font-size: 20px;
+			font-weight: 800;
+			color: #1a1a1a;
+			margin-bottom: 30px;
+			padding-bottom: 12px;
+			border-bottom: 1px solid #e0e0e0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.group-title {
+			font-size: 16px;
+			font-weight: 700;
+			color: #495057;
+			margin: 30px 0 15px;
+			padding-left: 10px;
+			border-left: 4px solid #1a1a1a;
+			line-height: 1.2;
+		}
+
+		.tooltip-wrap {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.tooltip-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: #e0e0e0;
+			color: #666;
+			font-size: 14px;
+			font-weight: bold;
+		}
+
+		.tooltip-wrap:hover .tooltip-icon {
+			background-color: #666;
+			color: #fff;
+		}
+
+		.tooltip-content {
+			display: none;
+			position: absolute;
+			left: 100%;
+			top: 50%;
+			transform: translateY(-50%);
+			margin-left: 10px;
+			background-color: #333;
+			color: #fff;
+			padding: 8px 12px;
+			border-radius: 6px;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 1.7;
+			white-space: nowrap;
+			z-index: 10;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.tooltip-content::before {
+			content: '';
+			position: absolute;
+			right: 100%;
+			top: 50%;
+			transform: translateY(-50%);
+			border-width: 5px;
+			border-style: solid;
+			border-color: transparent #333 transparent transparent;
+		}
+
+		.tooltip-wrap:hover .tooltip-content {
+			display: block;
+		}
+
+		.banner-grid {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 40px;
+			justify-content: flex-start;
+			align-items: flex-start;
+			margin-bottom: 20px;
+		}
+
+		.banner-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background: #ffffff;
+			padding: 30px;
+			border-radius: 16px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+			transition: transform 0.2s ease;
+		}
+
+		.banner-container:hover {
+			transform: translateY(-5px);
+		}
+
+		.banner-title {
+			font-size: 18px;
+			font-weight: 700;
+			margin-bottom: 20px;
+			color: #1a1a1a;
+			letter-spacing: -0.5px;
+		}
+
+		iframe {
+			box-sizing: content-box;
+			display: block;
+			border: 1px solid #e6e6e6;
+			background-color: #fff;
+		}
+
+		@media (max-width: 600px) {
+			body {
+				padding: 20px 10px;
+			}
+
+			.control-panel {
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 12px;
+				padding: 16px 20px;
+				margin: -20px -10px 30px -10px;
+			}
+
+			.section {
+				margin-bottom: 40px;
+			}
+
+			.section-title {
+				width: 100%;
+				font-size: 15px;
+				margin-bottom: 20px;
+				padding-bottom: 10px;
+				line-height: 1.4;
+			}
+
+			.tooltip-wrap {
+				display: none;
+			}
+
+			.banner-grid {
+				gap: 20px;
+			}
+
+			.banner-container {
+				width: 100%;
+				max-width: 100%;
+				padding: 30px 0;
+			}
+
+			.banner-title {
+				font-size: 14px;
+				margin-bottom: 15px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="control-panel">
+		<h1>Google RTB MCNAL</h1>
+		<div style="display: flex; align-items: center; gap: 20px;">
+			<div class="items-tabs" style="display: flex; gap: 8px;">
+				<button class="item-tab active" data-items="4">상품 4개</button>
+				<button class="item-tab" data-items="3">상품 3개</button>
+				<button class="item-tab" data-items="2">상품 2개</button>
+				<button class="item-tab" data-items="1">상품 1개</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="section" id="section-mcnal">
+		<h2 class="section-title">
+			Google RTB MCNAL 배너
+			<div class="tooltip-wrap">
+				<span class="tooltip-icon">?</span>
+				<div class="tooltip-content">- 할인 상품: .price_box 요소에 .sale 클래스 추가<br>- 모든 배너의 사이즈 변경은 CSS 최상단 :root 변수의
+					값을 수정하여
+					제어</div>
+			</div>
+		</h2>
+
+		<h3 class="group-title">정방형 / 사각형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">336 x 280</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_336_280_ui.html" width="336" height="280" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">300 x 250</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_300_250_ui.html" width="300" height="250" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">250 x 250</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_250_250_ui.html" width="250" height="250" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">200 x 200</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_200_200_ui.html" width="200" height="200" scrolling="no"></iframe>
+			</div>
+		</div>
+
+		<h3 class="group-title">가로형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">970 x 250</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_970_250_ui.html" width="970" height="250" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">728 x 90</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_728_90_ui.html" width="728" height="90" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">468 x 60</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_468_60_ui.html" width="468" height="60" scrolling="no"></iframe>
+			</div>
+		</div>
+
+		<h3 class="group-title">세로형1</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">300 x 600</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_300_600_ui.html" width="300" height="600" scrolling="no"></iframe>
+			</div>
+		</div>
+
+		<h3 class="group-title">세로형2</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">160 x 600</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_160_600_ui.html" width="160" height="600" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">120 x 600</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_120_600_ui.html" width="120" height="600" scrolling="no"></iframe>
+			</div>
+		</div>
+
+		<h3 class="group-title">모바일형1</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">300 x 150</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_300_150_ui.html" width="300" height="150" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">320 x 100</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_320_100_ui.html" width="320" height="100" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">300 x 100</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_300_100_ui.html" width="300" height="100" scrolling="no"></iframe>
+			</div>
+		</div>
+
+		<h3 class="group-title">모바일형2</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">320 x 50</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_320_50_ui.html" width="320" height="50" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">300 x 50</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_300_50_ui.html" width="300" height="50" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">234 x 60</div>
+				<iframe src="mcnal/ui/openRtb_mcnal_234_60_ui.html" width="234" height="60" scrolling="no"></iframe>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const iframes = document.querySelectorAll('iframe');
+			const itemTabs = document.querySelectorAll('.item-tab');
+			let currentItemsCount = 4;
+
+			function updateAllIframesSrc() {
+				iframes.forEach(iframe => {
+					let baseSrc = iframe.getAttribute('data-base-src');
+					if (!baseSrc) {
+						baseSrc = iframe.src.split('?')[0];
+						iframe.setAttribute('data-base-src', baseSrc);
+					}
+					iframe.src = `${baseSrc}?items=${currentItemsCount}`;
+				});
+			}
+
+			itemTabs.forEach(tab => {
+				tab.addEventListener('click', () => {
+					itemTabs.forEach(t => t.classList.remove('active'));
+					tab.classList.add('active');
+					currentItemsCount = tab.getAttribute('data-items');
+					updateAllIframesSrc();
+				});
+			});
+		});
+	</script>
+</body>
+
+</html>
