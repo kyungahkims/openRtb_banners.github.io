@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>카카오 배너</title>
+	<style>
+		/* 1. 웹 폰트 */
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		/* 2. 배너 & 이미지 규격 */
+		:root {
+			--width: 320px;
+			--height: 100px;
+		}
+
+		/* 3. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		/* 4. 해당 사이즈 배너 */
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "pretendard", -apple-system, "Malgun Gothic", sans-serif;
+			color: #111111;
+			overflow: hidden;
+		}
+
+		/* HOT 태그 */
+		.tag_hot {
+			position: absolute;
+			display: inline-block;
+			font-weight: 800;
+			line-height: 1;
+			letter-spacing: 0.2px;
+			color: #111111;
+			background: linear-gradient(180deg, #FFE45C 0%, #FFC400 100%);
+			border-radius: 999px;
+			box-shadow: 0 2px 0 #111111;
+			animation: pop 1.4s ease-in-out infinite;
+			z-index: 2;
+		}
+
+		@keyframes pop {
+
+			0%,
+			100% {
+				transform: rotate(-8deg) scale(1);
+			}
+
+			50% {
+				transform: rotate(-8deg) scale(1.12);
+			}
+		}
+
+		/* 컨페티 (위에서 떨어지는 색종이) */
+		.confetti {
+			position: absolute;
+			inset: 0;
+			overflow: hidden;
+			pointer-events: none;
+			z-index: 3;
+		}
+
+		.cf {
+			position: absolute;
+			top: 0;
+			width: 5px;
+			height: 8px;
+			border-radius: 2px;
+			animation: cfFall 3.2s linear infinite;
+		}
+
+		@keyframes cfFall {
+			0% {
+				transform: translateY(-30px) rotate(0deg);
+			}
+
+			100% {
+				transform: translateY(130px) rotate(540deg);
+			}
+		}
+
+		/* 가격 옆 화살표 */
+		.arrow {
+			flex-shrink: 0;
+			margin-top: 2px;
+			animation: nudge 0.9s ease-in-out infinite;
+		}
+
+		@keyframes nudge {
+
+			0%,
+			100% {
+				transform: translateX(0);
+			}
+
+			50% {
+				transform: translateX(3px);
+			}
+		}
+
+		.mobon_banner_wrap {
+			display: flex;
+			gap: 6px;
+			width: 100%;
+			height: 100%;
+			background-color: #FFFFFF;
+			background-image: radial-gradient(circle at 92% 90%, rgba(0, 0, 0, 0.04) 0px, rgba(0, 0, 0, 0) 70px),
+				radial-gradient(circle at 4% 0%, rgba(255, 255, 255, 0.6) 0px, rgba(255, 255, 255, 0) 70px);
+			padding: 5px 5px 5px 7px;
+		}
+
+		.mobon_banner {
+			display: flex;
+			gap: 6px;
+			flex-grow: 1;
+			min-width: 0;
+			cursor: pointer;
+		}
+
+		.img_wrap {
+			flex-shrink: 0;
+			align-self: center;
+			width: 88px;
+			height: 88px;
+			border: 3px solid #F1F1F1;
+			border-radius: 10px;
+			background-color: #EDEFF2;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+			animation: wiggle 2.4s ease-in-out infinite;
+			overflow: hidden;
+		}
+
+		.img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.bg {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			flex-grow: 1;
+			min-width: 0;
+			align-self: flex-start;
+			margin-top: 9px;
+			padding-left: 18px;
+		}
+
+		.pnm {
+			font-size: 13px;
+			font-weight: 600;
+			line-height: 1.2;
+			letter-spacing: -0.4px;
+			color: #111111;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			flex-grow: 1;
+			min-width: 0;
+		}
+
+		.price_box {
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+			gap: 2px;
+		}
+
+		/* 가격 알약(pill): 일반가는 .original_price, 할인가는 .sale_price 에 적용 */
+		.sale_price,
+		.original_price {
+			position: relative;
+			display: flex;
+			align-items: baseline;
+			font-size: 11px;
+			font-weight: 600;
+			letter-spacing: -0.3px;
+			line-height: 1;
+			color: #ffffff;
+			border-radius: 999px;
+			background: linear-gradient(180deg, #FF3B3B 0%, #C8102E 100%);
+			box-shadow: inset 0 -2px 0 rgba(100, 0, 0, 0.35), 0 2px 0 #111111;
+			padding: 2.5px 6px 2.5px;
+			white-space: nowrap;
+			transform-origin: center bottom;
+			animation: squish 3.2s ease-in-out infinite;
+		}
+
+		/* 젤리처럼 눌렸다 튀어오르는 가격 알약 */
+		@keyframes squish {
+
+			0%,
+			78%,
+			100% {
+				transform: scale(1);
+			}
+
+			84% {
+				transform: scale(1.12, 0.86);
+			}
+
+			90% {
+				transform: scale(0.94, 1.08);
+			}
+
+			95% {
+				transform: scale(1.03, 0.97);
+			}
+		}
+
+		.sale_price {
+			display: none;
+		}
+
+		/* 할인 상품인 경우 .price_box에 .sale 추가 */
+		.sale .sale_price {
+			display: flex;
+		}
+
+		.sale .original_price {
+			display: none;
+		}
+
+		.badge {
+			position: absolute;
+			left: 77px;
+			top: 7px;
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			width: 28px;
+			height: 28px;
+			color: #ffffff;
+			border-radius: 50%;
+			background: radial-gradient(circle at 35% 30%, #FF8080 0%, #E6192B 55%, #A80F1F 100%);
+			box-shadow: inset 0 -2px 4px rgba(100, 0, 0, 0.35), 0 0 0 2px #FFFFFF, 0 3px 5px rgba(0, 0, 0, 0.25);
+			animation: bounce 1.3s ease-in-out infinite;
+			z-index: 2;
+		}
+
+		.badge::after {
+			content: "";
+			position: absolute;
+			left: 5px;
+			top: 4px;
+			width: 7px;
+			height: 3px;
+			border-radius: 50%;
+			background: rgba(255, 255, 255, 0.7);
+			transform: rotate(-25deg);
+		}
+
+		.badge_txt,
+		.sale_rate {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.badge em {
+			font-style: normal;
+			font-weight: 600;
+			line-height: 1;
+		}
+
+		.badge strong {
+			font-weight: 800;
+			line-height: 1;
+		}
+
+		.badge_txt strong {
+			font-size: 9.5px;
+		}
+
+		/* 할인 상품: .badge에 .sale 추가 시 할인율 노출 */
+		.sale_rate {
+			display: none;
+		}
+
+		.sale_rate strong {
+			font-size: 12.5px;
+		}
+
+		.sale_rate strong span {
+			font-size: 0.7em;
+			font-weight: 700;
+		}
+
+		.badge.sale .badge_txt {
+			display: none;
+		}
+
+		.badge.sale .sale_rate {
+			display: flex;
+		}
+
+		.tag_hot {
+			left: 2px;
+			top: 81px;
+			font-size: 8.5px;
+			padding: 2px 5px 3px;
+		}
+
+
+		.thumb_wrap {
+			flex-shrink: 0;
+			display: grid;
+			grid-template-columns: repeat(4, 52px);
+			grid-auto-rows: 52px;
+			justify-content: end;
+			gap: 2px;
+			position: absolute;
+			right: 5px;
+			bottom: 5px;
+			width: 214px;
+		}
+
+		.thumb {
+			border: 2px solid #F1F1F1;
+			border-radius: 7px;
+			background-color: #EDEFF2;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+			overflow: hidden;
+			cursor: pointer;
+		}
+
+		/* 현재 노출 중인 메인 상품(1번) 썸네일 강조 */
+		.thumb.active {
+			border-width: 2px;
+			border-color: #E6192B;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.22);
+			animation: wiggle 2.4s ease-in-out infinite;
+		}
+
+		@keyframes bounce {
+
+			0%,
+			100% {
+				transform: translateY(0) rotate(-10deg) scale(1);
+			}
+
+			40% {
+				transform: translateY(-4px) rotate(-6deg) scale(1.06, .94);
+			}
+
+			60% {
+				transform: translateY(0) rotate(-10deg) scale(.94, 1.06);
+			}
+		}
+
+		@keyframes wiggle {
+
+			0%,
+			100% {
+				transform: rotate(3deg);
+			}
+
+			50% {
+				transform: rotate(-1deg);
+			}
+		}
+
+		/* 비밀특가 · 구매 찬스 배지 */
+		.badge {
+			width: 36px;
+			height: 36px;
+			left: 76px;
+		}
+
+		.badge::after {
+			opacity: 0.5;
+		}
+
+		.badge_txt,
+		.sale_rate {
+			gap: 1px;
+		}
+
+		.badge em,
+		.badge strong {
+			letter-spacing: -0.3px;
+			text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+		}
+
+		.badge em {
+			font-size: 9.5px;
+			font-weight: 800;
+		}
+
+		.badge strong {
+			font-size: 10.5px;
+		}
+
+
+		/* 5. 대체 배너 */
+		.fallback_banner {
+			display: none;
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			overflow: hidden;
+		}
+
+		.fallback_link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.fallback_banner img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		/* 5. 로즈 골드 톤 (시안 C 확정) */
+		.thumb { border-radius: 9px; }
+		.cf { width: 4px !important; height: 7px !important; opacity: .9; }
+		.mobon_banner_wrap { background: linear-gradient(100deg, #FBE4DF 0%, #F6CFC6 60%, #F0BFB4 100%); }
+		.pnm { color: #4A2328; }
+		.cf { background: #FFFFFF !important; } .cf:nth-child(even) { background: #C98A7A !important; }
+		.thumb { border-color: #FFFFFF; background-color: #F3D9D3; box-shadow: 0 4px 10px rgba(120,50,50,.16); }
+		.thumb.active { border-color: #B8475A; box-shadow: 0 0 0 2px rgba(184,71,90,.2), 0 4px 12px rgba(120,50,50,.25); }
+		.badge { color: #4A2328; background: radial-gradient(circle at 35% 30%, #F6D5C8 0%, #D29B88 55%, #9C5F4C 100%); box-shadow: inset 0 -2px 4px rgba(0,0,0,.25), 0 0 0 2px #FFFFFF, 0 0 0 3px #B8475A, 0 4px 8px rgba(0,0,0,.22); }
+		.badge em, .badge strong { text-shadow: none; }
+		.sale_price, .original_price {  background: linear-gradient(180deg, #C85A6E 0%, #8E2A40 100%); box-shadow: inset 0 -2px 0 rgba(0,0,0,.22), 0 2px 0 #4A2328; }
+		.arrow path[stroke="#111111"] { stroke: #4A2328; }
+		.arrow path[stroke="#E6192B"] { stroke: #B8475A; }
+		.tag_hot { color: #4A2328; background: linear-gradient(180deg, #FFFFFF 0%, #F3D9D3 100%); box-shadow: 0 2px 0 #B8475A; }
+		/* 6. 배지 샤인 스윕 (배지 시안 4 확정) */
+		.badge { overflow: hidden; }
+		.badge::before { content: ""; position: absolute; top: -20%; bottom: -20%; left: -70%; width: 20%; background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.85) 50%, rgba(255,255,255,0) 100%); transform: skewX(-20deg); animation: badge_shine 2.4s ease-in-out infinite; z-index: 1; }
+		@keyframes badge_shine { 0%, 55% { left: -70%; } 100% { left: 140%; } }
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset" id="noHiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="mobon_banner_wrap">
+
+			<!-- 메인 상품 -->
+			<div class="mobon_banner" onclick="window.open(this.dataset.purl)" data-purl="{{purl1}}">
+				<div class="img_wrap">
+					<img class="img" src="{{img1}}" data-pcode="{{pcode1}}" alt="{{pnm1}}">
+				</div>
+				<div class="bg">
+					<p class="pnm">{{pnm1}}</p>
+					<!-- 최종구매가 확인 (고정 문구) -->
+					<div class="price_box sale">
+						<div class="sale_price">최종구매가 확인</div>
+						<svg class="arrow" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M5 5l7 7-7 7" fill="none" stroke="#111111" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"></path>
+							<path d="M5 5l7 7-7 7" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+							<path d="M12 5l7 7-7 7" fill="none" stroke="#111111" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"></path>
+							<path d="M12 5l7 7-7 7" fill="none" stroke="#E6192B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+						</svg>
+					</div>
+				</div>
+				<!-- 배지: 기본 "구매 찬스", .sale 추가 시 "비밀특가" -->
+				<div class="badge {{box1}}">
+					<span class="badge_txt"><em>구매</em><strong>찬스</strong></span>
+					<span class="sale_rate"><em>비밀</em><strong>특가</strong></span>
+				</div>
+				<span class="tag_hot">HOT</span>
+			</div>
+
+			<!-- 썸네일 리스트 (1번 = 메인 상품) -->
+			<div class="thumb_wrap">
+				<div class="thumb active" onclick="window.open('{{purl1}}')"
+					data-purl="{{purl1}}" data-pnm="{{pnm1}}" data-box="{{box1}}">
+					<img class="img" src="{{img1}}" data-pcode="{{pcode1}}" alt="{{pnm1}}">
+				</div>
+				<div class="thumb" onclick="window.open('{{purl2}}')"
+					data-purl="{{purl2}}" data-pnm="{{pnm2}}" data-box="{{box2}}">
+					<img class="img" src="{{img2}}" data-pcode="{{pcode2}}" alt="{{pnm2}}">
+				</div>
+				<div class="thumb" onclick="window.open('{{purl3}}')"
+					data-purl="{{purl3}}" data-pnm="{{pnm3}}" data-box="{{box3}}">
+					<img class="img" src="{{img3}}" data-pcode="{{pcode3}}" alt="{{pnm3}}">
+				</div>
+				<div class="thumb" onclick="window.open('{{purl4}}')"
+					data-purl="{{purl4}}" data-pnm="{{pnm4}}" data-box="{{box4}}">
+					<img class="img" src="{{img4}}" data-pcode="{{pcode4}}" alt="{{pnm4}}">
+				</div>
+			</div>
+
+		</div>
+		<div class="confetti" aria-hidden="true">
+			<span class="cf" style="left: 14px; background: #FFC400; animation-delay: 0s; animation-duration: 2.6s"></span>
+			<span class="cf" style="left: 60px; background: #3DD6F5; animation-delay: 0.7s; animation-duration: 2.9s"></span>
+			<span class="cf" style="left: 106px; background: #E6192B; animation-delay: 1.4s; animation-duration: 3.2s"></span>
+			<span class="cf" style="left: 134px; background: #7B5CFF; animation-delay: 2.1s; animation-duration: 3.5s"></span>
+			<span class="cf" style="left: 180px; background: #FFC400; animation-delay: 2.8s; animation-duration: 2.6s"></span>
+			<span class="cf" style="left: 226px; background: #3DD6F5; animation-delay: 0.3s; animation-duration: 2.9s"></span>
+			<span class="cf" style="left: 254px; background: #E6192B; animation-delay: 1s; animation-duration: 3.2s"></span>
+			<span class="cf" style="left: 300px; background: #7B5CFF; animation-delay: 1.7s; animation-duration: 3.5s"></span>
+		</div>
+	</div>
+	<!-- 노출 추적 태그 -->
+	{{wp_imgtag}}
+
+	<!-- 대체 배너 영역 -->
+	<div class="fallback_banner" id="hiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="fallback_link" onclick="window.open('https://mobon.net/bridge/')">
+			<img src="{{HTTP}}/servlet/image/mobon/320x100.png" alt="대체배너">
+		</div>
+	</div>
+
+	<!--  이미지 에러 감지 -->
+	<script>
+		(() => {
+			const mainBanner = document.getElementById('noHiddenMobon');
+			const fallbackBanner = document.getElementById('hiddenMobon');
+			const images = document.querySelectorAll('.img');
+
+			let isFallbackTriggered = false;
+
+			const handleImageError = (event) => {
+				if (isFallbackTriggered) return;
+				isFallbackTriggered = true;
+
+				const pcode = event.target.dataset.pcode || '';
+
+				if (mainBanner) mainBanner.style.display = 'none';
+				if (fallbackBanner) fallbackBanner.style.display = 'block';
+
+				const errorUrl =
+					`{{HTTP_DR}}/rtbShop?uid=${encodeURIComponent("{{UUID}}")}&u={{USER}}&pc=${pcode}&itlTpCode={{ITL_TP_CODE}}`;
+				(new Image()).src = errorUrl;
+			};
+
+			images.forEach(img => {
+				if (img.complete && img.naturalHeight === 0) {
+					handleImageError({
+						target: img
+					});
+				} else {
+					img.addEventListener('error', handleImageError);
+				}
+			});
+		})();
+	</script>
+	<!-- 썸네일 호버 시 메인 상품(이미지·상품명·배지·링크) 전환 + 2초 자동 롤링 -->
+	<script>
+		(() => {
+			const reset = document.querySelector('.mobon_reset');
+			const banner = document.querySelector('.mobon_banner');
+			const mainImg = banner.querySelector('.img');
+			const pnmEl = banner.querySelector('.pnm');
+			const badgeEl = banner.querySelector('.badge');
+			const thumbs = Array.from(document.querySelectorAll('.thumb'));
+			let current = 0;
+			let timer = null;
+
+			const showProduct = (index) => {
+				const thumb = thumbs[index];
+				if (!thumb) return;
+				current = index;
+				const data = thumb.dataset;
+				const thumbImg = thumb.querySelector('.img');
+
+				thumbs.forEach(t => t.classList.remove('active'));
+				thumb.classList.add('active');
+
+				if (mainImg && thumbImg) {
+					mainImg.src = thumbImg.src;
+					mainImg.alt = thumbImg.alt;
+					mainImg.dataset.pcode = thumbImg.dataset.pcode || '';
+				}
+
+				if (pnmEl) pnmEl.textContent = data.pnm;
+
+				// 비밀특가 여부에 따라 .badge 의 .sale 전환 (구매 찬스 <-> 비밀특가)
+				const isSale = data.box === 'sale';
+				if (badgeEl) badgeEl.classList.toggle('sale', isSale);
+
+				banner.dataset.purl = data.purl;
+			};
+
+			// 2초마다 다음 상품, 배너 위에 마우스가 있으면 멈춤
+			const stop = () => {
+				if (timer) clearInterval(timer);
+				timer = null;
+			};
+			const start = () => {
+				stop();
+				if (thumbs.length <= 1) return;
+				timer = setInterval(() => showProduct((current + 1) % thumbs.length), 2000);
+			};
+
+			thumbs.forEach((thumb, index) => {
+				thumb.addEventListener('mouseenter', () => showProduct(index));
+			});
+			reset.addEventListener('mouseenter', stop);
+			reset.addEventListener('mouseleave', start);
+
+			start();
+		})();
+	</script>
+</body>
+
+</html>

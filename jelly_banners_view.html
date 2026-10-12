@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Kakao Jelly Banners Preview</title>
+	<style>
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: "pretendard";
+			background-color: #f4f5f7;
+			padding: 50px;
+		}
+
+		.control-panel {
+			position: sticky;
+			top: 0;
+			background: rgba(255, 255, 255, 0.75);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			padding: 16px 40px;
+			margin: -50px -50px 40px -50px;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+			z-index: 100;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.control-panel h1 {
+			font-size: 22px;
+			font-weight: 800;
+			color: #1a1a1a;
+			letter-spacing: -0.5px;
+		}
+
+		.control-panel p {
+			font-size: 13px;
+			color: #666;
+		}
+
+		.section {
+			margin-bottom: 60px;
+			scroll-margin-top: 115px;
+		}
+
+		.section-title {
+			font-size: 20px;
+			font-weight: 800;
+			color: #1a1a1a;
+			margin-bottom: 30px;
+			padding-bottom: 12px;
+			border-bottom: 1px solid #e0e0e0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.group-title {
+			font-size: 16px;
+			font-weight: 700;
+			color: #495057;
+			margin: 70px 0 30px;
+			padding-left: 10px;
+			border-left: 4px solid #1a1a1a;
+			line-height: 1.2;
+		}
+
+		.tooltip-wrap {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.tooltip-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: #e0e0e0;
+			color: #666;
+			font-size: 14px;
+			font-weight: bold;
+		}
+
+		.tooltip-wrap:hover .tooltip-icon {
+			background-color: #666;
+			color: #fff;
+		}
+
+		.tooltip-content {
+			display: none;
+			position: absolute;
+			left: 100%;
+			top: 50%;
+			transform: translateY(-50%);
+			margin-left: 10px;
+			background-color: #333;
+			color: #fff;
+			padding: 8px 12px;
+			border-radius: 6px;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 1.7;
+			white-space: nowrap;
+			z-index: 10;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.tooltip-content::before {
+			content: '';
+			position: absolute;
+			right: 100%;
+			top: 50%;
+			transform: translateY(-50%);
+			border-width: 5px;
+			border-style: solid;
+			border-color: transparent #333 transparent transparent;
+		}
+
+		.tooltip-wrap:hover .tooltip-content {
+			display: block;
+		}
+
+		/* 한 줄에 배너 하나씩 */
+		.banner-grid {
+			display: flex;
+			flex-direction: column;
+			gap: 40px;
+			align-items: flex-start;
+			margin-bottom: 20px;
+		}
+
+		.banner-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background: #ffffff;
+			padding: 30px;
+			border-radius: 16px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+			transition: transform 0.2s ease;
+		}
+
+		.banner-container:hover {
+			transform: translateY(-5px);
+		}
+
+		.banner-title {
+			font-size: 18px;
+			font-weight: 700;
+			margin-bottom: 20px;
+			color: #1a1a1a;
+			letter-spacing: -0.5px;
+		}
+
+		iframe {
+			box-sizing: content-box;
+			display: block;
+			border: 1px solid #e6e6e6;
+			background-color: #fff;
+		}
+
+		@media (max-width: 600px) {
+			body {
+				padding: 20px 10px;
+			}
+
+			.control-panel {
+				margin: -20px -10px 30px -10px;
+				padding: 12px 16px;
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 6px;
+			}
+
+			.banner-container {
+				width: 100%;
+				max-width: 100%;
+				padding: 30px 0;
+			}
+
+			.banner-title {
+				font-size: 14px;
+				margin-bottom: 15px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="control-panel">
+		<h1>Kakao JELLY</h1>
+		<p>로즈 골드 톤 · 가격 대신 "최종구매가 확인" 알약 고정 · 배지는 할인 상품 "비밀특가", 정상가 상품 "구매 찬스" (샤인 스윕) · 썸네일에 마우스를 올리면 메인 상품 전환, 2초마다 자동 롤링, 마우스를 올리면 멈춤</p>
+	</div>
+
+	<div class="section" id="section-jelly">
+
+		<h3 class="group-title">정방형 / 사각형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">300 x 250</div>
+				<iframe src="jelly/ui/openRtb_jelly_300x250_ui.html" width="300" height="250" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">250 x 250</div>
+				<iframe src="jelly/ui/openRtb_jelly_250x250_ui.html" width="250" height="250" scrolling="no"></iframe>
+			</div>
+		</div>
+
+		<h3 class="group-title">가로형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">728 x 90</div>
+				<iframe src="jelly/ui/openRtb_jelly_728x90_ui.html" width="728" height="90" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">468 x 60</div>
+				<iframe src="jelly/ui/openRtb_jelly_468x60_ui.html" width="468" height="60" scrolling="no"></iframe>
+			</div>
+		</div>
+
+		<h3 class="group-title">모바일형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">320 x 100</div>
+				<iframe src="jelly/ui/openRtb_jelly_320x100_ui.html" width="320" height="100" scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">300 x 150</div>
+				<iframe src="jelly/ui/openRtb_jelly_300x150_ui.html" width="300" height="150" scrolling="no"></iframe>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
