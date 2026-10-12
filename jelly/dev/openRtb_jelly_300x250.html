@@ -56,13 +56,17 @@
 		.tag_hot {
 			position: absolute;
 			display: inline-block;
+			left: 8px;
+			top: 8px;
+			font-size: 10px;
+			padding: 3px 7px 4px;
 			font-weight: 800;
 			line-height: 1;
 			letter-spacing: 0.2px;
-			color: #111111;
-			background: linear-gradient(180deg, #FFE45C 0%, #FFC400 100%);
+			color: #4A2328;
+			background: linear-gradient(180deg, #FFFFFF 0%, #F3D9D3 100%);
 			border-radius: 999px;
-			box-shadow: 0 2px 0 #111111;
+			box-shadow: 0 2px 0 #B8475A;
 			animation: pop 1.4s ease-in-out infinite;
 			z-index: 2;
 		}
@@ -91,10 +95,16 @@
 		.cf {
 			position: absolute;
 			top: 0;
-			width: 7px;
-			height: 11px;
+			width: 4px;
+			height: 7px;
+			opacity: 0.9;
+			background: #FFFFFF;
 			border-radius: 2px;
 			animation: cfFall 3.2s linear infinite;
+		}
+
+		.cf:nth-child(even) {
+			background: #C98A7A;
 		}
 
 		@keyframes cfFall {
@@ -131,9 +141,7 @@
 			flex-direction: column;
 			width: 100%;
 			height: 100%;
-			background-color: #FFFFFF;
-			background-image: radial-gradient(circle at 88% 70%, rgba(0, 0, 0, 0.04) 0px, rgba(0, 0, 0, 0) 90px),
-				radial-gradient(circle at 8% 0%, rgba(255, 255, 255, 0.6) 0px, rgba(255, 255, 255, 0) 100px);
+			background: linear-gradient(100deg, #FBE4DF 0%, #F6CFC6 60%, #F0BFB4 100%);
 			padding: 0 6px 6px;
 		}
 
@@ -223,9 +231,8 @@
 			padding: 5px 7px 6px;
 		}
 
-		/* 가격 알약(pill): 일반가는 .original_price, 할인가는 .sale_price 에 적용 */
-		.sale_price,
-		.original_price {
+		/* 최종구매가 확인 알약(pill) */
+		.sale_price {
 			position: relative;
 			display: flex;
 			align-items: baseline;
@@ -235,8 +242,8 @@
 			line-height: 1;
 			color: #ffffff;
 			border-radius: 999px;
-			background: linear-gradient(180deg, #FF3B3B 0%, #C8102E 100%);
-			box-shadow: inset 0 -3px 0 rgba(100, 0, 0, 0.35), 0 3px 0 #111111;
+			background: linear-gradient(180deg, #C85A6E 0%, #8E2A40 100%);
+			box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.22), 0 2px 0 #4A2328;
 			padding: 6px 9px 6px;
 			white-space: nowrap;
 			transform-origin: center bottom;
@@ -265,8 +272,7 @@
 			}
 		}
 
-		.sale_price::after,
-		.original_price::after {
+		.sale_price::after {
 			content: "";
 			position: absolute;
 			left: 10px;
@@ -275,19 +281,6 @@
 			height: 5px;
 			border-radius: 999px;
 			background: rgba(255, 255, 255, 0.45);
-		}
-
-		.sale_price {
-			display: none;
-		}
-
-		/* 할인 상품인 경우 .price_box에 .sale 추가 */
-		.sale .sale_price {
-			display: flex;
-		}
-
-		.sale .original_price {
-			display: none;
 		}
 
 		/* 배지: 메인 이미지 우상단 모서리에 걸침 */
@@ -300,12 +293,13 @@
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-			width: 46px;
-			height: 46px;
-			color: #ffffff;
+			width: 54px;
+			height: 54px;
+			color: #4A2328;
 			border-radius: 50%;
-			background: radial-gradient(circle at 35% 30%, #FF8080 0%, #E6192B 55%, #A80F1F 100%);
-			box-shadow: inset 0 -4px 6px rgba(100, 0, 0, 0.35), 0 0 0 3px #FFFFFF, 0 5px 8px rgba(0, 0, 0, 0.25);
+			overflow: hidden;
+			background: radial-gradient(circle at 35% 30%, #F6D5C8 0%, #D29B88 55%, #9C5F4C 100%);
+			box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.25), 0 0 0 3px #FFFFFF, 0 0 0 4px #B8475A, 0 4px 8px rgba(0, 0, 0, 0.22);
 			animation: bounce 1.3s ease-in-out infinite;
 			z-index: 2;
 		}
@@ -320,6 +314,33 @@
 			border-radius: 50%;
 			background: rgba(255, 255, 255, 0.7);
 			transform: rotate(-25deg);
+			opacity: 0.5;
+		}
+
+		/* 배지를 훑고 지나가는 샤인 */
+		.badge::before {
+			content: "";
+			position: absolute;
+			top: -20%;
+			bottom: -20%;
+			left: -70%;
+			width: 20%;
+			background: linear-gradient(100deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(255, 255, 255, 0) 100%);
+			transform: skewX(-20deg);
+			animation: badge_shine 2.4s ease-in-out infinite;
+			z-index: 1;
+		}
+
+		@keyframes badge_shine {
+
+			0%,
+			55% {
+				left: -70%;
+			}
+
+			100% {
+				left: 140%;
+			}
 		}
 
 		.badge_txt,
@@ -327,43 +348,27 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+			gap: 1px;
 		}
 
 		.badge em {
 			font-style: normal;
-			font-weight: 600;
+			font-size: 14px;
+			font-weight: 800;
 			line-height: 1;
+			letter-spacing: -0.3px;
 		}
 
 		.badge strong {
+			font-size: 15px;
 			font-weight: 800;
 			line-height: 1;
+			letter-spacing: -0.3px;
 		}
 
-		.badge_txt em {
-			font-size: 9px;
-		}
-
-		.badge_txt strong {
-			font-size: 13px;
-		}
-
-		/* 할인 상품: .badge에 .sale 추가 시 할인율 노출 */
+		/* 할인 상품: .badge에 .sale 추가 시 "구매 찬스" 대신 "비밀특가" 노출 */
 		.sale_rate {
 			display: none;
-		}
-
-		.sale_rate strong {
-			font-size: 18px;
-		}
-
-		.sale_rate strong span {
-			font-size: 0.7em;
-			font-weight: 700;
-		}
-
-		.sale_rate em {
-			font-size: 8.5px;
 		}
 
 		.badge.sale .badge_txt {
@@ -372,13 +377,6 @@
 
 		.badge.sale .sale_rate {
 			display: flex;
-		}
-
-		.tag_hot {
-			left: 8px;
-			top: 8px;
-			font-size: 10px;
-			padding: 3px 7px 4px;
 		}
 
 		/* 썸네일 세로열 */
@@ -393,19 +391,18 @@
 		.thumb {
 			width: 68px;
 			height: 68px;
-			border: 2px solid #F1F1F1;
-			border-radius: 12px;
-			background-color: #EDEFF2;
-			box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+			border: 2px solid #FFFFFF;
+			border-radius: 14px;
+			background-color: #F3D9D3;
+			box-shadow: 0 4px 10px rgba(120, 50, 50, 0.16);
 			overflow: hidden;
 			cursor: pointer;
 		}
 
 		/* 현재 노출 중인 메인 상품(1번) 썸네일 강조 */
 		.thumb.active {
-			border-width: 2px;
-			border-color: #E6192B;
-			box-shadow: 0 3px 6px rgba(0, 0, 0, 0.22);
+			border-color: #B8475A;
+			box-shadow: 0 0 0 3px rgba(184, 71, 90, 0.2), 0 4px 12px rgba(120, 50, 50, 0.25);
 			animation: wiggle 2.4s ease-in-out infinite;
 		}
 
@@ -437,36 +434,6 @@
 			}
 		}
 
-		/* 비밀특가 · 구매 찬스 배지 */
-		.badge {
-			width: 54px;
-			height: 54px;
-		}
-
-		.badge::after {
-			opacity: 0.5;
-		}
-
-		.badge_txt,
-		.sale_rate {
-			gap: 1px;
-		}
-
-		.badge em,
-		.badge strong {
-			letter-spacing: -0.3px;
-			text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
-		}
-
-		.badge em {
-			font-size: 14px;
-			font-weight: 800;
-		}
-
-		.badge strong {
-			font-size: 15px;
-		}
-
 
 		/* 5. 대체 배너 */
 		.fallback_banner {
@@ -489,24 +456,6 @@
 			height: 100%;
 			object-fit: cover;
 		}
-		/* 5. 로즈 골드 톤 (시안 C 확정) */
-		.thumb { border-radius: 14px; }
-		.cf { width: 4px !important; height: 7px !important; opacity: .9; }
-		.mobon_banner_wrap { background: linear-gradient(100deg, #FBE4DF 0%, #F6CFC6 60%, #F0BFB4 100%); }
-		.pnm { color: #FFFFFF; }
-		.cf { background: #FFFFFF !important; } .cf:nth-child(even) { background: #C98A7A !important; }
-		.thumb { border-color: #FFFFFF; background-color: #F3D9D3; box-shadow: 0 4px 10px rgba(120,50,50,.16); }
-		.thumb.active { border-color: #B8475A; box-shadow: 0 0 0 3px rgba(184,71,90,.2), 0 4px 12px rgba(120,50,50,.25); }
-		.badge { color: #4A2328; background: radial-gradient(circle at 35% 30%, #F6D5C8 0%, #D29B88 55%, #9C5F4C 100%); box-shadow: inset 0 -4px 6px rgba(0,0,0,.25), 0 0 0 3px #FFFFFF, 0 0 0 4px #B8475A, 0 4px 8px rgba(0,0,0,.22); }
-		.badge em, .badge strong { text-shadow: none; }
-		.sale_price, .original_price {  background: linear-gradient(180deg, #C85A6E 0%, #8E2A40 100%); box-shadow: inset 0 -2px 0 rgba(0,0,0,.22), 0 2px 0 #4A2328; }
-		.arrow path[stroke="#111111"] { stroke: #4A2328; }
-		.arrow path[stroke="#E6192B"] { stroke: #B8475A; }
-		.tag_hot { color: #4A2328; background: linear-gradient(180deg, #FFFFFF 0%, #F3D9D3 100%); box-shadow: 0 2px 0 #B8475A; }
-		/* 6. 배지 샤인 스윕 (배지 시안 4 확정) */
-		.badge { overflow: hidden; }
-		.badge::before { content: ""; position: absolute; top: -20%; bottom: -20%; left: -70%; width: 20%; background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.85) 50%, rgba(255,255,255,0) 100%); transform: skewX(-20deg); animation: badge_shine 2.4s ease-in-out infinite; z-index: 1; }
-		@keyframes badge_shine { 0%, 55% { left: -70%; } 100% { left: 140%; } }
 	</style>
 </head>
 
@@ -529,13 +478,13 @@
 					<!-- 이미지 위 상품명 + 최종구매가 확인 (고정 문구) -->
 					<div class="info">
 						<p class="pnm">{{pnm1}}</p>
-						<div class="price_box sale">
+						<div class="price_box">
 							<div class="sale_price">최종구매가 확인</div>
 							<svg class="arrow" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-								<path d="M5 5l7 7-7 7" fill="none" stroke="#111111" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"></path>
+								<path d="M5 5l7 7-7 7" fill="none" stroke="#4A2328" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"></path>
 								<path d="M5 5l7 7-7 7" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
-								<path d="M12 5l7 7-7 7" fill="none" stroke="#111111" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"></path>
-								<path d="M12 5l7 7-7 7" fill="none" stroke="#E6192B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+								<path d="M12 5l7 7-7 7" fill="none" stroke="#4A2328" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"></path>
+								<path d="M12 5l7 7-7 7" fill="none" stroke="#B8475A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
 							</svg>
 						</div>
 					</div>
@@ -566,14 +515,14 @@
 
 		</div>
 		<div class="confetti" aria-hidden="true">
-			<span class="cf" style="left: 13px; background: #FFC400; animation-delay: 0s; animation-duration: 2.6s"></span>
-			<span class="cf" style="left: 56px; background: #3DD6F5; animation-delay: 0.7s; animation-duration: 2.9s"></span>
-			<span class="cf" style="left: 100px; background: #E6192B; animation-delay: 1.4s; animation-duration: 3.2s"></span>
-			<span class="cf" style="left: 125px; background: #7B5CFF; animation-delay: 2.1s; animation-duration: 3.5s"></span>
-			<span class="cf" style="left: 169px; background: #FFC400; animation-delay: 2.8s; animation-duration: 2.6s"></span>
-			<span class="cf" style="left: 212px; background: #3DD6F5; animation-delay: 0.3s; animation-duration: 2.9s"></span>
-			<span class="cf" style="left: 238px; background: #E6192B; animation-delay: 1s; animation-duration: 3.2s"></span>
-			<span class="cf" style="left: 281px; background: #7B5CFF; animation-delay: 1.7s; animation-duration: 3.5s"></span>
+			<span class="cf" style="left: 13px; animation-delay: 0s; animation-duration: 2.6s"></span>
+			<span class="cf" style="left: 56px; animation-delay: 0.7s; animation-duration: 2.9s"></span>
+			<span class="cf" style="left: 100px; animation-delay: 1.4s; animation-duration: 3.2s"></span>
+			<span class="cf" style="left: 125px; animation-delay: 2.1s; animation-duration: 3.5s"></span>
+			<span class="cf" style="left: 169px; animation-delay: 2.8s; animation-duration: 2.6s"></span>
+			<span class="cf" style="left: 212px; animation-delay: 0.3s; animation-duration: 2.9s"></span>
+			<span class="cf" style="left: 238px; animation-delay: 1s; animation-duration: 3.2s"></span>
+			<span class="cf" style="left: 281px; animation-delay: 1.7s; animation-duration: 3.5s"></span>
 		</div>
 	</div>
 	<!-- 노출 추적 태그 -->
