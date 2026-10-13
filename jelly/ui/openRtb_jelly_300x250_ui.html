@@ -137,6 +137,7 @@
 		}
 
 		.mobon_banner_wrap {
+			cursor: pointer;
 			display: flex;
 			flex-direction: column;
 			width: 100%;
@@ -172,7 +173,6 @@
 			position: relative;
 			flex-grow: 1;
 			min-width: 0;
-			cursor: pointer;
 		}
 
 		.img_wrap {
@@ -191,7 +191,7 @@
 			object-fit: cover;
 		}
 
-		/* 이미지 하단 오버레이: 상품명 + 최종구매가 확인 (이미지 폭 꽉 채움, 살짝 투명) */
+		/* 이미지 하단 오버레이: 최종구매가 확인 (이미지 폭 꽉 채움, 살짝 투명) */
 		.info {
 			position: absolute;
 			left: 3px;
@@ -203,23 +203,6 @@
 			border-radius: 0 0 11px 11px;
 			overflow: hidden;
 			z-index: 2;
-		}
-
-		.pnm {
-			align-self: stretch;
-			font-size: 14px;
-			font-weight: 600;
-			line-height: 1.2;
-			letter-spacing: -0.3px;
-			color: #FFFFFF;
-			background: rgba(17, 17, 17, 0.62);
-			padding: 5px 8px 6px;
-			word-break: keep-all;
-			overflow-wrap: break-word;
-			display: -webkit-box;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-			overflow: hidden;
 		}
 
 		.price_box {
@@ -439,7 +422,7 @@
 <body>
 	<div class="mobon_reset">
 		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
-		<div class="mobon_banner_wrap">
+		<div class="mobon_banner_wrap" data-purl="javascript:void(0)">
 
 			<!-- 상단 로고 -->
 			<div class="shop_logo">
@@ -448,13 +431,12 @@
 
 			<div class="contents">
 				<!-- 메인 상품 -->
-				<div class="mobon_banner" data-purl="javascript:void(0)">
+				<div class="mobon_banner">
 					<div class="img_wrap">
 						<img class="img" src="https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp" alt="코튼 벨티드 원피스">
 					</div>
-					<!-- 이미지 위 상품명 + 최종구매가 확인 (고정 문구) -->
+					<!-- 이미지 위 최종구매가 확인 (고정 문구) -->
 					<div class="info">
-						<p class="pnm">코튼 벨티드 원피스</p>
 						<div class="price_box">
 							<div class="sale_price">최종구매가 확인</div>
 							<svg class="arrow" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
@@ -502,13 +484,13 @@
 			<span class="cf" style="left: 281px; animation-delay: 1.7s; animation-duration: 3.5s"></span>
 		</div>
 	</div>
-	<!-- 썸네일 호버 시 메인 상품(이미지·상품명·배지·링크) 전환 + 2초 자동 롤링 -->
+	<!-- 썸네일 호버 시 메인 상품(이미지·배지·링크) 전환 + 2초 자동 롤링 -->
 	<script>
 		(() => {
 			const reset = document.querySelector('.mobon_reset');
 			const banner = document.querySelector('.mobon_banner');
+			const wrap = document.querySelector('.mobon_banner_wrap');
 			const mainImg = banner.querySelector('.img');
-			const pnmEl = banner.querySelector('.pnm');
 			const badgeEl = banner.querySelector('.badge');
 			const thumbs = Array.from(document.querySelectorAll('.thumb'));
 			let current = 0;
@@ -529,13 +511,12 @@
 					mainImg.alt = thumbImg.alt;
 					mainImg.dataset.pcode = thumbImg.dataset.pcode || '';
 				}
-				if (pnmEl) pnmEl.textContent = data.pnm;
 
 				// 비밀특가 여부에 따라 .badge 의 .sale 전환 (구매 찬스 <-> 비밀특가)
 				const isSale = data.box === 'sale';
 				if (badgeEl) badgeEl.classList.toggle('sale', isSale);
 
-				banner.dataset.purl = data.purl;
+				wrap.dataset.purl = data.purl;
 			};
 
 			// 2초마다 다음 상품, 배너 위에 마우스가 있으면 멈춤

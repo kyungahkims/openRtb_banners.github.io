@@ -137,6 +137,7 @@
 		}
 
 		.mobon_banner_wrap {
+			cursor: pointer;
 			display: flex;
 			align-items: center;
 			gap: 9px;
@@ -152,7 +153,6 @@
 			gap: 9px;
 			flex-grow: 1;
 			min-width: 0;
-			cursor: pointer;
 		}
 
 		.img {
@@ -382,10 +382,10 @@
 <body>
 	<div class="mobon_reset">
 		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
-		<div class="mobon_banner_wrap">
+		<div class="mobon_banner_wrap" data-purl="javascript:void(0)">
 
 			<!-- 메인 상품 -->
-			<div class="mobon_banner" data-purl="javascript:void(0)">
+			<div class="mobon_banner">
 				<!-- 배지: 기본 "구매 찬스", .sale 추가 시 "비밀특가" -->
 				<div class="badge sale">
 					<span class="badge_txt"><em>구매</em><strong>찬스</strong></span>
@@ -452,6 +452,7 @@
 		(() => {
 			const reset = document.querySelector('.mobon_reset');
 			const banner = document.querySelector('.mobon_banner');
+			const wrap = document.querySelector('.mobon_banner_wrap');
 			const mainImg = banner.querySelector('.img');
 			const pnmEl = banner.querySelector('.pnm');
 			const badgeEl = banner.querySelector('.badge');
@@ -481,7 +482,7 @@
 				const isSale = data.box === 'sale';
 				if (badgeEl) badgeEl.classList.toggle('sale', isSale);
 
-				banner.dataset.purl = data.purl;
+				wrap.dataset.purl = data.purl;
 			};
 
 			// 2초마다 다음 상품, 배너 위에 마우스가 있으면 멈춤

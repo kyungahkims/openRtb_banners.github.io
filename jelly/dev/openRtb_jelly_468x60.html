@@ -137,6 +137,7 @@
 		}
 
 		.mobon_banner_wrap {
+			cursor: pointer;
 			display: flex;
 			align-items: center;
 			gap: 9px;
@@ -152,7 +153,6 @@
 			gap: 9px;
 			flex-grow: 1;
 			min-width: 0;
-			cursor: pointer;
 		}
 
 		.img {
@@ -405,10 +405,10 @@
 <body>
 	<div class="mobon_reset" id="noHiddenMobon">
 		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
-		<div class="mobon_banner_wrap">
+		<div class="mobon_banner_wrap" onclick="window.open(this.dataset.purl)" data-purl="{{purl1}}">
 
 			<!-- 메인 상품 -->
-			<div class="mobon_banner" onclick="window.open(this.dataset.purl)" data-purl="{{purl1}}">
+			<div class="mobon_banner">
 				<!-- 배지: 기본 "구매 찬스", .sale 추가 시 "비밀특가" -->
 				<div class="badge {{box1}}">
 					<span class="badge_txt"><em>구매</em><strong>찬스</strong></span>
@@ -432,23 +432,23 @@
 
 			<!-- 썸네일 리스트 (1번 = 메인 상품) -->
 			<div class="thumb_wrap">
-				<div class="thumb active" onclick="window.open('{{purl1}}')"
+				<div class="thumb active" onclick="event.stopPropagation(); window.open('{{purl1}}')"
 					data-purl="{{purl1}}" data-pnm="{{pnm1}}" data-box="{{box1}}">
 					<img class="img" src="{{img1}}" data-pcode="{{pcode1}}" alt="{{pnm1}}">
 				</div>
-				<div class="thumb" onclick="window.open('{{purl2}}')"
+				<div class="thumb" onclick="event.stopPropagation(); window.open('{{purl2}}')"
 					data-purl="{{purl2}}" data-pnm="{{pnm2}}" data-box="{{box2}}">
 					<img class="img" src="{{img2}}" data-pcode="{{pcode2}}" alt="{{pnm2}}">
 				</div>
-				<div class="thumb" onclick="window.open('{{purl3}}')"
+				<div class="thumb" onclick="event.stopPropagation(); window.open('{{purl3}}')"
 					data-purl="{{purl3}}" data-pnm="{{pnm3}}" data-box="{{box3}}">
 					<img class="img" src="{{img3}}" data-pcode="{{pcode3}}" alt="{{pnm3}}">
 				</div>
-				<div class="thumb" onclick="window.open('{{purl4}}')"
+				<div class="thumb" onclick="event.stopPropagation(); window.open('{{purl4}}')"
 					data-purl="{{purl4}}" data-pnm="{{pnm4}}" data-box="{{box4}}">
 					<img class="img" src="{{img4}}" data-pcode="{{pcode4}}" alt="{{pnm4}}">
 				</div>
-				<div class="thumb" onclick="window.open('{{purl5}}')"
+				<div class="thumb" onclick="event.stopPropagation(); window.open('{{purl5}}')"
 					data-purl="{{purl5}}" data-pnm="{{pnm5}}" data-box="{{box5}}">
 					<img class="img" src="{{img5}}" data-pcode="{{pcode5}}" alt="{{pnm5}}">
 				</div>
@@ -520,6 +520,7 @@
 		(() => {
 			const reset = document.querySelector('.mobon_reset');
 			const banner = document.querySelector('.mobon_banner');
+			const wrap = document.querySelector('.mobon_banner_wrap');
 			const mainImg = banner.querySelector('.img');
 			const pnmEl = banner.querySelector('.pnm');
 			const badgeEl = banner.querySelector('.badge');
@@ -549,7 +550,7 @@
 				const isSale = data.box === 'sale';
 				if (badgeEl) badgeEl.classList.toggle('sale', isSale);
 
-				banner.dataset.purl = data.purl;
+				wrap.dataset.purl = data.purl;
 			};
 
 			// 2초마다 다음 상품, 배너 위에 마우스가 있으면 멈춤
