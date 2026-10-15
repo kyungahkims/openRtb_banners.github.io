@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>카카오 배너</title>
+	<style>
+		/* 1. 웹 폰트 */
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		/* 2. 배너 & 이미지 규격 */
+		:root {
+			--width: 468px;
+			--height: 60px;
+		}
+
+		/* 3. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		/* 4. 해당 사이즈 배너 */
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "pretendard", -apple-system, "Malgun Gothic", sans-serif;
+			color: #111111;
+			overflow: hidden;
+		}
+
+		.tag_hot {
+			position: absolute;
+			display: inline-block;
+			left: 163px;
+			top: 0;
+			font-size: 8px;
+			padding: 2px 5px 3px;
+			font-weight: 800;
+			line-height: 1;
+			letter-spacing: 0.2px;
+			color: #4A2328;
+			background: linear-gradient(180deg, #FFFFFF 0%, #F3D9D3 100%);
+			border-radius: 999px;
+			box-shadow: 0 2px 0 #B8475A;
+			animation: pop 1.4s ease-in-out infinite;
+			z-index: 2;
+		}
+
+		@keyframes pop {
+
+			0%,
+			100% {
+				transform: rotate(-8deg) scale(1);
+			}
+
+			50% {
+				transform: rotate(-8deg) scale(1.12);
+			}
+		}
+
+		.arrow {
+			flex-shrink: 0;
+			margin-top: 2px;
+			animation: nudge 0.9s ease-in-out infinite;
+		}
+
+		@keyframes nudge {
+
+			0%,
+			100% {
+				transform: translateX(0);
+			}
+
+			50% {
+				transform: translateX(3px);
+			}
+		}
+
+		.mobon_banner_wrap {
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			gap: 9px;
+			width: 100%;
+			height: 100%;
+			background: #FFFFFF;
+			padding: 0 7px 0 9px;
+		}
+
+		.mobon_banner {
+			display: flex;
+			align-items: center;
+			gap: 9px;
+			flex-grow: 1;
+			min-width: 0;
+		}
+
+		.img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.bg {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 4px;
+			flex-grow: 1;
+			min-width: 0;
+		}
+
+		.pnm {
+			max-width: 100%;
+			font-size: 12px;
+			font-weight: 600;
+			line-height: 1.2;
+			letter-spacing: -0.4px;
+			color: #4A2328;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.price_box {
+			display: flex;
+			align-items: center;
+			gap: 2px;
+		}
+
+		.sale_price {
+			position: relative;
+			display: flex;
+			align-items: baseline;
+			font-size: 12px;
+			font-weight: 600;
+			letter-spacing: -0.3px;
+			line-height: 1;
+			color: #ffffff;
+			border-radius: 999px;
+			background: linear-gradient(180deg, #C85A6E 0%, #8E2A40 100%);
+			box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.22), 0 2px 0 #4A2328;
+			padding: 2.5px 7px 2.5px;
+			white-space: nowrap;
+			transform-origin: center bottom;
+			animation: squish 3.2s ease-in-out infinite;
+		}
+
+		@keyframes squish {
+
+			0%,
+			78%,
+			100% {
+				transform: scale(1);
+			}
+
+			84% {
+				transform: scale(1.12, 0.86);
+			}
+
+			90% {
+				transform: scale(0.94, 1.08);
+			}
+
+			95% {
+				transform: scale(1.03, 0.97);
+			}
+		}
+
+		.badge {
+			position: relative;
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			width: 46px;
+			height: 46px;
+			color: #4A2328;
+			border-radius: 50%;
+			overflow: hidden;
+			background: radial-gradient(circle at 35% 30%, #F6D5C8 0%, #D29B88 55%, #9C5F4C 100%);
+			box-shadow: inset 0 -3px 4px rgba(0, 0, 0, 0.25), 0 0 0 2px #FFFFFF, 0 0 0 3px #B8475A, 0 4px 8px rgba(0, 0, 0, 0.22);
+			animation: bounce 1.3s ease-in-out infinite;
+			z-index: 2;
+		}
+
+		.badge::after {
+			content: "";
+			position: absolute;
+			left: 6px;
+			top: 5px;
+			width: 9px;
+			height: 4px;
+			border-radius: 50%;
+			background: rgba(255, 255, 255, 0.7);
+			transform: rotate(-25deg);
+			opacity: 0.5;
+		}
+
+		.badge::before {
+			content: "";
+			position: absolute;
+			top: -20%;
+			bottom: -20%;
+			left: -70%;
+			width: 20%;
+			background: linear-gradient(100deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(255, 255, 255, 0) 100%);
+			transform: skewX(-20deg);
+			animation: badge_shine 2.4s ease-in-out infinite;
+			z-index: 1;
+		}
+
+		@keyframes badge_shine {
+
+			0%,
+			55% {
+				left: -70%;
+			}
+
+			100% {
+				left: 140%;
+			}
+		}
+
+		.badge_txt,
+		.sale_rate {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 1px;
+		}
+
+		.badge em {
+			font-style: normal;
+			font-size: 12px;
+			font-weight: 800;
+			line-height: 1;
+			letter-spacing: -0.3px;
+		}
+
+		.badge strong {
+			font-size: 13px;
+			font-weight: 800;
+			line-height: 1;
+			letter-spacing: -0.3px;
+		}
+
+		.sale_rate {
+			display: none;
+		}
+
+		.badge.sale .badge_txt {
+			display: none;
+		}
+
+		.badge.sale .sale_rate {
+			display: flex;
+		}
+
+
+		.thumb_wrap {
+			flex-shrink: 0;
+			display: grid;
+			grid-template-columns: repeat(5, 56px);
+			grid-template-rows: 56px;
+			gap: 3px;
+		}
+
+		.thumb {
+			border: 2px solid #FFFFFF;
+			border-radius: 9px;
+			background-color: #F3D9D3;
+			box-shadow: 0 4px 10px rgba(120, 50, 50, 0.16);
+			overflow: hidden;
+			cursor: pointer;
+		}
+
+		.thumb.active {
+			border-color: #B8475A;
+			box-shadow: 0 0 0 2px rgba(184, 71, 90, 0.2), 0 4px 12px rgba(120, 50, 50, 0.25);
+			animation: wiggle 2.4s ease-in-out infinite;
+		}
+
+		@keyframes bounce {
+
+			0%,
+			100% {
+				transform: translateY(0) rotate(-10deg) scale(1);
+			}
+
+			40% {
+				transform: translateY(-3px) rotate(-6deg) scale(1.06, .94);
+			}
+
+			60% {
+				transform: translateY(0) rotate(-10deg) scale(.94, 1.06);
+			}
+		}
+
+		@keyframes wiggle {
+
+			0%,
+			100% {
+				transform: rotate(3deg);
+			}
+
+			50% {
+				transform: rotate(-1deg);
+			}
+		}
+
+
+		/* 5. 대체 배너 */
+		.fallback_banner {
+			display: none;
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			overflow: hidden;
+		}
+
+		.fallback_link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.fallback_banner img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset" id="noHiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="mobon_banner_wrap" onclick="window.open(this.dataset.purl)" data-purl="{{purl1}}">
+
+			<!-- 메인 상품 -->
+			<div class="mobon_banner">
+				<!-- 배지: 기본 "구매 찬스", .sale 추가 시 "비밀특가" -->
+				<div class="badge {{box1}}">
+					<span class="badge_txt"><em>구매</em><strong>찬스</strong></span>
+					<span class="sale_rate"><em>비밀</em><strong>특가</strong></span>
+				</div>
+				<span class="tag_hot">HOT</span>
+				<div class="bg">
+					<p class="pnm">{{pnm1}}</p>
+					<!-- 최종구매가 확인 (고정 문구) -->
+					<!-- 할인 상품인 경우 .price_box에 .sale 추가 -->
+					<div class="price_box {{box1}}">
+						<div class="sale_price">최종구매가 확인</div>
+						<svg class="arrow" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M5 5l7 7-7 7" fill="none" stroke="#4A2328" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"></path>
+							<path d="M5 5l7 7-7 7" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+							<path d="M12 5l7 7-7 7" fill="none" stroke="#4A2328" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"></path>
+							<path d="M12 5l7 7-7 7" fill="none" stroke="#B8475A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+						</svg>
+					</div>
+				</div>
+			</div>
+
+			<!-- 썸네일 리스트 -->
+			<div class="thumb_wrap">
+				<div class="thumb active" onclick="event.stopPropagation(); window.open('{{purl1}}')"
+					data-purl="{{purl1}}" data-pnm="{{pnm1}}" data-box="{{box1}}">
+					<img class="img" src="{{img1}}" data-pcode="{{pcode1}}" alt="{{pnm1}}">
+				</div>
+				<div class="thumb" onclick="event.stopPropagation(); window.open('{{purl2}}')"
+					data-purl="{{purl2}}" data-pnm="{{pnm2}}" data-box="{{box2}}">
+					<img class="img" src="{{img2}}" data-pcode="{{pcode2}}" alt="{{pnm2}}">
+				</div>
+				<div class="thumb" onclick="event.stopPropagation(); window.open('{{purl3}}')"
+					data-purl="{{purl3}}" data-pnm="{{pnm3}}" data-box="{{box3}}">
+					<img class="img" src="{{img3}}" data-pcode="{{pcode3}}" alt="{{pnm3}}">
+				</div>
+				<div class="thumb" onclick="event.stopPropagation(); window.open('{{purl4}}')"
+					data-purl="{{purl4}}" data-pnm="{{pnm4}}" data-box="{{box4}}">
+					<img class="img" src="{{img4}}" data-pcode="{{pcode4}}" alt="{{pnm4}}">
+				</div>
+				<div class="thumb" onclick="event.stopPropagation(); window.open('{{purl5}}')"
+					data-purl="{{purl5}}" data-pnm="{{pnm5}}" data-box="{{box5}}">
+					<img class="img" src="{{img5}}" data-pcode="{{pcode5}}" alt="{{pnm5}}">
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- 노출 추적 태그 -->
+	{{wp_imgtag}}
+
+	<!-- 대체 배너 영역 -->
+	<div class="fallback_banner" id="hiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="fallback_link" onclick="window.open('https://mobon.net/bridge/')">
+			<img src="{{HTTP}}/servlet/image/mobon/468x60.png" alt="대체배너">
+		</div>
+	</div>
+
+	<!--  이미지 에러 감지 -->
+	<script>
+		(() => {
+			const mainBanner = document.getElementById('noHiddenMobon');
+			const fallbackBanner = document.getElementById('hiddenMobon');
+			const images = document.querySelectorAll('.img');
+
+			let isFallbackTriggered = false;
+
+			const handleImageError = (event) => {
+				if (isFallbackTriggered) return;
+				isFallbackTriggered = true;
+
+				const pcode = event.target.dataset.pcode || '';
+
+				if (mainBanner) mainBanner.style.display = 'none';
+				if (fallbackBanner) fallbackBanner.style.display = 'block';
+
+				const errorUrl =
+					`{{HTTP_DR}}/rtbShop?uid=${encodeURIComponent("{{UUID}}")}&u={{USER}}&pc=${pcode}&itlTpCode={{ITL_TP_CODE}}`;
+				(new Image()).src = errorUrl;
+			};
+
+			images.forEach(img => {
+				if (img.complete && img.naturalHeight === 0) {
+					handleImageError({
+						target: img
+					});
+				} else {
+					img.addEventListener('error', handleImageError);
+				}
+			});
+		})();
+	</script>
+	<!-- 썸네일 호버 시 메인 상품(이미지·배지·링크) 전환 + 2초 자동 롤링 -->
+	<script>
+		(() => {
+			const reset = document.querySelector('.mobon_reset');
+			const banner = document.querySelector('.mobon_banner');
+			const wrap = document.querySelector('.mobon_banner_wrap');
+			const mainImg = banner.querySelector('.img');
+			const pnmEl = banner.querySelector('.pnm');
+			const badgeEl = banner.querySelector('.badge');
+			const priceBox = banner.querySelector('.price_box');
+			const thumbs = Array.from(document.querySelectorAll('.thumb'));
+			let current = 0;
+			let timer = null;
+
+			const showProduct = (index) => {
+				const thumb = thumbs[index];
+				if (!thumb) return;
+				current = index;
+				const data = thumb.dataset;
+				const thumbImg = thumb.querySelector('.img');
+
+				thumbs.forEach(t => t.classList.remove('active'));
+				thumb.classList.add('active');
+
+				if (mainImg && thumbImg) {
+					mainImg.src = thumbImg.src;
+					mainImg.alt = thumbImg.alt;
+					mainImg.dataset.pcode = thumbImg.dataset.pcode || '';
+				}
+
+				if (pnmEl) pnmEl.textContent = data.pnm;
+
+				// 비밀특가 여부에 따라 .badge 의 .sale 전환
+				const isSale = /sale/i.test(data.box || '');
+				if (badgeEl) badgeEl.classList.toggle('sale', isSale);
+
+				wrap.dataset.purl = data.purl;
+			};
+
+			// 2초마다 다음 상품, 배너 위에 마우스가 있으면 멈춤
+			const stop = () => {
+				if (timer) clearInterval(timer);
+				timer = null;
+			};
+			const start = () => {
+				stop();
+				if (thumbs.length <= 1) return;
+				timer = setInterval(() => showProduct((current + 1) % thumbs.length), 2000);
+			};
+
+			thumbs.forEach((thumb, index) => {
+				thumb.addEventListener('mouseenter', () => showProduct(index));
+			});
+			reset.addEventListener('mouseenter', stop);
+			reset.addEventListener('mouseleave', start);
+
+			if (priceBox && priceBox.classList.contains('sale') && thumbs[0]) thumbs[0].dataset.box = 'sale';
+			showProduct(0);
+			start();
+		})();
+	</script>
+</body>
+
+</html>
