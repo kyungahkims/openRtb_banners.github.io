@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Story Banners Dev QA</title>
+<style>
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: "pretendard";
+			background-color: #f4f5f7;
+			padding: 50px 50px 30px;
+		}
+
+		.control-panel {
+			position: sticky;
+			top: 0;
+			background: rgba(255, 255, 255, 0.75);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			padding: 16px 40px;
+			margin: -50px -50px 40px -50px;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+			z-index: 100;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 28px;
+		}
+
+		.control-panel h1 {
+			flex-shrink: 0;
+			font-size: 22px;
+			font-weight: 800;
+			color: #1a1a1a;
+			letter-spacing: -0.5px;
+		}
+
+		.control-panel p {
+			flex: 1;
+			line-height: 1.6;
+			font-size: 13px;
+			color: #666;
+		}
+
+		.section {
+			scroll-margin-top: 115px;
+		}
+
+		.section-title {
+			font-size: 20px;
+			font-weight: 800;
+			color: #1a1a1a;
+			margin-bottom: 10px;
+			padding-bottom: 12px;
+			border-bottom: 1px solid #e0e0e0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.group-title {
+			font-size: 16px;
+			font-weight: 700;
+			color: #495057;
+			margin: 70px 0 30px;
+			padding-left: 10px;
+			border-left: 4px solid #1a1a1a;
+			line-height: 1.2;
+		}
+
+		/* 한 줄에 배너 하나씩 */
+		.banner-grid {
+			display: flex;
+			flex-direction: column;
+			gap: 40px;
+			align-items: flex-start;
+			margin-bottom: 20px;
+		}
+
+		/* 3종 한 줄에 나란히 (좁으면 줄바꿈) */
+		.banner-grid.row {
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-items: flex-start;
+		}
+
+		.banner-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background: #ffffff;
+			padding: 30px;
+			border-radius: 16px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+			transition: transform 0.2s ease;
+		}
+
+		.banner-container:hover {
+			transform: translateY(-5px);
+		}
+
+		.banner-title {
+			font-size: 18px;
+			font-weight: 700;
+			margin-bottom: 20px;
+			color: #1a1a1a;
+			letter-spacing: -0.5px;
+		}
+
+		iframe {
+			box-sizing: content-box;
+			display: block;
+			border: 1px solid #e6e6e6;
+			background-color: #fff;
+		}
+
+		/* 랜덤 문구 목록 */
+		.copy-pool {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+			margin-bottom: 50px;
+		}
+
+		.copy-card {
+			background: #fff;
+			padding: 22px 26px;
+			border-radius: 16px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+		}
+
+		.copy-card h4 {
+			font-size: 15px;
+			font-weight: 800;
+			color: #1a1a1a;
+			margin-bottom: 4px;
+		}
+
+		.copy-card .copy-note {
+			font-size: 12px;
+			color: #868e96;
+			margin-bottom: 14px;
+		}
+
+		.copy-card ol {
+			padding-left: 22px;
+			font-size: 13.5px;
+			line-height: 1.9;
+			color: #333;
+			word-break: keep-all;
+		}
+
+		.copy-card ol .more {
+			color: #8a8a8a;
+			margin-left: 2px;
+		}
+
+		.copy-card .tag-list {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+
+		.copy-card .tag-list span {
+			display: inline-block;
+			padding: 6px 12px;
+			border-radius: 14px;
+			background: #eef3fa;
+			color: #2f5d9e;
+			font-size: 13px;
+			font-weight: 600;
+		}
+
+		@media (max-width: 900px) {
+			.copy-pool {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		@media (max-width: 600px) {
+			body {
+				padding: 20px 10px;
+			}
+
+			.control-panel {
+				margin: -20px -10px 30px -10px;
+				padding: 12px 16px;
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 6px;
+			}
+
+			.banner-container {
+				width: 100%;
+				max-width: 100%;
+				padding: 30px 0;
+			}
+
+			.banner-title {
+				font-size: 14px;
+				margin-bottom: 15px;
+			}
+		}
+
+		/* 실행 검사 결과 */
+		.result {
+			font-size: 12px;
+			font-weight: 600;
+			margin: -12px 0 14px;
+			white-space: pre-line;
+		}
+
+		.pass {
+			color: #0a7d32;
+		}
+
+		.fail {
+			color: #c81e1e;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="control-panel">
+		<h1>STORY DEV</h1>
+		<p>story/dev 3종을 실제 치환값(테스트 상품 6개)으로 채워 실행 · 4초 뒤 본 배너 표시, 이미지 로드, 캡션·해시태그·프로필 이미지 할당 여부 검사 · <span id="summary">검사 중…</span></p>
+	</div>
+
+	<div class="section" id="section-dev">
+		<div class="banner-grid row">
+			<div class="banner-container">
+				<div class="banner-title">300 x 250</div>
+				<div class="result">검사 중…</div>
+				<iframe width="300" height="250" scrolling="no" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ko&quot;&gt;
+
+&lt;head&gt;
+	&lt;meta charset=&quot;UTF-8&quot;&gt;
+	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+	&lt;title&gt;구글RTB 배너&lt;/title&gt;
+	&lt;link rel=&quot;preconnect&quot; href=&quot;https://cdn.jsdelivr.net&quot; crossorigin&gt;
+	&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css&quot;&gt;
+	&lt;script&gt;
+		window.__mobonProducts = [{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp&quot;,pnm:&quot;테스트 상품 1&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p1&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/34d5572c55d7962dc09e3688c031d90e.jpg&quot;,pnm:&quot;테스트 상품 2&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p2&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/228785c2d74d7238046842d7afaab05b.webp&quot;,pnm:&quot;테스트 상품 3&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p3&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg&quot;,pnm:&quot;테스트 상품 4&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p4&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/aa8ad2b571d71bdea25f33dc4aeb46e7.webp&quot;,pnm:&quot;테스트 상품 5&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p5&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/587c0c1f483d9cbe2a9e89ef5a772fff.webp&quot;,pnm:&quot;테스트 상품 6&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p6&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;}];
+		window.__mobonPreload = (() =&gt; {
+			try {
+				const first = window.__mobonProducts[0];
+				if (!first || !first.img) return;
+				const link = document.createElement('link');
+				link.rel = 'preload';
+				link.as = 'image';
+				link.href = first.img;
+				link.fetchPriority = 'high';
+				document.head.appendChild(link);
+			} catch (e) {}
+		})();
+	&lt;/script&gt;
+	&lt;style&gt;
+		:root {
+			--width: 300px;
+			--height: 250px;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: &quot;pretendard&quot;, -apple-system, BlinkMacSystemFont, &quot;Malgun Gothic&quot;, sans-serif;
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			height: 100%;
+			background-color: #fff;
+			color: #222;
+			cursor: pointer;
+		}
+
+		.slider_wrap {
+			position: relative;
+			flex: 1;
+			min-height: 0;
+			margin: 0 8px;
+			border-radius: 10px;
+			background-color: #f2f2f2;
+			overflow: hidden;
+		}
+
+		.img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+			opacity: 0;
+			transition: opacity 0.5s ease;
+		}
+
+		.img.active {
+			opacity: 1;
+		}
+
+		.img.is-panning {
+			object-position: left top;
+			animation: panImage 5s ease-in-out infinite alternate;
+		}
+
+		@keyframes panImage {
+			0% {
+				object-position: left top;
+			}
+
+			100% {
+				object-position: right bottom;
+			}
+		}
+
+		.story_header {
+			order: -1;
+			display: flex;
+			flex-direction: column;
+			gap: 7px;
+			padding: 7px 10px;
+		}
+
+		.progress_wrap {
+			display: flex;
+			gap: 3px;
+		}
+
+		.progress_bar {
+			flex: 1;
+			height: 2px;
+			border-radius: 1px;
+			background-color: #e6e6e6;
+			overflow: hidden;
+		}
+
+		.progress_bar i {
+			display: block;
+			width: 0;
+			height: 100%;
+			background-color: #1d1d1f;
+		}
+
+		.progress_bar.done i {
+			width: 100%;
+		}
+
+		.progress_bar.active i {
+			animation: fillBar 3s linear forwards;
+		}
+
+		.mobon_banner.paused .progress_bar.active i {
+			animation-play-state: paused;
+		}
+
+		@keyframes fillBar {
+			from {
+				width: 0;
+			}
+
+			to {
+				width: 100%;
+			}
+		}
+
+		.bg {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+			padding: 8px 10px 9px;
+		}
+
+		.brand_wrap {
+			display: flex;
+			align-items: center;
+			gap: 7px;
+		}
+
+		.brand_avatar {
+			display: block;
+			flex-shrink: 0;
+			width: 22px;
+			height: 22px;
+			border-radius: 50%;
+			object-fit: cover;
+			object-position: center top;
+			background-color: #eee;
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+		}
+
+		.brand_name {
+			flex: 1;
+			font-size: 11.5px;
+			font-weight: 700;
+			letter-spacing: -0.3px;
+			color: #1d1d1f;
+		}
+
+		.pnm {
+			font-size: 13px;
+			font-weight: 500;
+			line-height: 1.4;
+			letter-spacing: -0.3px;
+			color: #222;
+			word-break: keep-all;
+			overflow-wrap: break-word;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+
+		.pnm .more {
+			font-weight: 400;
+			color: #8a8a8a;
+			text-decoration: underline;
+			text-decoration-color: transparent;
+			text-underline-offset: 2px;
+			transition: text-decoration-color 0.2s ease, color 0.2s ease;
+		}
+
+		.pnm .more:hover {
+			color: #555;
+			text-decoration-color: currentColor;
+		}
+
+		.tags {
+			font-size: 11px;
+			font-weight: 500;
+			line-height: 1.3;
+			letter-spacing: -0.2px;
+			color: #2f5d9e;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.fallback_banner {
+			display: none;
+			position: relative;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		.fallback_link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.fallback_banner img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			background-position: center center;
+		}
+	&lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+	&lt;div class=&quot;mobon_reset&quot; id=&quot;noHiddenMobon&quot;&gt;
+		&lt;div class=&quot;mobonLogo&quot; onclick=&quot;window.open('https://img.mobon.net/ad/linfo.php')&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;mobon_banner&quot;&gt;
+			&lt;div class=&quot;slider_wrap&quot;&gt;
+			&lt;/div&gt;
+
+			&lt;div class=&quot;story_header&quot;&gt;
+				&lt;div class=&quot;progress_wrap&quot;&gt;
+				&lt;/div&gt;
+				&lt;div class=&quot;brand_wrap&quot;&gt;
+					&lt;img class=&quot;brand_avatar&quot; src=&quot;&quot; alt=&quot;&quot; onload=&quot;this.style.visibility=''&quot; onerror=&quot;this.style.visibility='hidden'&quot;&gt;
+					&lt;span class=&quot;brand_name&quot;&gt;다바걸&lt;/span&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+
+			&lt;div class=&quot;bg&quot;&gt;
+				&lt;p class=&quot;pnm&quot;&gt;솔직히 나만 알고 싶어서 안 올리려다가 공개하는데요.. &lt;span class=&quot;more&quot;&gt;더보기&lt;/span&gt;&lt;/p&gt;
+				&lt;p class=&quot;tags&quot;&gt;#입소문 #득템찬스&lt;/p&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+
+	
+
+	&lt;div class=&quot;fallback_banner&quot; id=&quot;hiddenMobon&quot;&gt;
+		&lt;div class=&quot;mobonLogo&quot; onclick=&quot;window.open('https://img.mobon.net/ad/linfo.php')&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;fallback_link&quot; onclick=&quot;window.open('https://mobon.net/bridge/')&quot;&gt;
+			&lt;img src=&quot;https://img.mobon.net/servlet/image/mobon/300x250.png&quot; alt=&quot;대체배너&quot;&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+
+	&lt;script&gt;
+		(() =&gt; {
+			const frameWidth = 300;
+			const frameHeight = 250;
+			const mainBanner = document.getElementById('noHiddenMobon');
+			const fallbackBanner = document.getElementById('hiddenMobon');
+
+			const captions = [
+				&quot;솔직히 나만 알고 싶어서 안 올리려다가 공개하는데요..&quot;,
+				&quot;다들 어디서 샀냐고 연락 오길래 그냥 여기 남겨둘게요..&quot;,
+				&quot;사진 한 장 올렸을 뿐인데 반응 터져서 당황함..&quot;,
+				&quot;진짜 나만 아껴두고 이용하려 했던 곳인데..&quot;,
+				&quot;소문나면 사람 많아질까 봐 숨겨뒀다가 공유함..&quot;,
+				&quot;나만 알고 있기엔 너무 아까워서 큰맘 먹고 올림..&quot;,
+				&quot;요즘 주변 사람들한테 입에 침이 마르게 추천하는 중..&quot;,
+				&quot;단언컨대 올해 돈 쓰고 제일 만족스러웠던 순간..&quot;,
+				&quot;지인이 슬쩍 와서 어디서 구매했냐고 물어보는데..&quot;,
+				&quot;SNS에서 후기 좋길래 반신반의했는데 생각보다 더 좋음..&quot;
+			];
+			const pnmEl = document.querySelector(&quot;.pnm&quot;);
+			const captionText = captions[Math.floor(Math.random() * captions.length)].replace(/\.+$/, &quot;&quot;);
+			const captionEl = document.createElement(&quot;span&quot;);
+			if (pnmEl) {
+				const moreEl = pnmEl.querySelector(&quot;.more&quot;);
+				const tagEl = pnmEl.querySelector(&quot;.tags&quot;);
+				pnmEl.textContent = &quot;&quot;;
+				if (tagEl) pnmEl.append(tagEl, &quot; &quot;);
+				pnmEl.append(captionEl, &quot; &quot;);
+				if (moreEl) pnmEl.append(moreEl);
+			}
+			const fitCaption = () =&gt; {
+				if (!pnmEl) return;
+				let t = captionText;
+				captionEl.textContent = t + &quot;..&quot;;
+				while (pnmEl.scrollHeight &gt; pnmEl.clientHeight + 1 &amp;&amp; t.length &gt; 1) {
+					t = t.slice(0, -1).trimEnd();
+					captionEl.textContent = t + &quot;..&quot;;
+				}
+			};
+
+			const hashtags = [&quot;#입소문&quot;, &quot;#SNS에서난리&quot;, &quot;#요즘유행&quot;, &quot;#요즘이게대세&quot;, &quot;#득템찬스&quot;, &quot;#심장어택&quot;, &quot;#SNS화제&quot;, &quot;#럭키비키&quot;, &quot;#지금구매찬스&quot;, &quot;#품절주의&quot;];
+			const tagsEl = document.querySelector(&quot;.tags&quot;);
+			if (tagsEl) {
+				const pool = hashtags.slice();
+				const picked = [];
+				while (picked.length &lt; 2 &amp;&amp; pool.length) {
+					picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+				}
+				tagsEl.textContent = picked.join(&quot; &quot;);
+			}
+			fitCaption();
+			if (document.fonts &amp;&amp; document.fonts.ready) document.fonts.ready.then(fitCaption);
+			const sliderWrap = document.querySelector('.slider_wrap');
+			const progressWrap = document.querySelector('.progress_wrap');
+			const bannerContainer = document.querySelector('.mobon_banner');
+			const avatarEl = document.querySelector('.brand_avatar');
+
+			const allProducts = window.__mobonProducts;
+
+			if (allProducts.length &gt; 3) allProducts.length = 3;
+
+			const imageHtml = allProducts.map((item, index) =&gt; {
+				const activeClass = index === 0 ? 'active' : '';
+				const srcAttr = index === 0 ?
+					`src=&quot;${item.img}&quot; fetchpriority=&quot;high&quot;` :
+					`data-src=&quot;${item.img}&quot;`;
+				return `&lt;img class=&quot;img ${activeClass}&quot; ${srcAttr} decoding=&quot;async&quot; data-pcode=&quot;${item.pcode}&quot; alt=&quot;${item.pnm}&quot;&gt;`;
+			}).join('');
+
+			sliderWrap.innerHTML = imageHtml;
+
+			const handleImageErrors = () =&gt; {
+				const allBannerImages = document.querySelectorAll('.img');
+				let isFallbackTriggered = false;
+				const handleImageError = (event) =&gt; {
+					if (isFallbackTriggered) return;
+					isFallbackTriggered = true;
+					const pcode = event.target.dataset.pcode || '';
+					if (mainBanner) mainBanner.style.display = 'none';
+					if (fallbackBanner) {
+						fallbackBanner.style.display = 'block';
+						fallbackBanner.style.width = `${frameWidth}px`;
+						fallbackBanner.style.height = `${frameHeight}px`;
+					}
+					const errorUrl =
+						`https://img.mobon.net/rtbShop?uid=${encodeURIComponent(&quot;&quot;)}&amp;u=&amp;pc=${pcode}&amp;itlTpCode=`;
+					(new Image()).src = errorUrl;
+				};
+				allBannerImages.forEach(img =&gt; {
+					if (img.getAttribute('src') &amp;&amp; img.complete &amp;&amp; img.naturalHeight === 0) {
+						handleImageError({
+							target: img
+						});
+					} else {
+						img.addEventListener('error', handleImageError);
+					}
+				});
+			};
+			handleImageErrors();
+			progressWrap.innerHTML = allProducts.map(() =&gt; '&lt;span class=&quot;progress_bar&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/span&gt;').join('');
+
+			if (allProducts.length &lt;= 1) progressWrap.style.display = 'none';
+
+			const images = document.querySelectorAll('.slider_wrap .img');
+			const progressBars = document.querySelectorAll('.progress_bar');
+
+			const loadRestImages = () =&gt; {
+				images.forEach(img =&gt; {
+					if (img.dataset.src) {
+						img.src = img.dataset.src;
+						delete img.dataset.src;
+					}
+				});
+			};
+
+			if (images[0]) {
+				if (images[0].complete) {
+					loadRestImages();
+				} else {
+					images[0].addEventListener('load', loadRestImages, { once: true });
+					images[0].addEventListener('error', loadRestImages, { once: true });
+				}
+			}
+
+			let currentIndex = 0;
+			const totalImages = images.length;
+			let intervalId;
+
+			const checkPanning = (img) =&gt; {
+				const wrap = img.parentElement;
+				if (!wrap.clientWidth || !wrap.clientHeight) return;
+
+				const wrapRatio = wrap.clientWidth / wrap.clientHeight;
+				const imgRatio = img.naturalWidth / img.naturalHeight;
+
+				const overflowPx = imgRatio &gt; wrapRatio ?
+					(wrap.clientHeight * imgRatio) - wrap.clientWidth :
+					(wrap.clientWidth / imgRatio) - wrap.clientHeight;
+
+				const overflowRatio = imgRatio &gt; wrapRatio ?
+					overflowPx / wrap.clientWidth :
+					overflowPx / wrap.clientHeight;
+
+				if (overflowRatio &gt; 0.3) {
+					img.classList.add('is-panning');
+					img.style.animationDuration = overflowPx &lt;= 40 ? '3s' : '5s';
+				} else {
+					img.classList.remove('is-panning');
+					img.style.animationDuration = '';
+				}
+			};
+
+			function showImage(index) {
+				images.forEach(img =&gt; img.classList.remove('active'));
+				if (avatarEl &amp;&amp; allProducts[index]) avatarEl.src = allProducts[index].img;
+				if (images[index]) {
+					images[index].classList.add('active');
+
+					if (images[index].complete &amp;&amp; images[index].naturalWidth &gt; 0) {
+						checkPanning(images[index]);
+					} else {
+						images[index].addEventListener('load', () =&gt; checkPanning(images[index]), { once: true });
+					}
+				}
+
+				progressBars.forEach((bar, i) =&gt; {
+					bar.classList.remove('done', 'active');
+					if (i &lt; index) bar.classList.add('done');
+				});
+				if (progressBars[index] &amp;&amp; totalImages &gt; 1) {
+					void progressBars[index].offsetWidth;
+					progressBars[index].classList.add('active');
+				}
+			}
+
+			function nextImage() {
+				currentIndex = (currentIndex + 1) % totalImages;
+				showImage(currentIndex);
+			}
+
+			function startSlider() {
+				if (totalImages &lt;= 1) return;
+				stopSlider();
+				bannerContainer.classList.remove('paused');
+				showImage(currentIndex);
+
+				intervalId = setInterval(nextImage, 3000);
+			}
+
+			function stopSlider() {
+				clearInterval(intervalId);
+				bannerContainer.classList.add('paused');
+			}
+
+			bannerContainer.addEventListener('mouseenter', stopSlider);
+			bannerContainer.addEventListener('mouseleave', startSlider);
+
+			bannerContainer.addEventListener('click', () =&gt; {
+				const purl = allProducts[currentIndex].purl;
+				if (purl) {
+					window.open(purl);
+				}
+			});
+
+			showImage(currentIndex);
+
+			startSlider();
+		})();
+	&lt;/script&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">250 x 250</div>
+				<div class="result">검사 중…</div>
+				<iframe width="250" height="250" scrolling="no" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ko&quot;&gt;
+
+&lt;head&gt;
+	&lt;meta charset=&quot;UTF-8&quot;&gt;
+	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+	&lt;title&gt;구글RTB 배너&lt;/title&gt;
+	&lt;link rel=&quot;preconnect&quot; href=&quot;https://cdn.jsdelivr.net&quot; crossorigin&gt;
+	&lt;link rel=&quot;stylesheet&quot;
+		href=&quot;https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css&quot;&gt;
+	&lt;script&gt;
+		window.__mobonProducts = [{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp&quot;,pnm:&quot;테스트 상품 1&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p1&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/34d5572c55d7962dc09e3688c031d90e.jpg&quot;,pnm:&quot;테스트 상품 2&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p2&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/228785c2d74d7238046842d7afaab05b.webp&quot;,pnm:&quot;테스트 상품 3&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p3&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg&quot;,pnm:&quot;테스트 상품 4&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p4&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/aa8ad2b571d71bdea25f33dc4aeb46e7.webp&quot;,pnm:&quot;테스트 상품 5&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p5&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/587c0c1f483d9cbe2a9e89ef5a772fff.webp&quot;,pnm:&quot;테스트 상품 6&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p6&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;}];
+		window.__mobonPreload = (() =&gt; {
+			try {
+				const first = window.__mobonProducts[0];
+				if (!first || !first.img) return;
+				const link = document.createElement('link');
+				link.rel = 'preload';
+				link.as = 'image';
+				link.href = first.img;
+				link.fetchPriority = 'high';
+				document.head.appendChild(link);
+			} catch (e) {}
+		})();
+	&lt;/script&gt;
+	&lt;style&gt;
+		:root {
+			--width: 250px;
+			--height: 250px;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: &quot;pretendard&quot;, -apple-system, BlinkMacSystemFont, &quot;Malgun Gothic&quot;, sans-serif;
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			height: 100%;
+			background-color: #fff;
+			color: #222;
+			cursor: pointer;
+		}
+
+		.slider_wrap {
+			position: relative;
+			flex: 1;
+			min-height: 0;
+			margin: 0 7px;
+			border-radius: 9px;
+			background-color: #f2f2f2;
+			overflow: hidden;
+		}
+
+		.img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+			opacity: 0;
+			transition: opacity 0.5s ease;
+		}
+
+		.img.active {
+			opacity: 1;
+		}
+
+		.img.is-panning {
+			object-position: left top;
+			animation: panImage 5s ease-in-out infinite alternate;
+		}
+
+		@keyframes panImage {
+			0% {
+				object-position: left top;
+			}
+
+			100% {
+				object-position: right bottom;
+			}
+		}
+
+		.story_header {
+			order: -1;
+			display: flex;
+			flex-direction: column;
+			gap: 7px;
+			padding: 7px 9px;
+		}
+
+		.progress_wrap {
+			display: flex;
+			gap: 3px;
+		}
+
+		.progress_bar {
+			flex: 1;
+			height: 2px;
+			border-radius: 1px;
+			background-color: #e6e6e6;
+			overflow: hidden;
+		}
+
+		.progress_bar i {
+			display: block;
+			width: 0;
+			height: 100%;
+			background-color: #1d1d1f;
+		}
+
+		.progress_bar.done i {
+			width: 100%;
+		}
+
+		.progress_bar.active i {
+			animation: fillBar 3s linear forwards;
+		}
+
+		.mobon_banner.paused .progress_bar.active i {
+			animation-play-state: paused;
+		}
+
+		@keyframes fillBar {
+			from {
+				width: 0;
+			}
+
+			to {
+				width: 100%;
+			}
+		}
+
+		.bg {
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+			padding: 7px 9px 8px;
+		}
+
+		.brand_wrap {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.brand_avatar {
+			display: block;
+			flex-shrink: 0;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			object-fit: cover;
+			object-position: center top;
+			background-color: #eee;
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+		}
+
+		.brand_name {
+			flex: 1;
+			font-size: 11px;
+			font-weight: 700;
+			letter-spacing: -0.3px;
+			color: #1d1d1f;
+		}
+
+		.pnm {
+			font-size: 13px;
+			font-weight: 500;
+			line-height: 1.4;
+			letter-spacing: -0.3px;
+			color: #222;
+			word-break: keep-all;
+			overflow-wrap: break-word;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+
+		.pnm .more {
+			font-weight: 400;
+			color: #8a8a8a;
+			text-decoration: underline;
+			text-decoration-color: transparent;
+			text-underline-offset: 2px;
+			transition: text-decoration-color 0.2s ease, color 0.2s ease;
+		}
+
+		.pnm .more:hover {
+			color: #555;
+			text-decoration-color: currentColor;
+		}
+
+		.tags {
+			font-size: 11px;
+			font-weight: 500;
+			line-height: 1.3;
+			letter-spacing: -0.2px;
+			color: #2f5d9e;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.fallback_banner {
+			display: none;
+			position: relative;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		.fallback_link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.fallback_banner img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			background-position: center center;
+		}
+	&lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+	&lt;div class=&quot;mobon_reset&quot; id=&quot;noHiddenMobon&quot;&gt;
+		&lt;div class=&quot;mobonLogo&quot; onclick=&quot;window.open('https://img.mobon.net/ad/linfo.php')&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;mobon_banner&quot;&gt;
+			&lt;div class=&quot;slider_wrap&quot;&gt;
+			&lt;/div&gt;
+
+			&lt;div class=&quot;story_header&quot;&gt;
+				&lt;div class=&quot;progress_wrap&quot;&gt;
+				&lt;/div&gt;
+				&lt;div class=&quot;brand_wrap&quot;&gt;
+					&lt;img class=&quot;brand_avatar&quot; src=&quot;&quot; alt=&quot;&quot; onload=&quot;this.style.visibility=''&quot; onerror=&quot;this.style.visibility='hidden'&quot;&gt;
+					&lt;span class=&quot;brand_name&quot;&gt;다바걸&lt;/span&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+
+			&lt;div class=&quot;bg&quot;&gt;
+				&lt;p class=&quot;pnm&quot;&gt;솔직히 나만 알고 싶어서 안 올리려다가 공개하는데요.. &lt;span class=&quot;more&quot;&gt;더보기&lt;/span&gt;&lt;/p&gt;
+				&lt;p class=&quot;tags&quot;&gt;#입소문 #득템찬스&lt;/p&gt;
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+
+	
+
+	&lt;div class=&quot;fallback_banner&quot; id=&quot;hiddenMobon&quot;&gt;
+		&lt;div class=&quot;mobonLogo&quot; onclick=&quot;window.open('https://img.mobon.net/ad/linfo.php')&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;fallback_link&quot; onclick=&quot;window.open('https://mobon.net/bridge/')&quot;&gt;
+			&lt;img src=&quot;https://img.mobon.net/servlet/image/mobon/250x250.png&quot; alt=&quot;대체배너&quot;&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+
+	&lt;script&gt;
+		(() =&gt; {
+			const frameWidth = 250;
+			const frameHeight = 250;
+			const mainBanner = document.getElementById('noHiddenMobon');
+			const fallbackBanner = document.getElementById('hiddenMobon');
+
+			const captions = [
+				&quot;솔직히 나만 알고 싶어서 안 올리려다가 공개하는데요..&quot;,
+				&quot;다들 어디서 샀냐고 연락 오길래 그냥 여기 남겨둘게요..&quot;,
+				&quot;사진 한 장 올렸을 뿐인데 반응 터져서 당황함..&quot;,
+				&quot;진짜 나만 아껴두고 이용하려 했던 곳인데..&quot;,
+				&quot;소문나면 사람 많아질까 봐 숨겨뒀다가 공유함..&quot;,
+				&quot;나만 알고 있기엔 너무 아까워서 큰맘 먹고 올림..&quot;,
+				&quot;요즘 주변 사람들한테 입에 침이 마르게 추천하는 중..&quot;,
+				&quot;단언컨대 올해 돈 쓰고 제일 만족스러웠던 순간..&quot;,
+				&quot;지인이 슬쩍 와서 어디서 구매했냐고 물어보는데..&quot;,
+				&quot;SNS에서 후기 좋길래 반신반의했는데 생각보다 더 좋음..&quot;
+			];
+			const pnmEl = document.querySelector(&quot;.pnm&quot;);
+			const captionText = captions[Math.floor(Math.random() * captions.length)].replace(/\.+$/, &quot;&quot;);
+			const captionEl = document.createElement(&quot;span&quot;);
+			if (pnmEl) {
+				const moreEl = pnmEl.querySelector(&quot;.more&quot;);
+				const tagEl = pnmEl.querySelector(&quot;.tags&quot;);
+				pnmEl.textContent = &quot;&quot;;
+				if (tagEl) pnmEl.append(tagEl, &quot; &quot;);
+				pnmEl.append(captionEl, &quot; &quot;);
+				if (moreEl) pnmEl.append(moreEl);
+			}
+			const fitCaption = () =&gt; {
+				if (!pnmEl) return;
+				let t = captionText;
+				captionEl.textContent = t + &quot;..&quot;;
+				while (pnmEl.scrollHeight &gt; pnmEl.clientHeight + 1 &amp;&amp; t.length &gt; 1) {
+					t = t.slice(0, -1).trimEnd();
+					captionEl.textContent = t + &quot;..&quot;;
+				}
+			};
+
+			const hashtags = [&quot;#입소문&quot;, &quot;#SNS에서난리&quot;, &quot;#요즘유행&quot;, &quot;#요즘이게대세&quot;, &quot;#득템찬스&quot;, &quot;#심장어택&quot;, &quot;#SNS화제&quot;, &quot;#럭키비키&quot;, &quot;#지금구매찬스&quot;, &quot;#품절주의&quot;];
+			const tagsEl = document.querySelector(&quot;.tags&quot;);
+			if (tagsEl) {
+				const pool = hashtags.slice();
+				const picked = [];
+				while (picked.length &lt; 2 &amp;&amp; pool.length) {
+					picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+				}
+				tagsEl.textContent = picked.join(&quot; &quot;);
+			}
+			fitCaption();
+			if (document.fonts &amp;&amp; document.fonts.ready) document.fonts.ready.then(fitCaption);
+			const sliderWrap = document.querySelector('.slider_wrap');
+			const progressWrap = document.querySelector('.progress_wrap');
+			const bannerContainer = document.querySelector('.mobon_banner');
+			const avatarEl = document.querySelector('.brand_avatar');
+
+			const allProducts = window.__mobonProducts;
+
+			if (allProducts.length &gt; 3) allProducts.length = 3;
+
+			const imageHtml = allProducts.map((item, index) =&gt; {
+				const activeClass = index === 0 ? 'active' : '';
+				const srcAttr = index === 0 ?
+					`src=&quot;${item.img}&quot; fetchpriority=&quot;high&quot;` :
+					`data-src=&quot;${item.img}&quot;`;
+				return `&lt;img class=&quot;img ${activeClass}&quot; ${srcAttr} decoding=&quot;async&quot; data-pcode=&quot;${item.pcode}&quot; alt=&quot;${item.pnm}&quot;&gt;`;
+			}).join('');
+
+			sliderWrap.innerHTML = imageHtml;
+
+			const handleImageErrors = () =&gt; {
+				const allBannerImages = document.querySelectorAll('.img');
+				let isFallbackTriggered = false;
+				const handleImageError = (event) =&gt; {
+					if (isFallbackTriggered) return;
+					isFallbackTriggered = true;
+					const pcode = event.target.dataset.pcode || '';
+					if (mainBanner) mainBanner.style.display = 'none';
+					if (fallbackBanner) {
+						fallbackBanner.style.display = 'block';
+						fallbackBanner.style.width = `${frameWidth}px`;
+						fallbackBanner.style.height = `${frameHeight}px`;
+					}
+					const errorUrl =
+						`https://img.mobon.net/rtbShop?uid=${encodeURIComponent(&quot;&quot;)}&amp;u=&amp;pc=${pcode}&amp;itlTpCode=`;
+					(new Image()).src = errorUrl;
+				};
+				allBannerImages.forEach(img =&gt; {
+					if (img.getAttribute('src') &amp;&amp; img.complete &amp;&amp; img.naturalHeight === 0) {
+						handleImageError({
+							target: img
+						});
+					} else {
+						img.addEventListener('error', handleImageError);
+					}
+				});
+			};
+			handleImageErrors();
+			progressWrap.innerHTML = allProducts.map(() =&gt; '&lt;span class=&quot;progress_bar&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;/span&gt;').join('');
+
+			if (allProducts.length &lt;= 1) progressWrap.style.display = 'none';
+
+			const images = document.querySelectorAll('.slider_wrap .img');
+			const progressBars = document.querySelectorAll('.progress_bar');
+
+			const loadRestImages = () =&gt; {
+				images.forEach(img =&gt; {
+					if (img.dataset.src) {
+						img.src = img.dataset.src;
+						delete img.dataset.src;
+					}
+				});
+			};
+
+			if (images[0]) {
+				if (images[0].complete) {
+					loadRestImages();
+				} else {
+					images[0].addEventListener('load', loadRestImages, { once: true });
+					images[0].addEventListener('error', loadRestImages, { once: true });
+				}
+			}
+
+			let currentIndex = 0;
+			const totalImages = images.length;
+			let intervalId;
+
+			const checkPanning = (img) =&gt; {
+				const wrap = img.parentElement;
+				if (!wrap.clientWidth || !wrap.clientHeight) return;
+
+				const wrapRatio = wrap.clientWidth / wrap.clientHeight;
+				const imgRatio = img.naturalWidth / img.naturalHeight;
+
+				const overflowPx = imgRatio &gt; wrapRatio ?
+					(wrap.clientHeight * imgRatio) - wrap.clientWidth :
+					(wrap.clientWidth / imgRatio) - wrap.clientHeight;
+
+				const overflowRatio = imgRatio &gt; wrapRatio ?
+					overflowPx / wrap.clientWidth :
+					overflowPx / wrap.clientHeight;
+
+				if (overflowRatio &gt; 0.3) {
+					img.classList.add('is-panning');
+					img.style.animationDuration = overflowPx &lt;= 40 ? '3s' : '5s';
+				} else {
+					img.classList.remove('is-panning');
+					img.style.animationDuration = '';
+				}
+			};
+
+			function showImage(index) {
+				images.forEach(img =&gt; img.classList.remove('active'));
+				if (avatarEl &amp;&amp; allProducts[index]) avatarEl.src = allProducts[index].img;
+				if (images[index]) {
+					images[index].classList.add('active');
+
+					if (images[index].complete &amp;&amp; images[index].naturalWidth &gt; 0) {
+						checkPanning(images[index]);
+					} else {
+						images[index].addEventListener('load', () =&gt; checkPanning(images[index]), { once: true });
+					}
+				}
+
+				progressBars.forEach((bar, i) =&gt; {
+					bar.classList.remove('done', 'active');
+					if (i &lt; index) bar.classList.add('done');
+				});
+				if (progressBars[index] &amp;&amp; totalImages &gt; 1) {
+					void progressBars[index].offsetWidth;
+					progressBars[index].classList.add('active');
+				}
+			}
+
+			function nextImage() {
+				currentIndex = (currentIndex + 1) % totalImages;
+				showImage(currentIndex);
+			}
+
+			function startSlider() {
+				if (totalImages &lt;= 1) return;
+				stopSlider();
+				bannerContainer.classList.remove('paused');
+				showImage(currentIndex);
+
+				intervalId = setInterval(nextImage, 3000);
+			}
+
+			function stopSlider() {
+				clearInterval(intervalId);
+				bannerContainer.classList.add('paused');
+			}
+
+			bannerContainer.addEventListener('mouseenter', stopSlider);
+			bannerContainer.addEventListener('mouseleave', startSlider);
+
+			bannerContainer.addEventListener('click', () =&gt; {
+				const purl = allProducts[currentIndex].purl;
+				if (purl) {
+					window.open(purl);
+				}
+			});
+
+			showImage(currentIndex);
+
+			startSlider();
+		})();
+	&lt;/script&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">728 x 90</div>
+				<div class="result">검사 중…</div>
+				<iframe width="728" height="90" scrolling="no" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ko&quot;&gt;
+
+&lt;head&gt;
+	&lt;meta charset=&quot;UTF-8&quot;&gt;
+	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+	&lt;title&gt;구글RTB 배너&lt;/title&gt;
+	&lt;link rel=&quot;preconnect&quot; href=&quot;https://cdn.jsdelivr.net&quot; crossorigin&gt;
+	&lt;link rel=&quot;stylesheet&quot;
+		href=&quot;https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css&quot;&gt;
+	&lt;script&gt;
+		window.__mobonProducts = [{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp&quot;,pnm:&quot;테스트 상품 1&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p1&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/34d5572c55d7962dc09e3688c031d90e.jpg&quot;,pnm:&quot;테스트 상품 2&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p2&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/228785c2d74d7238046842d7afaab05b.webp&quot;,pnm:&quot;테스트 상품 3&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p3&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg&quot;,pnm:&quot;테스트 상품 4&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p4&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/aa8ad2b571d71bdea25f33dc4aeb46e7.webp&quot;,pnm:&quot;테스트 상품 5&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p5&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;},{img:&quot;https://cafe24img.poxo.com/dabainsang/web/product/small/202607/587c0c1f483d9cbe2a9e89ef5a772fff.webp&quot;,pnm:&quot;테스트 상품 6&quot;,price:&quot;49,900&quot;,prdt_prmct:&quot;39,900&quot;,dc_rate:&quot;20&quot;,pcode:&quot;p6&quot;,purl:&quot;javascript:void(0)&quot;,advrtsReplcCode:&quot;01&quot;,advrtsReplcNm:&quot;&quot;}];
+		window.__mobonPreload = (() =&gt; {
+			try {
+				const first = window.__mobonProducts[0];
+				if (!first || !first.img) return;
+				const link = document.createElement('link');
+				link.rel = 'preload';
+				link.as = 'image';
+				link.href = first.img;
+				link.fetchPriority = 'high';
+				document.head.appendChild(link);
+			} catch (e) {}
+		})();
+	&lt;/script&gt;
+	&lt;style&gt;
+		:root {
+			--width: 728px;
+			--height: 90px;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: &quot;pretendard&quot;, -apple-system, BlinkMacSystemFont, &quot;Malgun Gothic&quot;, sans-serif;
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			display: flex;
+			width: 100%;
+			height: 100%;
+			background-color: #fff;
+			color: #222;
+			cursor: pointer;
+		}
+
+		.bg {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			flex-shrink: 0;
+			gap: 6px;
+			width: 238px;
+			height: 100%;
+			padding: 8px 12px;
+			overflow: hidden;
+		}
+
+		.brand_wrap {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			line-height: 1;
+		}
+
+		.brand_avatar {
+			display: block;
+			flex-shrink: 0;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			object-fit: cover;
+			object-position: center top;
+			background-color: #eee;
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+		}
+
+		.brand_name {
+			flex: 1;
+			min-width: 0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-size: 13px;
+			font-weight: 700;
+			line-height: 20px;
+			letter-spacing: -0.3px;
+			color: #222;
+		}
+
+		.pnm {
+			font-size: 13px;
+			font-weight: 500;
+			line-height: 1.4;
+			letter-spacing: -0.3px;
+			color: #222;
+			word-break: keep-all;
+			overflow-wrap: break-word;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+
+		.pnm .more {
+			font-weight: 400;
+			color: #8a8a8a;
+			text-decoration: underline;
+			text-decoration-color: transparent;
+			text-underline-offset: 2px;
+			transition: text-decoration-color 0.2s ease, color 0.2s ease;
+		}
+
+		.pnm .more:hover {
+			color: #555;
+			text-decoration-color: currentColor;
+		}
+
+		.pnm .tags {
+			vertical-align: middle;
+			line-height: 1.5;
+			margin-right: 2px;
+			font-size: 11px;
+			letter-spacing: -0.2px;
+			font-weight: 500;
+			color: #2f5d9e;
+		}
+
+		.mobon_banner_wrap {
+			position: relative;
+			flex: 1;
+			min-width: 0;
+			padding: 5px 5px 5px 0;
+			overflow: hidden;
+		}
+
+		.mobon_banner_wrap::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			width: 36px;
+			background: linear-gradient(to right, rgba(255, 255, 255, 0), #fff);
+			pointer-events: none;
+			z-index: 1;
+		}
+
+		.track {
+			display: flex;
+			height: 100%;
+			gap: 4px;
+			will-change: transform;
+		}
+
+		.thumb {
+			position: relative;
+			flex: 0 0 85px;
+			border-radius: 8px;
+			overflow: hidden;
+			background-color: #f2f2f2;
+			cursor: pointer;
+		}
+
+		.img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+			transition: transform 0.4s ease;
+		}
+
+		.thumb:hover .img {
+			transform: scale(1.05);
+		}
+
+		.fallback_banner {
+			display: none;
+			position: relative;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		.fallback_link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.fallback_banner img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			background-position: center center;
+		}
+	&lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+	&lt;div class=&quot;mobon_reset&quot; id=&quot;noHiddenMobon&quot;&gt;
+		&lt;div class=&quot;mobonLogo&quot; onclick=&quot;window.open('https://img.mobon.net/ad/linfo.php')&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;mobon_banner&quot;&gt;
+
+			&lt;div class=&quot;bg&quot;&gt;
+				&lt;div class=&quot;brand_wrap&quot;&gt;
+					&lt;img class=&quot;brand_avatar&quot; src=&quot;&quot; alt=&quot;&quot; onload=&quot;this.style.visibility=''&quot; onerror=&quot;this.style.visibility='hidden'&quot;&gt;
+					&lt;span class=&quot;brand_name&quot;&gt;다바걸&lt;/span&gt;
+				&lt;/div&gt;
+				&lt;p class=&quot;pnm&quot;&gt;&lt;span class=&quot;tags&quot;&gt;#입소문&lt;/span&gt; 솔직히 나만 알고 싶어서 안 올리려다가 공개하는데요.. &lt;span class=&quot;more&quot;&gt;더보기&lt;/span&gt;&lt;/p&gt;
+			&lt;/div&gt;
+
+			&lt;div class=&quot;mobon_banner_wrap&quot;&gt;
+
+			&lt;/div&gt;
+
+		&lt;/div&gt;
+	&lt;/div&gt;
+
+	
+
+	&lt;div class=&quot;fallback_banner&quot; id=&quot;hiddenMobon&quot;&gt;
+		&lt;div class=&quot;mobonLogo&quot; onclick=&quot;window.open('https://img.mobon.net/ad/linfo.php')&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;fallback_link&quot; onclick=&quot;window.open('https://mobon.net/bridge/')&quot;&gt;
+			&lt;img src=&quot;https://img.mobon.net/servlet/image/mobon/728x90.png&quot; alt=&quot;대체배너&quot;&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+
+	&lt;script&gt;
+		(() =&gt; {
+			const frameWidth = 728;
+			const frameHeight = 90;
+			const mainBanner = document.getElementById('noHiddenMobon');
+			const fallbackBanner = document.getElementById('hiddenMobon');
+
+			const captions = [
+				&quot;솔직히 나만 알고 싶어서 안 올리려다가 공개하는데요..&quot;,
+				&quot;다들 어디서 샀냐고 연락 오길래 그냥 여기 남겨둘게요..&quot;,
+				&quot;사진 한 장 올렸을 뿐인데 반응 터져서 당황함..&quot;,
+				&quot;진짜 나만 아껴두고 이용하려 했던 곳인데..&quot;,
+				&quot;소문나면 사람 많아질까 봐 숨겨뒀다가 공유함..&quot;,
+				&quot;나만 알고 있기엔 너무 아까워서 큰맘 먹고 올림..&quot;,
+				&quot;요즘 주변 사람들한테 입에 침이 마르게 추천하는 중..&quot;,
+				&quot;단언컨대 올해 돈 쓰고 제일 만족스러웠던 순간..&quot;,
+				&quot;지인이 슬쩍 와서 어디서 구매했냐고 물어보는데..&quot;,
+				&quot;SNS에서 후기 좋길래 반신반의했는데 생각보다 더 좋음..&quot;
+			];
+			const pnmEl = document.querySelector(&quot;.pnm&quot;);
+			const captionText = captions[Math.floor(Math.random() * captions.length)].replace(/\.+$/, &quot;&quot;);
+			const captionEl = document.createElement(&quot;span&quot;);
+			if (pnmEl) {
+				const moreEl = pnmEl.querySelector(&quot;.more&quot;);
+				const tagEl = pnmEl.querySelector(&quot;.tags&quot;);
+				pnmEl.textContent = &quot;&quot;;
+				if (tagEl) pnmEl.append(tagEl, &quot; &quot;);
+				pnmEl.append(captionEl, &quot; &quot;);
+				if (moreEl) pnmEl.append(moreEl);
+			}
+			const fitCaption = () =&gt; {
+				if (!pnmEl) return;
+				let t = captionText;
+				captionEl.textContent = t + &quot;..&quot;;
+				while (pnmEl.scrollHeight &gt; pnmEl.clientHeight + 1 &amp;&amp; t.length &gt; 1) {
+					t = t.slice(0, -1).trimEnd();
+					captionEl.textContent = t + &quot;..&quot;;
+				}
+			};
+
+			const hashtags = [&quot;#입소문&quot;, &quot;#SNS에서난리&quot;, &quot;#요즘유행&quot;, &quot;#요즘이게대세&quot;, &quot;#득템찬스&quot;, &quot;#심장어택&quot;, &quot;#SNS화제&quot;, &quot;#럭키비키&quot;, &quot;#지금구매찬스&quot;, &quot;#품절주의&quot;];
+			const tagsEl = document.querySelector(&quot;.tags&quot;);
+			if (tagsEl) {
+				const pool = hashtags.slice();
+				const picked = [];
+				while (picked.length &lt; 1 &amp;&amp; pool.length) {
+					picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+				}
+				tagsEl.textContent = picked.join(&quot; &quot;);
+			}
+			fitCaption();
+			if (document.fonts &amp;&amp; document.fonts.ready) document.fonts.ready.then(fitCaption);
+			const mobonBannerWrap = document.querySelector('.mobon_banner_wrap');
+			const mobonBanner = document.querySelector('.mobon_banner');
+			const avatarEl = document.querySelector('.brand_avatar');
+
+			const allProducts = window.__mobonProducts;
+
+			if (allProducts.length &gt; 6) allProducts.length = 6;
+
+			mobonBannerWrap.innerHTML = '&lt;div class=&quot;track&quot;&gt;&lt;/div&gt;';
+			const track = mobonBannerWrap.querySelector('.track');
+			track.innerHTML = allProducts.map((item, index) =&gt; {
+				return `&lt;div class=&quot;thumb&quot; data-index=&quot;${index}&quot;&gt;
+							&lt;img class=&quot;img&quot; src=&quot;${item.img}&quot; data-pcode=&quot;${item.pcode}&quot; alt=&quot;${item.pnm}&quot; fetchpriority=&quot;${index === 0 ? 'high' : 'low'}&quot; decoding=&quot;async&quot;&gt;
+						&lt;/div&gt;`;
+			}).join('');
+
+			if (allProducts.length &gt; 1) track.innerHTML += track.innerHTML;
+
+			const handleImageErrors = () =&gt; {
+				const allBannerImages = document.querySelectorAll('.img');
+				let isFallbackTriggered = false;
+				const handleImageError = (event) =&gt; {
+					if (isFallbackTriggered) return;
+					isFallbackTriggered = true;
+					const pcode = event.target.dataset.pcode || '';
+					if (mainBanner) mainBanner.style.display = 'none';
+					if (fallbackBanner) {
+						fallbackBanner.style.display = 'block';
+						fallbackBanner.style.width = `${frameWidth}px`;
+						fallbackBanner.style.height = `${frameHeight}px`;
+					}
+					const errorUrl =
+						`https://img.mobon.net/rtbShop?uid=${encodeURIComponent(&quot;&quot;)}&amp;u=&amp;pc=${pcode}&amp;itlTpCode=`;
+					(new Image()).src = errorUrl;
+				};
+				allBannerImages.forEach(img =&gt; {
+					if (img.getAttribute('src') &amp;&amp; img.complete &amp;&amp; img.naturalHeight === 0) {
+						handleImageError({
+							target: img
+						});
+					} else {
+						img.addEventListener('error', handleImageError);
+					}
+				});
+			};
+			handleImageErrors();
+
+			const thumbs = document.querySelectorAll('.mobon_banner_wrap .thumb');
+
+			let currentIndex = 0;
+			const totalImages = allProducts.length;
+			let intervalId;
+
+			const STEP = 89;
+			let moving = false;
+
+			function showThumb() {}
+
+			function setAvatar() {
+				const first = track.firstElementChild;
+				const i = first ? parseInt(first.getAttribute('data-index')) : 0;
+				if (avatarEl &amp;&amp; allProducts[i]) avatarEl.src = allProducts[i].img;
+			}
+
+			function nextThumb() {
+				if (moving) return;
+				moving = true;
+				track.style.transition = 'transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1)';
+				track.style.transform = `translateX(-${STEP}px)`;
+				track.addEventListener('transitionend', () =&gt; {
+					track.style.transition = 'none';
+					track.appendChild(track.firstElementChild);
+					setAvatar();
+					track.style.transform = 'translateX(0)';
+					void track.offsetWidth;
+					moving = false;
+				}, { once: true });
+			}
+
+			function startSlider() {
+				if (totalImages &lt;= 1) return;
+				stopSlider();
+
+				intervalId = setInterval(nextThumb, 1800);
+			}
+
+			function stopSlider() {
+				clearInterval(intervalId);
+			}
+
+			mobonBanner.addEventListener('mouseenter', stopSlider);
+			mobonBanner.addEventListener('mouseleave', startSlider);
+
+			thumbs.forEach(thumb =&gt; {
+				thumb.addEventListener('click', (e) =&gt; {
+					e.stopPropagation();
+					const index = parseInt(thumb.getAttribute('data-index'));
+					const purl = allProducts[index].purl;
+					if (purl) {
+						window.open(purl);
+					}
+				});
+			});
+
+			mobonBanner.addEventListener('click', () =&gt; {
+				const purl = allProducts[0].purl;
+				if (purl) {
+					window.open(purl);
+				}
+			});
+
+			setAvatar();
+			startSlider();
+		})();
+	&lt;/script&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;"></iframe>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		setTimeout(() => {
+			let pass = 0, fail = 0;
+			document.querySelectorAll('.banner-container').forEach(item => {
+				const iframe = item.querySelector('iframe');
+				const box = item.querySelector('.result');
+				const msgs = [];
+				const info = [];
+				try {
+					const d = iframe.contentDocument;
+					const main = d.getElementById('noHiddenMobon');
+					const fb = d.getElementById('hiddenMobon');
+					const imgs = [...d.querySelectorAll('.img')];
+
+					if (!main || main.style.display === 'none') msgs.push('본 배너 숨김');
+					if (fb && fb.style.display === 'block') msgs.push('대체 배너로 전환됨');
+					if (!imgs.length) msgs.push('상품 이미지 없음');
+					const noSrc = imgs.filter(i => !i.getAttribute('src'));
+					if (noSrc.length) msgs.push(noSrc.length + '장 src 미할당');
+					const broken = imgs.filter(i => i.complete && i.naturalHeight === 0);
+					if (broken.length) msgs.push(broken.length + '장 로드 실패');
+					const pnm = d.querySelector('.pnm');
+					if (pnm && !pnm.textContent.trim()) msgs.push('캡션 비어있음');
+					const tags = d.querySelector('.tags');
+					if (tags && !tags.textContent.trim()) msgs.push('해시태그 비어있음');
+					const avatar = d.querySelector('.brand_avatar');
+					if (avatar && !avatar.getAttribute('src')) msgs.push('프로필 이미지 미할당');
+					info.push('이미지 ' + imgs.length + '장');
+				} catch (e) {
+					msgs.push('검사 실패: ' + e.message);
+				}
+				const bad = msgs.length > 0;
+				box.className = 'result ' + (bad ? 'fail' : 'pass');
+				box.textContent = (bad ? '문제: ' + msgs.join(', ') + ' / ' : '정상 · ') + info.join(', ');
+				bad ? fail++ : pass++;
+			});
+			const s = document.getElementById('summary');
+			s.textContent = '통과 ' + pass + ' / 문제 ' + fail;
+			s.className = fail ? 'fail' : 'pass';
+		}, 4000);
+	</script>
+</body>
+
+</html>
