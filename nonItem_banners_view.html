@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>NonItem Banners Preview</title>
+	<style>
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: "pretendard";
+			background-color: #f4f5f7;
+			padding: 50px;
+		}
+
+		.control-panel {
+			position: sticky;
+			top: 0;
+			background: rgba(255, 255, 255, 0.75);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			padding: 16px 40px;
+			margin: -50px -50px 40px -50px;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+			z-index: 100;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.control-panel h1 {
+			font-size: 22px;
+			font-weight: 800;
+			color: #1a1a1a;
+			letter-spacing: -0.5px;
+		}
+
+		.control-panel p {
+			font-size: 13px;
+			color: #666;
+		}
+
+		.nav {
+			display: flex;
+			gap: 8px;
+		}
+
+		.nav a {
+			font-size: 13px;
+			font-weight: 600;
+			color: #444;
+			text-decoration: none;
+			background: #fff;
+			border: 1px solid #e0e0e0;
+			border-radius: 999px;
+			padding: 6px 14px;
+		}
+
+		.nav a:hover {
+			background: #1a1a1a;
+			color: #fff;
+			border-color: #1a1a1a;
+		}
+
+		.section {
+			margin-bottom: 60px;
+			scroll-margin-top: 115px;
+		}
+
+		.section-title {
+			font-size: 20px;
+			font-weight: 800;
+			color: #1a1a1a;
+			margin-bottom: 30px;
+			padding-bottom: 12px;
+			border-bottom: 1px solid #e0e0e0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.group-title {
+			font-size: 16px;
+			font-weight: 700;
+			color: #495057;
+			margin: 70px 0 30px;
+			padding-left: 10px;
+			border-left: 4px solid #1a1a1a;
+			line-height: 1.2;
+		}
+
+		.tooltip-wrap {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.tooltip-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: #e0e0e0;
+			color: #666;
+			font-size: 14px;
+			font-weight: bold;
+		}
+
+		.tooltip-wrap:hover .tooltip-icon {
+			background-color: #666;
+			color: #fff;
+		}
+
+		.tooltip-content {
+			display: none;
+			position: absolute;
+			left: 100%;
+			top: 50%;
+			transform: translateY(-50%);
+			margin-left: 10px;
+			background-color: #333;
+			color: #fff;
+			padding: 8px 12px;
+			border-radius: 6px;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 1.7;
+			white-space: nowrap;
+			z-index: 10;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.tooltip-content::before {
+			content: '';
+			position: absolute;
+			right: 100%;
+			top: 50%;
+			transform: translateY(-50%);
+			border-width: 5px;
+			border-style: solid;
+			border-color: transparent #333 transparent transparent;
+		}
+
+		.tooltip-wrap:hover .tooltip-content {
+			display: block;
+		}
+
+		/* 사이즈별로 가로 나열 */
+		.banner-grid {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 40px;
+			align-items: flex-start;
+			margin-bottom: 20px;
+		}
+
+		.banner-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background: #ffffff;
+			padding: 30px;
+			border-radius: 16px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+			transition: transform 0.2s ease;
+		}
+
+		.banner-container:hover {
+			transform: translateY(-5px);
+		}
+
+		.banner-title {
+			font-size: 18px;
+			font-weight: 700;
+			margin-bottom: 20px;
+			color: #1a1a1a;
+			letter-spacing: -0.5px;
+		}
+
+		iframe {
+			box-sizing: content-box;
+			display: block;
+			border: 1px solid #e6e6e6;
+			background-color: #fff;
+		}
+
+		@media (max-width: 600px) {
+			body {
+				padding: 20px 10px;
+			}
+
+			.control-panel {
+				margin: -20px -10px 30px -10px;
+				padding: 12px 16px;
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 6px;
+			}
+
+			.banner-container {
+				width: 100%;
+				max-width: 100%;
+				padding: 30px 0;
+			}
+
+			.banner-title {
+				font-size: 14px;
+				margin-bottom: 15px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="control-panel">
+		<div>
+			<h1>NonItem auto</h1>
+			<p style="margin-top: 10px;">상품 정보 없이 광고주 이미지 1장만 노출되는 비상품 오토 배너 · A/B 테스트 3타입 (A 기존 · B glow · C flip</p>
+		</div>
+		<div class="nav"><a href="#section-basic">A. 기존</a><a href="#section-glow">B. glow</a><a href="#section-flip">C.
+				flip</a></div>
+	</div>
+
+	<div class="section" id="section-basic">
+		<h2 class="section-title">
+			A. 기존
+			<div class="tooltip-wrap">
+				<span class="tooltip-icon">?</span>
+				<div class="tooltip-content">- 광고주 이미지 1장을 비율 그대로 넣기만 한 현재 버전입니다.<br>- 슬롯 비율과 다르면 흰 여백이 남고 움직임이 없습니다.
+				</div>
+			</div>
+		</h2>
+
+		<h3 class="group-title">정방형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">여백 없는 경우</div>
+				<iframe src="nonItem/ui/openRtbBanner_nonitem_basic_ui.html" width="300" height="250"
+					scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">여백이 있는 경우</div>
+				<iframe src="nonItem/ui/openRtbBanner_nonitem_basic_ui.html" width="250" height="250"
+					scrolling="no"></iframe>
+			</div>
+		</div>
+	</div>
+
+	<div class="section" id="section-glow">
+		<h2 class="section-title">
+			B. glow
+			<div class="tooltip-wrap">
+				<span class="tooltip-icon">?</span>
+				<div class="tooltip-content">- 이미지는 잘리지 않게 그대로, 흰 여백은 같은 이미지를 흐리게 키운 배경으로 채웁니다.<br>- 이미지가 튀어나오며 등장하고,
+					테두리를 따라 빛이 돌며 작은 반짝이가 번갈아 뜹니다.<br>- 파일 1개로 전 사이즈 대응합니다.</div>
+			</div>
+		</h2>
+
+		<h3 class="group-title">정방형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">여백 없는 경우</div>
+				<iframe src="nonItem/ui/openRtbBanner_nonitem_glow_ui.html" width="300" height="250"
+					scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">여백이 있는 경우</div>
+				<iframe src="nonItem/ui/openRtbBanner_nonitem_glow_ui.html" width="250" height="250"
+					scrolling="no"></iframe>
+			</div>
+		</div>
+	</div>
+
+	<div class="section" id="section-flip">
+		<h2 class="section-title">
+			C. flip
+			<div class="tooltip-wrap">
+				<span class="tooltip-icon">?</span>
+				<div class="tooltip-content">- 배경 처리는 B와 같습니다.<br>- 이미지 4초 노출 후 6조각이 엇갈려 뒤집히며 "지금 구매 찬스" 버튼 1.2초 노출 (7초
+					주기 반복)<br>- 파일 1개로 전 사이즈 대응합니다.</div>
+			</div>
+		</h2>
+
+		<h3 class="group-title">정방형</h3>
+		<div class="banner-grid">
+			<div class="banner-container">
+				<div class="banner-title">여백 없는 경우</div>
+				<iframe src="nonItem/ui/openRtbBanner_nonitem_flip_ui.html" width="300" height="250"
+					scrolling="no"></iframe>
+			</div>
+			<div class="banner-container">
+				<div class="banner-title">여백이 있는 경우</div>
+				<iframe src="nonItem/ui/openRtbBanner_nonitem_flip_ui.html" width="250" height="250"
+					scrolling="no"></iframe>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

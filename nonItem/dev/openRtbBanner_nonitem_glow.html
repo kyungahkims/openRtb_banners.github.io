@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글RTB 배너</title>
+	<style>
+		/* 1. 배너 & 이미지 규격 */
+		:root {
+			--width: 100%;
+			--height: 100%;
+		}
+
+		/* 2. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			cursor: pointer;
+			background: #222;
+		}
+
+		.bgfill {
+			position: absolute;
+			inset: -20px;
+			width: calc(100% + 40px);
+			height: calc(100% + 40px);
+			object-fit: cover;
+			filter: blur(18px) brightness(0.85) saturate(1.2);
+		}
+
+		.frame {
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.img {
+			display: block;
+			max-width: 100vw;
+			max-height: 100vh;
+			object-fit: contain;
+		}
+
+		@property --ang {
+			syntax: '<angle>';
+			inherits: false;
+			initial-value: 0deg;
+		}
+
+		.pic {
+			position: relative;
+			line-height: 0;
+			animation: popIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+		}
+
+		.pic::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			z-index: 2;
+			border: 1px solid rgba(255, 255, 255, 0.18);
+			pointer-events: none;
+		}
+
+		@keyframes popIn {
+			from {
+				opacity: 0;
+				transform: scale(0.6) translateY(8%);
+			}
+
+			to {
+				opacity: 1;
+				transform: none;
+			}
+		}
+
+		.ringwrap {
+			position: absolute;
+			inset: 0;
+			z-index: 3;
+			pointer-events: none;
+			filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 5px rgba(255, 236, 206, 0.6));
+			animation: ringIn 0.5s ease 0.8s both;
+		}
+
+		.ring {
+			position: absolute;
+			inset: 0;
+			padding: clamp(1.5px, 0.8vmin, 2.5px);
+			background: conic-gradient(from var(--ang), transparent 0deg 250deg, rgba(255, 236, 206, 0.6) 320deg, #fff 352deg, transparent 360deg);
+			-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+			-webkit-mask-composite: xor;
+			mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+			animation: ring 4s linear 0.8s infinite;
+		}
+
+		@keyframes ringIn {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+		@keyframes ring {
+			to {
+				--ang: 360deg;
+			}
+		}
+
+		.spark {
+			position: absolute;
+			z-index: 4;
+			width: var(--s);
+			height: var(--s);
+			pointer-events: none;
+			opacity: 0;
+			animation: fade var(--t) cubic-bezier(0.4, 0, 0.2, 1) var(--d) infinite;
+		}
+
+		.spark.s1 {
+			left: 88%;
+			top: 82%;
+			--s: clamp(8px, 9vmin, 32px);
+			--t: 3.8s;
+			--d: 2.8s;
+		}
+
+		.spark.s2 {
+			left: 10%;
+			top: 12%;
+			--s: clamp(7px, 7.5vmin, 27px);
+			--t: 4.4s;
+			--d: 1.3s;
+		}
+
+		.spark.s3 {
+			left: 84%;
+			top: 22%;
+			--s: clamp(5px, 5vmin, 18px);
+			--t: 3.4s;
+			--d: 4.6s;
+		}
+
+		.spark.s4 {
+			left: 16%;
+			top: 78%;
+			--s: clamp(6px, 6.5vmin, 23px);
+			--t: 4.1s;
+			--d: 0.6s;
+		}
+
+		.spark.s5 {
+			left: 52%;
+			top: 8%;
+			--s: clamp(5px, 4.5vmin, 16px);
+			--t: 3.6s;
+			--d: 3.5s;
+		}
+
+		.spark.s6 {
+			left: 70%;
+			top: 90%;
+			--s: clamp(5px, 4vmin, 14px);
+			--t: 4.7s;
+			--d: 2.1s;
+		}
+
+		.spark.s7 {
+			left: 94%;
+			top: 52%;
+			--s: clamp(5px, 5.5vmin, 20px);
+			--t: 3.9s;
+			--d: 1.9s;
+		}
+
+		.spark.s8 {
+			left: 6%;
+			top: 48%;
+			--s: clamp(5px, 4.5vmin, 16px);
+			--t: 4.3s;
+			--d: 3.1s;
+		}
+
+		.spark.s9 {
+			left: 36%;
+			top: 92%;
+			--s: clamp(5px, 5vmin, 18px);
+			--t: 3.7s;
+			--d: 0.2s;
+		}
+
+		.spark.s10 {
+			left: 62%;
+			top: 14%;
+			--s: clamp(5px, 4vmin, 14px);
+			--t: 4.6s;
+			--d: 2.5s;
+		}
+
+		.spark.s11 {
+			left: 28%;
+			top: 24%;
+			--s: clamp(5px, 4vmin, 14px);
+			--t: 3.5s;
+			--d: 1s;
+		}
+
+		.spark.s12 {
+			left: 76%;
+			top: 66%;
+			--s: clamp(5px, 5.5vmin, 20px);
+			--t: 4s;
+			--d: 3.9s;
+		}
+
+		.spark svg {
+			display: block;
+			width: 100%;
+			height: 100%;
+			filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 1)) drop-shadow(0 0 6px rgba(255, 236, 206, 0.85));
+			animation: slowspin var(--t) ease-in-out var(--d) infinite;
+		}
+
+		@keyframes fade {
+			0%, 10% {
+				opacity: 0;
+				transform: translate(-50%, -50%) scale(0.3);
+			}
+
+			26% {
+				opacity: 1;
+				transform: translate(-50%, -50%) scale(1);
+			}
+
+			50% {
+				opacity: 0.9;
+				transform: translate(-50%, -50%) scale(0.92);
+			}
+
+			72%, 100% {
+				opacity: 0;
+				transform: translate(-50%, -50%) scale(0.3);
+			}
+		}
+
+		@keyframes slowspin {
+			0%, 18% {
+				transform: rotate(-12deg);
+			}
+
+			60%, 100% {
+				transform: rotate(14deg);
+			}
+		}
+
+		/* 5. 대체 배너 */
+		.fallback_banner {
+			display: none;
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			overflow: hidden;
+		}
+
+		.fallback_link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.fallback_banner img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset" id="noHiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="mobon_banner" onclick="window.open('{{purl}}')">
+			<img class="bgfill" src="{{img}}" alt="" aria-hidden="true">
+			<div class="frame">
+				<div class="pic">
+					<img class="img" src="{{img}}" alt="배너 이미지">
+					<span class="ringwrap"><span class="ring"></span></span>
+					<span class="spark s1"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s2"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s3"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s4"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s5"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s6"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s7"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s8"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s9"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s10"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s11"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+					<span class="spark s12"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="gl_v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="gl_h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect x="11.7" y="0" width="0.6" height="24" fill="url(#gl_v)"/><rect x="0" y="11.7" width="24" height="0.6" fill="url(#gl_h)"/><circle cx="12" cy="12" r="1.6" fill="#f6e3c4" opacity="0.9"/><circle cx="12" cy="12" r="0.7" fill="#fff"/></svg></span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 노출 추적 태그 -->
+	{{wp_imgtag}}
+
+	<!-- 대체 배너 영역 -->
+	<div class="fallback_banner" id="hiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="fallback_link" onclick="window.open('https://mobon.net/bridge/')">
+			<img src="{{HTTP}}/servlet/image/mobon/336x280.png" alt="대체배너">
+		</div>
+	</div>
+
+	<!-- 이미지 에러 감지 -->
+	<script>
+		(() => {
+			const mainBanner = document.getElementById('noHiddenMobon');
+			const fallbackBanner = document.getElementById('hiddenMobon');
+			const images = document.querySelectorAll('.img');
+
+			let isFallbackTriggered = false;
+
+			const handleImageError = (event) => {
+				if (isFallbackTriggered) return;
+				isFallbackTriggered = true;
+
+				const pcode = event.target.dataset.pcode || '';
+
+				if (mainBanner) mainBanner.style.display = 'none';
+				if (fallbackBanner) fallbackBanner.style.display = 'block';
+
+				const errorUrl =
+					`{{HTTP_DR}}/rtbShop?uid=${encodeURIComponent("{{UUID}}")}&u={{USER}}&pc=${pcode}&itlTpCode={{ITL_TP_CODE}}`;
+				(new Image()).src = errorUrl;
+			};
+
+			images.forEach(img => {
+				if (img.complete && img.naturalHeight === 0) {
+					handleImageError({
+						target: img
+					});
+				} else {
+					img.addEventListener('error', handleImageError);
+				}
+			});
+		})();
+	</script>
+</body>
+
+</html>

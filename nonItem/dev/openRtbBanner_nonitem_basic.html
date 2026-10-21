@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글RTB 배너</title>
+	<style>
+		/* 1. 배너 & 이미지 규격 */
+		:root {
+			--width: 100%;
+			--height: 100%;
+		}
+
+		/* 2. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			object-position: center;
+		}
+
+		/* 5. 대체 배너 */
+		.fallback_banner {
+			display: none;
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			overflow: hidden;
+		}
+
+		.fallback_link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.fallback_banner img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset" id="noHiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="mobon_banner" onclick="window.open('{{purl}}')">
+			<img class="img" src="{{img}}" alt="배너 이미지">
+		</div>
+	</div>
+
+	<!-- 노출 추적 태그 -->
+	{{wp_imgtag}}
+
+	<!-- 대체 배너 영역 -->
+	<div class="fallback_banner" id="hiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="fallback_link" onclick="window.open('https://mobon.net/bridge/')">
+			<img src="{{HTTP}}/servlet/image/mobon/336x280.png" alt="대체배너">
+		</div>
+	</div>
+
+	<!-- 이미지 에러 감지 -->
+	<script>
+		(() => {
+			const mainBanner = document.getElementById('noHiddenMobon');
+			const fallbackBanner = document.getElementById('hiddenMobon');
+			const images = document.querySelectorAll('.img');
+
+			let isFallbackTriggered = false;
+
+			const handleImageError = (event) => {
+				if (isFallbackTriggered) return;
+				isFallbackTriggered = true;
+
+				const pcode = event.target.dataset.pcode || '';
+
+				if (mainBanner) mainBanner.style.display = 'none';
+				if (fallbackBanner) fallbackBanner.style.display = 'block';
+
+				const errorUrl =
+					`{{HTTP_DR}}/rtbShop?uid=${encodeURIComponent("{{UUID}}")}&u={{USER}}&pc=${pcode}&itlTpCode={{ITL_TP_CODE}}`;
+				(new Image()).src = errorUrl;
+			};
+
+			images.forEach(img => {
+				if (img.complete && img.naturalHeight === 0) {
+					handleImageError({
+						target: img
+					});
+				} else {
+					img.addEventListener('error', handleImageError);
+				}
+			});
+		})();
+	</script>
+</body>
+
+</html>
