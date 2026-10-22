@@ -224,6 +224,56 @@
 				margin-bottom: 15px;
 			}
 		}
+
+		/* 전체 사이즈 테스트 */
+		.adv-picker {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-top: 10px;
+			font-size: 13px;
+			color: #666;
+		}
+
+		.adv-picker button {
+			font: inherit;
+			font-weight: 600;
+			color: #444;
+			background: #fff;
+			border: 1px solid #e0e0e0;
+			border-radius: 999px;
+			padding: 4px 12px;
+			cursor: pointer;
+		}
+
+		.adv-picker button.on {
+			background: #1a1a1a;
+			color: #fff;
+			border-color: #1a1a1a;
+		}
+
+		.size-test {
+			gap: 20px;
+		}
+
+		.size-test .banner-container {
+			padding: 16px;
+			border-radius: 12px;
+		}
+
+		.size-test .banner-title {
+			font-size: 13px;
+			margin-bottom: 10px;
+		}
+
+		.size-test .banner-title small {
+			display: block;
+			margin-top: 2px;
+			font-size: 11px;
+			font-weight: 500;
+			color: #999;
+			text-align: center;
+		}
 	</style>
 </head>
 
@@ -231,7 +281,8 @@
 	<div class="control-panel">
 		<div>
 			<h1>NonItem auto</h1>
-			<p style="margin-top: 10px;">상품 정보 없이 광고주 이미지 1장만 노출되는 비상품 오토 배너 · A/B 테스트 3타입 (A 기존 · B glow · C flip</p>
+			<p style="margin-top: 10px;">상품 정보 없이 광고주 이미지 1장만 노출되는 비상품 오토 배너 · A/B 테스트 3타입 (A 기존 · B glow · C flip)</p>
+			<div class="adv-picker" id="adv-picker">전체 사이즈 테스트 광고주 :</div>
 		</div>
 		<div class="nav"><a href="#section-basic">A. 기존</a><a href="#section-glow">B. glow</a><a href="#section-flip">C.
 				flip</a></div>
@@ -260,6 +311,10 @@
 					scrolling="no"></iframe>
 			</div>
 		</div>
+
+		<h3 class="group-title">전체 사이즈 테스트 <small style="font-weight:500;color:#999">iauto 요청 사이즈 37개 · 9/22~10/20 노출 많은
+				순 · iauto 합계 노출의 95.7% (rtb_google_frame_stats.xlsx 기준)</small></h3>
+		<div class="banner-grid size-test" data-file="nonItem/ui/openRtbBanner_nonitem_basic_ui.html"></div>
 	</div>
 
 	<div class="section" id="section-glow">
@@ -285,6 +340,10 @@
 					scrolling="no"></iframe>
 			</div>
 		</div>
+
+		<h3 class="group-title">전체 사이즈 테스트 <small style="font-weight:500;color:#999">iauto 요청 사이즈 37개 · 9/22~10/20 노출 많은
+				순 · iauto 합계 노출의 95.7% (rtb_google_frame_stats.xlsx 기준)</small></h3>
+		<div class="banner-grid size-test" data-file="nonItem/ui/openRtbBanner_nonitem_glow_ui.html"></div>
 	</div>
 
 	<div class="section" id="section-flip">
@@ -310,7 +369,64 @@
 					scrolling="no"></iframe>
 			</div>
 		</div>
+
+		<h3 class="group-title">전체 사이즈 테스트 <small style="font-weight:500;color:#999">iauto 요청 사이즈 37개 · 9/22~10/20 노출 많은
+				순 · iauto 합계 노출의 95.7% (rtb_google_frame_stats.xlsx 기준)</small></h3>
+		<div class="banner-grid size-test" data-file="nonItem/ui/openRtbBanner_nonitem_flip_ui.html"></div>
 	</div>
+	<script>
+		// 전체 사이즈 테스트 : 광고주 소재 12장 중 슬롯 비율과 가장 가까운 이미지를 골라 ?img= 로 넘김
+		(() => {
+			const ADV = [
+				{ name: '쿠쿠홈시스', dir: '260901_쿠쿠홈시스/260901_쿠쿠홈시스' },
+				{ name: '대한항공', dir: '260907_대한항공_모비온_9월 통합_수정/260907_대한항공_모비온_9월 통합' },
+				{ name: '하나투어', dir: '261021_하나투어_탐나는 방송상품총집합_하나라이브 A/261021_하나투어_탐나는 방송상품총집합_하나라이브 A' },
+			];
+			const FILES = ['1200x600.jpg', '120x600.jpg', '1456x180.jpg', '160x600.jpg', '250x250.jpg', '300x150.jpg', '320x100.jpg', '336x280.jpg', '720x120.jpg', '720x1230.jpg', '800x1500.jpg', '970x250.jpg'];
+			// 320x100 은 광고주마다 파일명 뒤에 배경색이 붙음
+			const COLOR_320 = { '쿠쿠홈시스': '320x100(#000000).jpg', '대한항공': '320x100(#957767).jpg', '하나투어': '320x100(#5c15df).jpg' };
+			// iauto 프레임 요청 사이즈 37개 : rtb_google_frame_stats.xlsx "7b_요청사이즈_auto_iauto_일별" 에서 구분=iauto, 9/22~10/20 집계 (이상치 제외)
+			// 노출 5만 이상 36개 + 요청 사이즈 130x325. iauto 합계 노출의 95.7% 커버. [w, h, 노출]
+			const SIZES = [[320, 50, 4913966], [200, 200, 2523520], [250, 250, 2339801], [728, 90, 2150263], [160, 600, 1419957], [120, 600, 893331], [320, 100, 872151], [300, 250, 805320], [336, 280, 378179], [655, 120, 365749], [300, 100, 308087], [600, 62, 259518], [300, 50, 255220], [300, 600, 231675], [240, 120, 221518], [120, 60, 216831], [176, 62, 198821], [970, 250, 194766], [240, 133, 189126], [468, 60, 188752], [970, 90, 171789], [970, 280, 168031], [584, 60, 161393], [200, 600, 122912], [360, 50, 120485], [1180, 250, 101124], [220, 90, 97984], [384, 50, 94281], [750, 100, 80337], [234, 60, 74727], [320, 150, 73122], [411, 50, 72413], [360, 100, 64781], [930, 280, 64261], [120, 400, 59420], [384, 100, 56977], [130, 325, 11188]]
+				.sort((a, b) => b[2] - a[2])
+				.map(([w, h, imp]) => [w, h, "노출 " + (imp >= 10000 ? Math.round(imp / 10000) + "만" : imp.toLocaleString())]);
+
+			// 슬롯보다 작은 소재는 늘려야 하므로 제외하고, 슬롯 이상 크기 중 여백(비율 차이)이 가장 적은 소재를 고름
+			const pickImage = (adv, w, h) => {
+				const r = Math.log(w / h);
+				const all = FILES.map(f => { const [iw, ih] = f.match(/(\d+)x(\d+)/).slice(1).map(Number); return { f, iw, ih }; });
+				const bigEnough = all.filter(c => c.iw >= w && c.ih >= h);
+				let best = null;
+				for (const c of (bigEnough.length ? bigEnough : all)) {
+					const d = Math.abs(Math.log(c.iw / c.ih) - r);
+					if (!best || d < best.d) best = { f: c.f === '320x100.jpg' ? COLOR_320[adv.name] : c.f, d, label: c.iw + 'x' + c.ih };
+				}
+				const url = new URL(adv.dir.split('/').map(encodeURIComponent).join('/') + '/' + encodeURIComponent(best.f), location.href).href;
+				return { url, label: best.label };
+			};
+
+			const render = adv => {
+				document.querySelectorAll('.size-test').forEach(grid => {
+					grid.innerHTML = SIZES.map(([w, h, tag]) => {
+						const img = pickImage(adv, w, h);
+						return '<div class="banner-container"><div class="banner-title">' + w + ' x ' + h + (tag ? ' · ' + tag : '') + '<small>소재 ' + img.label + '</small></div>'
+							+ '<iframe src="' + grid.dataset.file + '?img=' + encodeURIComponent(img.url) + '" width="' + w + '" height="' + h + '" scrolling="no" loading="lazy"></iframe></div>';
+					}).join('');
+				});
+				document.querySelectorAll('#adv-picker button').forEach(b => b.classList.toggle('on', b.textContent === adv.name));
+			};
+
+			const picker = document.getElementById('adv-picker');
+			ADV.forEach(adv => {
+				const b = document.createElement('button');
+				b.type = 'button';
+				b.textContent = adv.name;
+				b.addEventListener('click', () => render(adv));
+				picker.appendChild(b);
+			});
+			render(ADV[0]);
+		})();
+	</script>
 </body>
 
 </html>

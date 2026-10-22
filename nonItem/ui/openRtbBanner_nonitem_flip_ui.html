@@ -333,6 +333,14 @@
 			<div class="cta"><span class="go">지금 구매 찬스 <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></span></div>
 		</div>
 	</div>
+	<script>
+		// 미리보기 전용 : ?img= 로 광고주 이미지 교체
+		(() => {
+			const src = new URLSearchParams(location.search).get('img');
+			if (!src) return;
+			document.querySelectorAll('.img, .bgfill').forEach(el => el.src = src);
+		})();
+	</script>
 </body>
 
 </html>

@@ -77,6 +77,14 @@
 			<img class="img" src="https://manage.mobon.net/ad/imgfile//20240617185940-tJb4iOIAxf-336x280.jpg" alt="배너이미지">
 		</div>
 	</div>
+	<script>
+		// 미리보기 전용 : ?img= 로 광고주 이미지 교체
+		(() => {
+			const src = new URLSearchParams(location.search).get('img');
+			if (!src) return;
+			document.querySelectorAll('.img, .bgfill').forEach(el => el.src = src);
+		})();
+	</script>
 </body>
 
 </html>
