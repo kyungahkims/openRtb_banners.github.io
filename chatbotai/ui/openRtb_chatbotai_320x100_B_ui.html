@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글RTB 배너 - B 튀어나온 상품</title>
+	<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+	<style>
+		/* 1. 웹 폰트 head 에서 비동기 로드 */
+
+		/* 2. 배너 & 이미지 규격 */
+		:root {
+			--width: 320px;
+			--height: 100px;
+			--theme-cyan: #00E5FF;
+			--theme-purple: #7C4DFF;
+		}
+
+		/* 3. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		/* 4. 해당 사이즈 배너 */
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			background: #fff;
+			cursor: pointer;
+			overflow: hidden;
+		}
+
+		/* 말풍선 : 회전하는 그라데이션 테두리 */
+		@property --bd-angle {
+			syntax: '<angle>';
+			initial-value: 0deg;
+			inherits: false;
+		}
+
+		.bubble {
+			position: absolute;
+			left: 6px;
+			top: 50%;
+			transform: translateY(-50%);
+			display: flex;
+			align-items: center;
+			width: 232px;
+			height: 66px;
+			padding: 4px 6px 4px 8px;
+			border-radius: 34px;
+			background: linear-gradient(#1A1A24, #1A1A24) padding-box,
+				conic-gradient(from var(--bd-angle), #00d2ff, #6c22f5, #ff33cc, #00d2ff) border-box;
+			border: 2.5px solid transparent;
+			box-shadow: 0 4px 14px rgba(108, 34, 245, 0.18), inset 0 0 12px rgba(108, 34, 245, 0.15);
+			animation: bubble-border-spin 4s linear infinite, bubble-in 0.5s ease both;
+			transition: filter 0.3s ease, transform 0.2s ease;
+			z-index: 2;
+		}
+
+		.bubble:hover {
+			filter: brightness(1.1);
+		}
+
+		.bubble:active {
+			transform: translateY(-50%) scale(0.98);
+		}
+
+		@keyframes bubble-border-spin {
+			to {
+				--bd-angle: 360deg;
+			}
+		}
+
+		@keyframes bubble-in {
+			from {
+				opacity: 0;
+				translate: 0 12px;
+			}
+
+			to {
+				opacity: 1;
+				translate: 0 0;
+			}
+		}
+
+		/* 상품 아바타 */
+		.avatar {
+			flex-shrink: 0;
+			width: 52px;
+			height: 52px;
+			margin-right: 4px;
+			padding: 2px;
+			border-radius: 50%;
+			background: linear-gradient(135deg, #00d2ff, #6c22f5);
+		}
+
+		.avatar img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+			object-fit: cover;
+			background: #eee;
+		}
+
+		/* 타이핑 텍스트 */
+		.txt {
+			position: relative;
+			flex: 1;
+			min-width: 0;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			color: #fff;
+			font-size: 12px;
+			font-weight: 700;
+			line-height: 1.45;
+			letter-spacing: -0.6px;
+			white-space: nowrap;
+		}
+
+		.txt b {
+			font-weight: 900;
+			background: linear-gradient(90deg, #b077ff, #00d2ff);
+			-webkit-background-clip: text;
+			background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+		.txt .hidden {
+			visibility: hidden;
+		}
+
+		.typing {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			align-items: center;
+		}
+
+		.sparkle-canvas {
+			vertical-align: middle;
+			width: 14px;
+			height: 12px;
+			margin: -3px 1px 0 0;
+		}
+
+		.cursor-bar {
+			display: inline-block;
+			width: 1.5px;
+			height: 13px;
+			margin-left: 3px;
+			vertical-align: -2px;
+			border-radius: 2px;
+			background-color: var(--theme-cyan);
+			box-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
+		}
+
+		.is-blinking .cursor-bar {
+			animation: caret-blink 0.9s step-end infinite;
+		}
+
+		@keyframes caret-blink {
+
+			from,
+			to {
+				opacity: 0;
+			}
+
+			50% {
+				opacity: 1;
+			}
+		}
+
+		.loading-dots {
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			padding-left: 4px;
+		}
+
+		.loading-dots span {
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			background-color: var(--theme-cyan);
+			animation: dot-wave 1.2s infinite ease-in-out both;
+		}
+
+		.loading-dots span:nth-child(1) {
+			animation-delay: -0.32s;
+		}
+
+		.loading-dots span:nth-child(2) {
+			animation-delay: -0.16s;
+		}
+
+		@keyframes dot-wave {
+
+			0%,
+			80%,
+			100% {
+				transform: translateY(0);
+				opacity: 0.4;
+			}
+
+			40% {
+				transform: translateY(-6px);
+				opacity: 1;
+			}
+		}
+
+		/* AI 오브 : 캔버스 리본 + 펄스 링 */
+		.orb-wrap {
+			position: absolute;
+			right: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 66px;
+			height: 66px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 2;
+		}
+
+		.orb-wrap::before,
+		.orb-wrap::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			border-radius: 50%;
+			background: radial-gradient(circle, rgba(0, 229, 255, 0.32) 0%, transparent 70%);
+			animation: pulse 2.5s ease-out infinite;
+			pointer-events: none;
+		}
+
+		.orb-wrap::after {
+			animation-delay: 1.25s;
+		}
+
+		@keyframes pulse {
+			0% {
+				transform: scale(1);
+				opacity: 0.8;
+			}
+
+			100% {
+				transform: scale(1.45);
+				opacity: 0;
+			}
+		}
+
+		.orb {
+			position: relative;
+			z-index: 1;
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+			border: 0.25px solid transparent;
+			background: linear-gradient(90deg, rgba(0, 229, 255, 0.6), rgba(255, 51, 204, 0.6)) border-box;
+			box-shadow: 0 0 15px rgba(0, 229, 255, 0.5), 0 0 15px rgba(255, 51, 204, 0.3), 0 0 30px rgba(0, 229, 255, 0.3), inset 0 0 15px rgba(0, 229, 255, 0.1);
+			transition: box-shadow 0.3s ease;
+		}
+
+		.orb canvas {
+			display: block;
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+			animation: canvas-spin 5s linear infinite;
+		}
+
+		@keyframes canvas-spin {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
+		/* 화살표 버튼 + 뒤에서 위로 떠오르는 스파클 */
+		.arrow-btn {
+			position: relative;
+			flex-shrink: 0;
+			width: 30px;
+			height: 30px;
+			margin-left: 2px;
+			border-radius: 50%;
+			border: 1px solid rgba(0, 229, 255, 0.3);
+			background: #1A1A24;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.3s ease;
+		}
+
+		.bubble:hover .arrow-btn {
+			background: rgba(0, 229, 255, 0.1);
+			border-color: var(--theme-cyan);
+			transform: translateX(3px);
+		}
+
+		.arrow-btn svg {
+			width: 15px;
+			height: 15px;
+		}
+
+		.cta-spark {
+			position: absolute;
+			pointer-events: none;
+			line-height: 1;
+			z-index: -1;
+			animation: cta-float 1.8s ease-out infinite;
+		}
+
+		.cta-spark.s1 {
+			top: -3px;
+			left: 5px;
+			font-size: 9px;
+			color: #67e8f9;
+			animation-delay: 0s;
+		}
+
+		.cta-spark.s2 {
+			top: 0;
+			right: 1px;
+			font-size: 7px;
+			color: #c084fc;
+			animation-delay: .5s;
+		}
+
+		.cta-spark.s3 {
+			top: 3px;
+			left: -3px;
+			font-size: 6px;
+			color: #ffffff;
+			animation-delay: 1s;
+		}
+
+		@keyframes cta-float {
+			0% {
+				transform: translateY(4px) scale(.5);
+				opacity: 0;
+			}
+
+			35% {
+				opacity: 1;
+			}
+
+			100% {
+				transform: translateY(-30px) scale(1);
+				opacity: 0;
+			}
+		}
+
+		/* V. 상품 스캔 */
+		.avatar {
+			position: relative;
+			overflow: hidden;
+		}
+
+
+		/* P2. 튀어나온 상품 */
+		.bubble {
+			overflow: visible;
+			left: 12px;
+			width: 228px;
+			padding-left: 4px;
+		}
+
+		.orb-wrap {
+			right: 10px;
+		}
+
+		.avatar {
+			width: 60px;
+			height: 60px;
+			margin-left: -8px;
+			margin-right: 6px;
+			box-shadow: 2px 6px 12px rgba(0, 0, 0, 0.35), 0 0 0 2px #fff;
+		}
+
+		.txt {
+			font-size: 11.5px;
+		}
+
+		.avatar {
+			overflow: hidden;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="mobon_banner">
+			<div class="bubble">
+				<div class="avatar">
+					<img src="https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg" alt="상품 이미지">
+					<img class="next" src="" alt="" aria-hidden="true">
+				</div>
+				<div class="txt" id="intro-text"></div>
+				<div class="arrow-btn">
+					<span class="cta-spark s1">✦</span>
+					<span class="cta-spark s2">✦</span>
+					<span class="cta-spark s3">✦</span>
+					<svg viewBox="0 0 24 24" fill="none" stroke="#00E5FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M5 12h14"></path>
+						<path d="m12 5 7 7-7 7"></path>
+					</svg>
+				</div>
+			</div>
+
+			<div class="orb-wrap">
+				<div class="orb" id="orb">
+					<canvas id="bot-canvas"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		/* AI 오브 캔버스 애니메이션 */
+		(() => {
+			const c = document.getElementById('bot-canvas');
+			const orb = document.getElementById('orb');
+			const ctx = c.getContext('2d');
+			let w, h, cx, cy, baseR;
+
+			const resize = () => {
+				const dpr = window.devicePixelRatio || 1;
+				const rect = c.parentElement.getBoundingClientRect();
+				w = rect.width;
+				h = rect.height;
+				c.width = w * dpr;
+				c.height = h * dpr;
+				ctx.setTransform(1, 0, 0, 1, 0, 0);
+				ctx.scale(dpr, dpr);
+				cx = w / 2;
+				cy = h / 2;
+				baseR = Math.min(w, h) * 0.48;
+			};
+			window.addEventListener('resize', resize);
+			resize();
+
+			let audioLevel = 0;
+			const simulateAudio = () => {
+				audioLevel += (Math.random() * 0.3 - audioLevel) * 0.2;
+				requestAnimationFrame(simulateAudio);
+			};
+			simulateAudio();
+
+			const ribbons = [
+				{ r: 255, g: 30, b: 100, rx: 0.75, ry: 0.28, ox: -0.05, oy: 0.2, rot: 0.15, spd: 0.7, dir: 1, alpha: 0.6 },
+				{ r: 40, g: 255, b: 150, rx: 0.75, ry: 0.28, ox: 0.05, oy: -0.2, rot: -0.15, spd: 0.6, dir: -1, alpha: 0.5 },
+				{ r: 0, g: 220, b: 255, rx: 0.8, ry: 0.3, ox: 0.1, oy: 0.0, rot: -0.3, spd: 0.9, dir: 1, alpha: 0.4 },
+				{ r: 120, g: 30, b: 255, rx: 0.85, ry: 0.4, ox: -0.1, oy: 0.15, rot: 0.25, spd: 0.8, dir: -1, alpha: 0.5 },
+				{ r: 255, g: 255, b: 255, rx: 0.7, ry: 0.2, ox: 0.0, oy: 0.0, rot: 0.0, spd: 1.0, dir: 1, alpha: 0.32 },
+				{ r: 0, g: 120, b: 255, rx: 0.9, ry: 0.6, ox: 0.0, oy: -0.1, rot: 0.35, spd: 0.7, dir: -1, alpha: 0.4 },
+				{ r: 255, g: 80, b: 180, rx: 0.75, ry: 0.25, ox: 0.15, oy: -0.1, rot: 0.5, spd: 1.2, dir: 1, alpha: 0.55 },
+				{ r: 0, g: 255, b: 220, rx: 0.65, ry: 0.18, ox: -0.12, oy: 0.08, rot: -0.6, spd: 1.4, dir: -1, alpha: 0.5 }
+			];
+
+			let lastT = 0;
+			let effectiveTime = 0;
+			let auraIntensity = 0;
+			let startTime = 0;
+			window.botState = { isThinking: false };
+
+			const draw = (t) => {
+				requestAnimationFrame(draw);
+				if (startTime === 0) startTime = t;
+				let dt = t - lastT;
+				if (lastT === 0) dt = 16;
+				lastT = t;
+
+				auraIntensity += ((window.botState.isThinking ? 1 : 0) - auraIntensity) * 0.08;
+
+				const elapsed = t - startTime;
+				const burst = elapsed < 200 ? (1 - elapsed / 200) * 20 : 0;
+				const speedMult = 1 + ((3.5 + Math.sin(t * 0.006) * 2.5) - 1) * auraIntensity + burst;
+
+				// 생각 중(로딩)일 때 흰 빛이 도는 링
+				if (auraIntensity > 0.01) {
+					const pulse = Math.sin(t * 0.008) * 0.5 + 0.5;
+					const ringAngle = (t * 0.1) % 360;
+					const spread = 12 + pulse * 20;
+					const baseAlpha = Math.max(0, 1 - auraIntensity);
+					orb.style.background =
+						'conic-gradient(from ' + ringAngle + 'deg, rgba(255,255,255,' + auraIntensity + ') 0%, rgba(220,250,255,' + (0.8 * auraIntensity) + ') 50%, rgba(255,255,255,' + auraIntensity + ') 100%) border-box, ' +
+						'linear-gradient(90deg, rgba(0,229,255,' + (0.6 * baseAlpha) + '), rgba(255,51,204,' + (0.6 * baseAlpha) + ')) border-box';
+					orb.style.boxShadow =
+						'0 0 ' + ((4 + pulse * 4) * auraIntensity) + 'px rgba(255,255,255,' + auraIntensity + '), ' +
+						'0 0 ' + (spread * auraIntensity) + 'px rgba(150,245,255,' + (0.9 * auraIntensity) + '), ' +
+						'0 0 ' + (spread * 2 * auraIntensity) + 'px rgba(0,229,255,' + (0.7 * auraIntensity) + '), ' +
+						'0 0 15px rgba(0,229,255,' + (0.5 * baseAlpha) + '), 0 0 15px rgba(255,51,204,' + (0.3 * baseAlpha) + '), 0 0 30px rgba(0,229,255,' + (0.3 * baseAlpha) + ')';
+				} else if (orb.style.background) {
+					orb.style.background = '';
+					orb.style.boxShadow = '';
+				}
+
+				effectiveTime += dt * Math.max(0.1, speedMult);
+				ctx.clearRect(0, 0, w, h);
+
+				const R = baseR * (1 + audioLevel * 0.15);
+				const time = effectiveTime * 0.0008;
+
+				ctx.save();
+				ctx.beginPath();
+				ctx.arc(cx, cy, R, 0, Math.PI * 2);
+				ctx.clip();
+				ctx.fillStyle = '#010a26';
+				ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+				ctx.globalCompositeOperation = 'lighter';
+
+				ribbons.forEach((rib, i) => {
+					const angle = rib.rot + (time * rib.dir * rib.spd) + Math.sin(time * 1.8 + i) * 0.2;
+					const width = R * rib.rx * (1 + Math.sin(time * 2.2 + i * 2) * 0.2);
+					const height = R * rib.ry * (1 + Math.cos(time * 1.9 + i) * 0.25);
+					const px = cx + (R * rib.ox) + Math.sin(time * 1.8 + i) * R * 0.18 + Math.cos(time * 2.7 + i) * R * 0.08;
+					const py = cy + (R * rib.oy) + Math.cos(time * 1.6 + i) * R * 0.18 + Math.sin(time * 2.4 + i) * R * 0.08;
+					ctx.beginPath();
+					ctx.ellipse(px, py, width, height, angle, 0, Math.PI * 2);
+					const grad = ctx.createRadialGradient(px, py, 0, px, py, width);
+					grad.addColorStop(0, 'rgba(' + rib.r + ',' + rib.g + ',' + rib.b + ',' + rib.alpha + ')');
+					grad.addColorStop(1, 'rgba(' + rib.r + ',' + rib.g + ',' + rib.b + ',0.01)');
+					ctx.fillStyle = grad;
+					ctx.fill();
+				});
+
+				// 코어
+				const coreX = cx + Math.sin(time * 1.2) * R * 0.15 + Math.cos(time * 2.6) * R * 0.05;
+				const coreY = cy + Math.cos(time * 1.4) * R * 0.15 + Math.sin(time * 2.2) * R * 0.05;
+				const core = ctx.createRadialGradient(coreX, coreY, 0, coreX, coreY, R * 0.5);
+				core.addColorStop(0, 'rgba(255,255,255,0.55)');
+				core.addColorStop(0.2, 'rgba(255,255,255,0.25)');
+				core.addColorStop(0.5, 'rgba(255,255,255,0.1)');
+				core.addColorStop(1, 'rgba(255,255,255,0)');
+				ctx.fillStyle = core;
+				ctx.beginPath();
+				ctx.arc(coreX, coreY, R * 0.5, 0, Math.PI * 2);
+				ctx.fill();
+
+				// 플레어
+				const flareWidth = R * 0.85 * (1 + Math.sin(time * 3) * 0.1);
+				ctx.beginPath();
+				ctx.ellipse(coreX, coreY, flareWidth, R * 0.015, time * -0.6, 0, Math.PI * 2);
+				const flare = ctx.createRadialGradient(coreX, coreY, 0, coreX, coreY, flareWidth);
+				flare.addColorStop(0, 'rgba(255,255,255,0.35)');
+				flare.addColorStop(1, 'rgba(255,255,255,0)');
+				ctx.fillStyle = flare;
+				ctx.fill();
+				ctx.restore();
+
+				// 유리 가장자리
+				ctx.globalCompositeOperation = 'source-over';
+				ctx.beginPath();
+				ctx.arc(cx, cy, R, 0, Math.PI * 2);
+				const glass = ctx.createRadialGradient(cx, cy, R * 0.75, cx, cy, R);
+				glass.addColorStop(0, 'rgba(255,255,255,0)');
+				glass.addColorStop(0.85, 'rgba(255,255,255,0.08)');
+				glass.addColorStop(0.95, 'rgba(255,255,255,0.25)');
+				glass.addColorStop(1, 'rgba(255,255,255,0.4)');
+				ctx.fillStyle = glass;
+				ctx.fill();
+				ctx.shadowBlur = 10;
+				ctx.shadowColor = 'rgba(255,255,255,0.7)';
+				ctx.lineWidth = 0.8;
+				ctx.strokeStyle = 'rgba(255,255,255,' + (0.45 + Math.sin(time * 1.5) * 0.12) + ')';
+				ctx.stroke();
+				ctx.shadowBlur = 0;
+			};
+			requestAnimationFrame(draw);
+		})();
+
+		/* 텍스트 타이핑 : 로딩 점 → 한 글자씩 → 커서 깜빡임, 8초마다 반복 */
+		(() => {
+			const introText = document.getElementById('intro-text');
+			const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+			/* 문구 : 스토리 배너 톤 30종. 배너가 뜰 때 하나를 랜덤으로 고르고, 반복마다 다음 문구로 */
+			const SP = "<canvas class='sparkle-canvas' width='42' height='42'></canvas> ";
+			const messages = [
+				SP + "SNS에서 <b>제일 핫한</b><br>상품 추천해 드릴까요?",
+				SP + "<b>인스타 난리 난</b> 그거<br>보여 드릴까요?",
+				SP + "<b>틱톡 품절템</b> 떴어요<br>확인해 볼까요?",
+				SP + "요즘 <b>다들 사는 거</b><br>궁금하지 않으세요?",
+				SP + "<b>이번 주 급상승</b><br>아이템 골라왔어요!",
+				SP + "요즘 <b>뭐가 핫한지</b><br>알려 드릴까요?",
+				SP + "<b>나만 알고 싶은</b> 그거<br>살짝 보여 드릴까요?",
+				SP + "다들 <b>어디서 샀냐고</b><br>묻는 그 상품이에요",
+				SP + "올리자마자 <b>DM 폭주</b><br>한 아이템 볼까요?",
+				SP + "<b>후기 터진</b> 그 상품<br>지금 확인해 볼까요?",
+				SP + "소문나기 전에<br><b>먼저 보여</b> 드릴게요",
+				SP + "<b>품절되기 전에</b><br>지금 보여 드릴까요?",
+				SP + "지인이 <b>몰래 따라 산</b><br>아이템, 볼까요?",
+				SP + "<b>단톡방 난리 난</b><br>그 상품 찾았어요!",
+				SP + "안 친한 동창도<br><b>물어본 그 상품</b> 볼까요?",
+				SP + "<b>올해 제일 만족한</b><br>쇼핑템 추천해요",
+				SP + "반신반의했는데<br><b>진짜 좋은</b> 그거 볼까요?",
+				SP + "<b>팀장님도 물어본</b><br>그 상품 보여 드려요?",
+				SP + "전남친 <b>염탐 온</b><br>화제의 제품 볼까요?",
+				SP + "<b>오늘의 운세</b> 개운템<br>지금 확인해 볼까요?",
+				SP + "<b>입소문 1위</b> 아이템<br>궁금하지 않으세요?",
+				SP + "지금 <b>심장 어택</b><br>아이템 떴어요!",
+				SP + "<b>럭키비키</b> 득템 찬스<br>놓치지 마세요!",
+				SP + "추천해준 친구한테<br><b>밥 사야 할</b> 꿀템 볼까요?",
+				SP + "<b>알고리즘</b>이 선택한<br>바로 그 아이템!",
+				SP + "SNS에서 <b>검색량 터진</b><br>그거, 가져왔어요",
+				SP + "<b>클릭 유발 1위!</b><br>요즘 난리 난 이슈템",
+				SP + "지금 <b>장바구니</b>에<br>가장 많이 담기는 중!",
+				SP + "요즘 유행은<br><b>이거 하나</b>로 정리 끝!",
+				SP + "요즘 <b>뭐 사지?</b> 고민<br>끝내줄 핫템이에요!"
+			];
+			let msgIndex = Math.floor(Math.random() * messages.length);
+
+			/* 상품 : 1개 이상. 한 바퀴(스캔 → 문구)마다 다음 상품으로 교체, 끝나면 처음부터 무한 반복. 1개면 교체 없이 같은 상품으로 반복 */
+			const products = [
+				'https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg',
+				'https://cafe24img.poxo.com/dabainsang/web/product/small/202607/34d5572c55d7962dc09e3688c031d90e.jpg',
+				'https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp',
+				'https://cafe24img.poxo.com/dabainsang/web/product/small/202607/228785c2d74d7238046842d7afaab05b.webp',
+				'https://cafe24img.poxo.com/dabainsang/web/product/small/202607/aa8ad2b571d71bdea25f33dc4aeb46e7.webp',
+				'https://cafe24img.poxo.com/dabainsang/web/product/small/202607/587c0c1f483d9cbe2a9e89ef5a772fff.webp'
+			];
+			const avatarImg = document.querySelector('.avatar img:not(.next)');
+			const nextImg = document.querySelector('.avatar .next');
+			let prodIndex = 0;
+			products.forEach(src => { const i = new Image(); i.src = src; });
+			const swapProduct = async () => {
+				const next = products[prodIndex++ % products.length];
+				if (avatarImg.src === next) return;
+				nextImg.src = next;
+				if (!nextImg.complete) await new Promise(r => { nextImg.onload = r; nextImg.onerror = r; });
+				nextImg.classList.add('show');
+				await sleep(450);
+				avatarImg.src = next;
+				nextImg.classList.remove('show');
+			};
+			const typeText = async () => {
+				await swapProduct();
+				const message = messages[msgIndex++ % messages.length];
+				window.botState.isThinking = true;
+				introText.className = 'txt is-loading';
+				introText.innerHTML = '<div class="hidden">' + message + '</div>' +
+					'<div class="typing"><div class="loading-dots"><span></span><span></span><span></span></div></div>';
+				await sleep(1500);
+				setTimeout(() => { window.botState.isThinking = false; }, 500);
+
+				introText.className = 'txt is-typing';
+				const typing = introText.querySelector('.typing');
+				let current = '';
+				let i = 0;
+				while (i < message.length) {
+					if (message[i] === '<') {
+						const end = message.indexOf('>', i);
+						if (end !== -1) {
+							current += message.substring(i, end + 1);
+							i = end + 1;
+							continue;
+						}
+					}
+					current += message[i];
+					typing.innerHTML = '<div>' + current + '<span class="cursor-bar"></span></div>';
+					await sleep(45);
+					i++;
+				}
+				introText.className = 'txt is-blinking';
+			};
+
+			const loop = async () => {
+				while (true) {
+					await typeText();
+					await sleep(5000);
+				}
+			};
+			loop();
+		})();
+
+		/* 반짝이는 캔버스 아이콘 */
+		(() => {
+			let time = 0;
+			const drawStar = (ctx, w, h) => {
+				ctx.beginPath();
+				ctx.moveTo(0, -h / 2);
+				ctx.quadraticCurveTo(w / 12, -h / 12, w / 2, 0);
+				ctx.quadraticCurveTo(w / 12, h / 12, 0, h / 2);
+				ctx.quadraticCurveTo(-w / 12, h / 12, -w / 2, 0);
+				ctx.quadraticCurveTo(-w / 12, -h / 12, 0, -h / 2);
+			};
+			const drawSparkles = () => {
+				requestAnimationFrame(drawSparkles);
+				time += 0.05;
+				document.querySelectorAll('.sparkle-canvas').forEach(canvas => {
+					const ctx = canvas.getContext('2d');
+					const w = canvas.width;
+					const h = canvas.height;
+					ctx.clearRect(0, 0, w, h);
+					ctx.save();
+					ctx.translate(w / 2, h / 2);
+
+					const scale1 = 0.6 + Math.sin(time) * 0.4;
+					ctx.save();
+					ctx.scale(scale1, scale1);
+					ctx.rotate(time * 0.5);
+					drawStar(ctx, w, h);
+					ctx.fillStyle = '#00E5FF';
+					ctx.fill();
+					ctx.restore();
+
+					ctx.save();
+					ctx.scale(scale1 * 0.5, scale1 * 0.5);
+					ctx.rotate(time * 0.5);
+					drawStar(ctx, w, h);
+					ctx.fillStyle = '#FFFFFF';
+					ctx.fill();
+					ctx.restore();
+
+					const scale2 = 0.3 + Math.sin(time + 2) * 0.2;
+					ctx.save();
+					ctx.translate(w * 0.3, -h * 0.3);
+					ctx.scale(scale2, scale2);
+					ctx.rotate(-time * 0.8);
+					drawStar(ctx, w, h);
+					ctx.fillStyle = '#FFFFFF';
+					ctx.fill();
+					ctx.restore();
+
+					ctx.restore();
+				});
+			};
+			requestAnimationFrame(drawSparkles);
+		})();
+	</script>
+</body>
+
+</html>
