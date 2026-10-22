@@ -399,17 +399,20 @@
 				let best = null;
 				for (const c of (bigEnough.length ? bigEnough : all)) {
 					const d = Math.abs(Math.log(c.iw / c.ih) - r);
-					if (!best || d < best.d) best = { f: c.f === '320x100.jpg' ? COLOR_320[adv.name] : c.f, d, label: c.iw + 'x' + c.ih };
+					if (!best || d < best.d) best = { f: c.f === '320x100.jpg' ? COLOR_320[adv.name] : c.f, d, iw: c.iw, ih: c.ih, label: c.iw + 'x' + c.ih };
 				}
 				const url = new URL(adv.dir.split('/').map(encodeURIComponent).join('/') + '/' + encodeURIComponent(best.f), location.href).href;
-				return { url, label: best.label };
+				// 여백 % : 소재를 슬롯에 contain 으로 넣었을 때 남는 면적 비율
+				const scale = Math.min(w / best.iw, h / best.ih);
+				const margin = Math.round(100 * (1 - (scale * best.iw * scale * best.ih) / (w * h)));
+				return { url, label: best.label, margin };
 			};
 
 			const render = adv => {
 				document.querySelectorAll('.size-test').forEach(grid => {
 					grid.innerHTML = SIZES.map(([w, h, tag]) => {
 						const img = pickImage(adv, w, h);
-						return '<div class="banner-container"><div class="banner-title">' + w + ' x ' + h + (tag ? ' · ' + tag : '') + '<small>소재 ' + img.label + '</small></div>'
+						return '<div class="banner-container"><div class="banner-title">' + w + ' x ' + h + (tag ? ' · ' + tag : '') + '<small>소재 ' + img.label + ' · 여백 ' + img.margin + '%</small></div>'
 							+ '<iframe src="' + grid.dataset.file + '?img=' + encodeURIComponent(img.url) + '" width="' + w + '" height="' + h + '" scrolling="no" loading="lazy"></iframe></div>';
 					}).join('');
 				});
