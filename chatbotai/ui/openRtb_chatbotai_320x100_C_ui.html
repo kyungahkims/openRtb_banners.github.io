@@ -144,9 +144,9 @@
 		.avatar {
 			position: relative;
 			flex-shrink: 0;
-			width: 68px;
-			height: 68px;
-			margin-left: -8px;
+			width: 72px;
+			height: 72px;
+			margin-left: -13px;
 			margin-right: 1px;
 			padding: 2px;
 			border-radius: 50%;
@@ -189,7 +189,7 @@
 		.hot {
 			position: absolute;
 			top: -7px;
-			right: -6px;
+			right: 1px;
 			padding: 1px 5px;
 			border-radius: 7px;
 			background: #ff3b5c;
@@ -282,7 +282,7 @@
 			}
 		}
 
-		.bubble:has(.is-loading) .arrow-btn {
+		.bubble.is-loading .arrow-btn {
 			visibility: hidden;
 			opacity: 0;
 			transition: none;
@@ -476,7 +476,7 @@
 		<div class="mobon_banner">
 			<div class="bubble">
 				<div class="avatar">
-					<span class="clip"><img src="https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg" alt="상품 이미지"><img class="next" src="" alt="" aria-hidden="true"></span>
+					<span class="clip"><img class="img" src="https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg" alt="상품 이미지"><img class="next" src="" alt="" aria-hidden="true"></span>
 					<span class="hot">HOT</span>
 				</div>
 				<div class="txt" id="intro-text"></div>
@@ -650,6 +650,7 @@
 
 		(() => {
 			const introText = document.getElementById('intro-text');
+			const bubble = document.querySelector('.bubble');
 			const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 			const SP = "<canvas class='sparkle-canvas' width='42' height='42'></canvas> ";
 			const messages = [
@@ -712,12 +713,14 @@
 				await swapProduct();
 				const message = messages[msgIndex++ % messages.length];
 				window.botState.isThinking = true;
+				bubble.classList.add('is-loading');
 				introText.className = 'txt is-loading';
 				introText.innerHTML = '<div class="hidden">' + message + '</div>' +
 					'<div class="typing"><div class="loading-dots"><span></span><span></span><span></span></div></div>';
 				await sleep(1500);
 				setTimeout(() => { window.botState.isThinking = false; }, 500);
 
+				bubble.classList.remove('is-loading');
 				introText.className = 'txt is-typing';
 				const typing = introText.querySelector('.typing');
 				let current = '';
