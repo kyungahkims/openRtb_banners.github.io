@@ -200,7 +200,7 @@
 		}
 
 		/* 호버: 화살표 이동 */
-		.mobon_reset:hover .shop_btn::after {
+		.mobon_banner:hover .shop_btn::after {
 			transform: translateX(4px);
 		}
 
@@ -1000,16 +1000,21 @@
 
 			if (!mainBanner || products.length === 0) return;
 
+			/* 천 단위 콤마 */
+			const comma = (v) => String(v ?? '').replace(/,/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
 			/* 렌더링 */
 			const renderProducts = () => {
 				const htmlStr = products.map((item, i) => {
 					const isSale = item.prdt_prmct ? "sale" : "";
+					const price = comma(item.price);
+					const salePrice = comma(item.prdt_prmct);
 
-					let priceText = `${item.price}원`;
+					let priceText = `${price}원`;
 					if (item.advrtsReplcCode === "02") {
 						priceText = item.advrtsReplcNm;
 					} else if (item.advrtsReplcCode === "03") {
-						priceText = `${item.advrtsReplcNm}${item.price}원`;
+						priceText = `${item.advrtsReplcNm}${price}원`;
 					}
 
 					return `
@@ -1023,7 +1028,7 @@
                         <p class="pnm">${item.pnm}</p>
                         <div class="price_box ${isSale}">
                           ${item.dc_rate ? `<div class="sale_rate">-${item.dc_rate}<span>%</span></div>` : ''}
-                            ${item.prdt_prmct ? `<div class="sale_price">${item.prdt_prmct}원</div>` : ''}
+                            ${item.prdt_prmct ? `<div class="sale_price">${salePrice}원</div>` : ''}
                             <div class="original_price">${priceText}</div>
                         </div>
                     </div>
@@ -1064,7 +1069,7 @@
 				const cellRatio = cellWidth / cellHeight;
 
 				mainBanner.classList.remove('layout_square', 'layout_mobile', 'layout_horizontal', 'layout_vertical', 'layout_mini', 'layout_micro');
-				if (frameHeight <= 40 || frameWidth <= 100) {
+				if (frameHeight <= 40 || (frameWidth <= 100 && frameHeight <= 60)) {
 					mainBanner.classList.add('layout_micro');
 				} else if (frameWidth <= 200 && frameHeight <= 60) {
 					mainBanner.classList.add('layout_mini');
