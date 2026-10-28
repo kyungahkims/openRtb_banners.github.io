@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글 오토프레임</title>
+	<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+	<style>
+		/* 공통 */
+		:root {
+			--bg: #ffffff;
+			--ink: #141414;
+			--muted: #8a8a8a;
+			--line: rgba(0, 0, 0, 0.18);
+			--accent: #141414;
+			--body: "pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		.mobon_reset {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			font-family: var(--body);
+			background: #d9d9d9;
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			position: relative;
+			display: flex;
+			width: 100%;
+			height: 100%;
+			color: var(--ink);
+			background-color: var(--bg);
+			cursor: pointer;
+			overflow: hidden;
+		}
+
+		.img_wrap {
+			position: relative;
+			overflow: hidden;
+			background: #ececec;
+		}
+
+		.img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+		}
+
+		.img.is-panning {
+			object-position: left top;
+			animation: panImage 5s ease-in-out infinite alternate;
+		}
+
+		@keyframes panImage {
+			0% {
+				object-position: left top;
+			}
+
+			100% {
+				object-position: right bottom;
+			}
+		}
+
+		.text_wrap {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			flex: 1;
+			min-width: 0;
+			container-type: inline-size;
+		}
+
+		.flex {
+			min-width: 0;
+		}
+
+		.kicker {
+			position: absolute;
+			top: 0;
+			left: 0;
+			display: flex;
+			align-items: center;
+			font-size: 8px;
+			font-weight: 700;
+			line-height: 1;
+			letter-spacing: 0.2em;
+			color: #fff;
+			background: var(--ink);
+			padding: 5px 9px 4px;
+			margin: 0;
+			white-space: nowrap;
+			z-index: 2;
+		}
+
+
+		.pnm {
+			min-width: 0;
+			font-size: clamp(12px, 3.3cqw, 16px);
+			font-weight: 400;
+			line-height: 1.35;
+			letter-spacing: -0.01em;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.price_box {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			column-gap: 7px;
+			line-height: 1.15;
+			margin-top: 9px;
+		}
+
+		.sale .sale_rate,
+		.sale .sale_price {
+			display: block;
+		}
+
+		.sale .original_price {
+			display: none;
+		}
+
+		.sale_rate {
+			display: none;
+			font-size: clamp(10px, 3.2cqw, 12px);
+			font-weight: 500;
+			letter-spacing: 0.04em;
+			color: var(--accent);
+		}
+
+		.sale_price,
+		.original_price {
+			font-size: clamp(14px, 5cqw, 20px);
+			font-weight: 600;
+			letter-spacing: -0.02em;
+		}
+
+		.sale_price {
+			display: none;
+		}
+
+		.shop_btn {
+			display: inline-flex;
+			align-items: center;
+			align-self: flex-start;
+			gap: 6px;
+			font-family: var(--body);
+			font-size: clamp(9px, 2.3cqw, 10px);
+			font-weight: 600;
+			line-height: 1;
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+			color: var(--ink);
+			background: none;
+			border: 0;
+			border-bottom: 1px solid var(--ink);
+			border-radius: 0;
+			padding: 0 0 5px;
+			cursor: pointer;
+			white-space: nowrap;
+		}
+
+		.shop_btn::after {
+			content: "\2192";
+			letter-spacing: 0;
+			transition: transform 0.3s ease;
+		}
+
+		/* 호버: 화살표 이동 */
+		.mobon_reset:hover .shop_btn::after {
+			transform: translateX(4px);
+		}
+
+		/* 정방형 */
+		.mobon_reset.layout_square .img_wrap {
+			width: 100%;
+			max-width: 100%;
+			height: 100%;
+		}
+
+		.mobon_reset.layout_square .text_wrap {
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			flex-direction: row;
+			align-items: center;
+			gap: 12px;
+			width: 100%;
+			height: auto;
+			background: var(--bg);
+			border-top: 1px solid var(--line);
+			padding: 13px 14px 14px;
+			z-index: 1;
+		}
+
+		.mobon_reset.layout_square .flex {
+			flex: 1;
+		}
+
+		.mobon_reset.layout_square .kicker {
+			margin-bottom: 8px;
+		}
+
+		.mobon_reset.layout_square .pnm {
+			font-size: clamp(13px, 5cqw, 15px);
+		}
+
+		.mobon_reset.layout_square .price_box {
+			margin-top: 7px;
+		}
+
+		.mobon_reset.layout_square .sale_price,
+		.mobon_reset.layout_square .original_price {
+			font-size: clamp(14px, 6.4cqw, 18px);
+		}
+
+		.mobon_reset.layout_square .shop_btn {
+			flex: 0 0 auto;
+			align-self: center;
+			font-size: clamp(9px, 3.4cqw, 10px);
+		}
+
+		@media (max-width: 220px) {
+			.mobon_reset.layout_square .text_wrap {
+				gap: 8px;
+				padding: 10px 11px 11px;
+			}
+
+			.mobon_reset.layout_square .kicker {
+				margin-bottom: 6px;
+			}
+
+			.mobon_reset.layout_square .price_box {
+				margin-top: 5px;
+			}
+
+			.mobon_reset.layout_square .shop_btn {
+				letter-spacing: 0.2em;
+			}
+		}
+
+		@media (max-width: 150px) {
+			.mobon_reset.layout_square .kicker,
+			.mobon_reset.layout_square .shop_btn,
+			.mobon_reset.layout_square .sale_rate {
+				display: none;
+			}
+
+			.mobon_reset.layout_square .text_wrap {
+				padding: 7px 8px 8px;
+			}
+
+			.mobon_reset.layout_square .pnm {
+				font-size: 11px;
+			}
+
+			.mobon_reset.layout_square .price_box {
+				flex-wrap: nowrap;
+				margin-top: 3px;
+			}
+
+			.mobon_reset.layout_square .sale_price,
+			.mobon_reset.layout_square .original_price {
+				font-size: 12px;
+			}
+		}
+
+		/* 초미니형 */
+		.mobon_reset.layout_micro .img_wrap {
+			flex: none;
+			height: 100%;
+			aspect-ratio: 1;
+		}
+
+		.mobon_reset.layout_micro .text_wrap {
+			flex-direction: row;
+			align-items: center;
+			gap: 6px;
+			padding: 0 6px;
+		}
+
+		.mobon_reset.layout_micro .kicker,
+		.mobon_reset.layout_micro .price_box {
+			display: none;
+		}
+
+		.mobon_reset.layout_micro .flex {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.mobon_reset.layout_micro .pnm {
+			font-size: 10px;
+			letter-spacing: -0.03em;
+		}
+
+		.mobon_reset.layout_micro .shop_btn {
+			align-self: center;
+			font-size: 8px;
+			letter-spacing: 0.15em;
+			padding-bottom: 3px;
+		}
+
+		/* 이미지 + VIEW만 */
+		.mobon_reset.layout_micro .flex {
+			display: none;
+		}
+
+		.mobon_reset.layout_micro .text_wrap {
+			justify-content: center;
+			padding: 0;
+		}
+
+		/* 미니형 */
+		.mobon_reset.layout_mini .img_wrap {
+			flex: none;
+			height: 100%;
+			aspect-ratio: 1;
+		}
+
+		.mobon_reset.layout_mini .text_wrap {
+			flex-direction: row;
+			align-items: center;
+			gap: 6px;
+			padding: 0 8px;
+		}
+
+		.mobon_reset.layout_mini .kicker,
+		.mobon_reset.layout_mini .pnm,
+		.mobon_reset.layout_mini .sale_rate {
+			display: none;
+		}
+
+		.mobon_reset.layout_mini .flex {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.mobon_reset.layout_mini .price_box {
+			flex-wrap: nowrap;
+			margin-top: 0;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+
+		.mobon_reset.layout_mini .sale_price,
+		.mobon_reset.layout_mini .original_price {
+			font-size: 12px;
+		}
+
+		.mobon_reset.layout_mini .shop_btn {
+			align-self: center;
+			font-size: 8px;
+			letter-spacing: 0.15em;
+			padding-bottom: 3px;
+		}
+
+		.mobon_reset.layout_mini .shop_btn::after {
+			display: none;
+		}
+
+		/* 폭 160 이하: 이미지 + VIEW만 */
+		@media (max-width: 160px) {
+			.mobon_reset.layout_mini .flex {
+				display: none;
+			}
+
+			.mobon_reset.layout_mini .text_wrap {
+				justify-content: center;
+				padding: 0;
+			}
+
+			.mobon_reset.layout_mini .shop_btn::after {
+				display: inline;
+			}
+		}
+
+		/* 모바일형 */
+		.mobon_reset.layout_mobile .img_wrap {
+			max-width: 25%;
+			flex: 0 0 25%;
+		}
+
+		.mobon_reset.layout_mobile .text_wrap {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			gap: 10px;
+			padding: 0 14px 0 13px;
+		}
+
+		.mobon_reset.layout_mobile .flex {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.mobon_reset.layout_mobile .kicker {
+			font-size: 8px;
+			margin-bottom: 7px;
+		}
+
+		.mobon_reset.layout_mobile .pnm {
+			font-size: 13px;
+		}
+
+		.mobon_reset.layout_mobile .price_box {
+			margin-top: 6px;
+		}
+
+		.mobon_reset.layout_mobile .sale_rate {
+			font-size: 10px;
+		}
+
+		.mobon_reset.layout_mobile .sale_price,
+		.mobon_reset.layout_mobile .original_price {
+			font-size: 15px;
+		}
+
+		.mobon_reset.layout_mobile .shop_btn {
+			flex-shrink: 0;
+			align-self: center;
+			font-size: 9px;
+		}
+
+		@media (max-height: 70px) {
+			.mobon_reset.layout_mobile .kicker {
+				display: none;
+			}
+
+			.mobon_reset.layout_mobile .text_wrap {
+				padding: 0 10px;
+			}
+
+			.mobon_reset.layout_mobile .pnm {
+				font-size: 11px;
+			}
+
+			.mobon_reset.layout_mobile .price_box {
+				margin-top: 4px;
+			}
+
+			.mobon_reset.layout_mobile .sale_rate {
+				font-size: 9px;
+			}
+
+			.mobon_reset.layout_mobile .sale_price,
+			.mobon_reset.layout_mobile .original_price {
+				font-size: 13px;
+			}
+
+			.mobon_reset.layout_mobile .shop_btn {
+				font-size: 8px;
+				letter-spacing: 0.2em;
+				padding-bottom: 3px;
+			}
+		}
+
+		/* 가로형 */
+		.mobon_reset.layout_horizontal .img_wrap {
+			max-width: 42%;
+			flex: 0 0 42%;
+		}
+
+		.mobon_reset.layout_horizontal .text_wrap {
+			flex-direction: row;
+			align-items: center;
+			gap: 14px;
+			padding: 0 clamp(12px, 4cqw, 26px) 0 clamp(12px, 4cqw, 22px);
+		}
+
+		.mobon_reset.layout_horizontal .flex {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.mobon_reset.layout_horizontal .shop_btn {
+			flex-shrink: 0;
+			align-self: center;
+		}
+
+		@media (min-height: 150px) {
+			.mobon_reset.layout_horizontal .text_wrap {
+				flex-direction: column;
+				align-items: flex-start;
+				justify-content: center;
+				gap: 0;
+			}
+
+			.mobon_reset.layout_horizontal .flex {
+				flex: none;
+				width: 100%;
+			}
+
+			.mobon_reset.layout_horizontal .kicker {
+				margin-bottom: 14px;
+			}
+
+			.mobon_reset.layout_horizontal .pnm {
+				font-size: clamp(14px, 3.6cqw, 17px);
+			}
+
+			.mobon_reset.layout_horizontal .price_box {
+				margin-top: 10px;
+			}
+
+			.mobon_reset.layout_horizontal .sale_price,
+			.mobon_reset.layout_horizontal .original_price {
+				font-size: clamp(18px, 6cqw, 24px);
+			}
+
+			.mobon_reset.layout_horizontal .shop_btn {
+				margin-top: 18px;
+			}
+		}
+
+		@media (max-height: 120px) {
+			.mobon_reset.layout_horizontal .kicker {
+				margin-bottom: 7px;
+			}
+
+			.mobon_reset.layout_horizontal .pnm {
+				font-size: 14px;
+			}
+
+			.mobon_reset.layout_horizontal .price_box {
+				flex-wrap: nowrap;
+				column-gap: 5px;
+				margin-top: 6px;
+				white-space: nowrap;
+			}
+
+			.mobon_reset.layout_horizontal .sale_rate {
+				font-size: 10px;
+			}
+
+			.mobon_reset.layout_horizontal .sale_price,
+			.mobon_reset.layout_horizontal .original_price {
+				font-size: 16px;
+			}
+
+			.mobon_reset.layout_horizontal .shop_btn {
+				font-size: 9px;
+			}
+		}
+
+		@media (max-height: 70px) {
+			.mobon_reset.layout_horizontal .kicker {
+				display: none;
+			}
+
+			.mobon_reset.layout_horizontal .text_wrap {
+				padding: 0 12px;
+			}
+
+			.mobon_reset.layout_horizontal .pnm {
+				font-size: 12px;
+			}
+
+			.mobon_reset.layout_horizontal .price_box {
+				margin-top: 4px;
+			}
+
+			.mobon_reset.layout_horizontal .sale_rate {
+				font-size: 9px;
+			}
+
+			.mobon_reset.layout_horizontal .sale_price,
+			.mobon_reset.layout_horizontal .original_price {
+				font-size: 14px;
+			}
+
+			.mobon_reset.layout_horizontal .shop_btn {
+				font-size: 8px;
+				letter-spacing: 0.2em;
+				padding-bottom: 3px;
+			}
+		}
+
+		/* 세로형 */
+		.mobon_reset.layout_vertical .mobon_banner {
+			flex-direction: column;
+		}
+
+		.mobon_reset.layout_vertical .img_wrap {
+			flex: 1;
+			max-width: 100%;
+			height: 100%;
+		}
+
+		.mobon_reset.layout_vertical .text_wrap {
+			flex: none;
+			align-items: center;
+			text-align: center;
+			border-top: 1px solid var(--line);
+			padding: 14px 10px 16px;
+		}
+
+		.mobon_reset.layout_vertical .flex {
+			width: 100%;
+		}
+
+		.mobon_reset.layout_vertical .kicker {
+			justify-content: center;
+			font-size: 8px;
+			margin-bottom: 9px;
+		}
+
+		.mobon_reset.layout_vertical .kicker::before {
+			display: none;
+		}
+
+		.mobon_reset.layout_vertical .pnm {
+			font-size: 13px;
+		}
+
+		.mobon_reset.layout_vertical .price_box {
+			flex-direction: column;
+			align-items: center;
+			row-gap: 3px;
+			margin-top: 9px;
+		}
+
+		.mobon_reset.layout_vertical .sale_rate {
+			font-size: 10px;
+		}
+
+		.mobon_reset.layout_vertical .sale_price,
+		.mobon_reset.layout_vertical .original_price {
+			font-size: 16px;
+		}
+
+		.mobon_reset.layout_vertical .shop_btn {
+			align-self: center;
+			margin-top: 14px;
+			font-size: 9px;
+		}
+
+		@media (max-width: 140px) {
+			.mobon_reset.layout_vertical .text_wrap {
+				padding: 12px 8px 13px;
+			}
+
+			.mobon_reset.layout_vertical .pnm {
+				font-size: 12px;
+			}
+
+			.mobon_reset.layout_vertical .sale_price,
+			.mobon_reset.layout_vertical .original_price {
+				font-size: 14px;
+			}
+
+			.mobon_reset.layout_vertical .shop_btn {
+				margin-top: 11px;
+				font-size: 8px;
+				letter-spacing: 0.2em;
+			}
+		}
+
+		.mobon_reset .text_wrap {
+			position: relative;
+		}
+
+		.mobon_reset.layout_square .text_wrap {
+			border-top: 0;
+			padding-top: 24px;
+		}
+
+		.mobon_reset.layout_vertical .text_wrap {
+			border-top: 0;
+			padding-top: 26px;
+		}
+
+		.mobon_reset.layout_vertical .kicker {
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+		.mobon_reset.layout_mini .kicker,
+		.mobon_reset.layout_micro .kicker {
+			display: none;
+		}
+
+		@media (max-height: 70px) {
+			.mobon_reset .kicker {
+				display: none;
+			}
+		}
+
+		@media (max-width: 220px) {
+			.mobon_reset.layout_square .text_wrap {
+				padding-top: 20px;
+			}
+
+			.mobon_reset.layout_square .kicker {
+				padding: 4px 7px 3px;
+			}
+		}
+
+		@media (max-width: 150px) {
+			.mobon_reset.layout_square .text_wrap {
+				padding-top: 7px;
+			}
+		}
+
+		@media (max-width: 140px) {
+			.mobon_reset.layout_vertical .text_wrap {
+				padding-top: 22px;
+			}
+		}
+
+		/* 할인율 */
+		.mobon_reset .price_box .sale_rate {
+			color: #e0262e;
+			font-weight: 700;
+		}
+
+		/* 좁은 모바일 */
+		.mobon_reset .sale_price,
+		.mobon_reset .original_price {
+			white-space: nowrap;
+		}
+
+		@media (max-width: 250px) {
+			.mobon_reset.layout_mobile .price_box {
+				flex-wrap: nowrap;
+				column-gap: 4px;
+				white-space: nowrap;
+			}
+
+			.mobon_reset.layout_mobile .sale_rate {
+				font-size: 9px;
+			}
+
+			.mobon_reset.layout_mobile .sale_price,
+			.mobon_reset.layout_mobile .original_price {
+				font-size: 12px;
+			}
+
+			.mobon_reset.layout_mobile .kicker {
+				display: none;
+			}
+		}
+
+		@media (max-width: 200px) {
+			.mobon_reset.layout_mobile .price_box.sale .sale_rate {
+				display: none;
+			}
+
+			.mobon_reset.layout_mobile .sale_price,
+			.mobon_reset.layout_mobile .original_price {
+				font-size: 11px;
+			}
+
+			.mobon_reset.layout_mobile .text_wrap {
+				padding-left: 7px;
+				gap: 5px;
+			}
+		}
+
+		/* 폭 250 이하·높이 80 이상: VIEW 아래로 */
+		@media (max-width: 250px) and (min-height: 80px) {
+			.mobon_reset.layout_mobile .text_wrap {
+				flex-direction: column;
+				align-items: flex-start;
+				justify-content: center;
+				gap: 0;
+			}
+
+			.mobon_reset.layout_mobile .flex {
+				flex: none;
+				width: 100%;
+			}
+
+			.mobon_reset.layout_mobile[class] .shop_btn {
+				align-self: flex-start;
+				margin-top: 7px;
+			}
+		}
+
+		/* 폭 250 이하·높이 110 이상: 사진 넓게 + 탭 표시 */
+		@media (max-width: 250px) and (min-height: 110px) {
+			.mobon_reset.layout_mobile[class] .img_wrap {
+				max-width: 45%;
+				flex: 0 0 45%;
+			}
+
+			.mobon_reset.layout_mobile .text_wrap {
+				padding-left: 11px;
+				padding-right: 8px;
+			}
+
+			.mobon_reset.layout_mobile .kicker {
+				display: flex;
+				margin-bottom: 7px;
+			}
+
+			.mobon_reset.layout_mobile .pnm {
+				font-size: 12px;
+			}
+
+			.mobon_reset.layout_mobile .price_box {
+				margin-top: 5px;
+			}
+
+			.mobon_reset.layout_mobile[class] .shop_btn {
+				margin-top: 13px;
+			}
+		}
+
+		/* 폭 220·높이 160 이하 정방형: 가격 한 줄 */
+		@media (max-width: 220px) and (max-height: 160px) {
+			.mobon_reset.layout_square .price_box {
+				flex-wrap: nowrap;
+				column-gap: 4px;
+				white-space: nowrap;
+				margin-top: 3px;
+			}
+
+			.mobon_reset.layout_square .sale_rate {
+				font-size: 9px;
+			}
+
+			.mobon_reset.layout_square .sale_price,
+			.mobon_reset.layout_square .original_price {
+				font-size: 13px;
+			}
+
+			.mobon_reset.layout_square .pnm {
+				font-size: 12px;
+			}
+
+			.mobon_reset.layout_square .text_wrap {
+				padding-bottom: 8px;
+			}
+
+			.mobon_reset.layout_square .text_wrap {
+				padding-top: 18px;
+			}
+		}
+
+		/* 폭 150 이하 정방형: 여백 축소 */
+		@media (max-width: 150px) {
+			.mobon_reset.layout_square .text_wrap {
+				padding-top: 6px;
+				padding-bottom: 7px;
+			}
+		}
+
+		/* 탭 위치 */
+		.mobon_reset.layout_horizontal .kicker,
+		.mobon_reset.layout_mobile .kicker {
+			position: static;
+			display: inline-flex;
+			align-self: flex-start;
+			width: max-content;
+			margin: 0 0 8px;
+		}
+
+		.mobon_reset.layout_horizontal .flex,
+		.mobon_reset.layout_mobile .flex {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.mobon_reset.layout_horizontal .pnm,
+		.mobon_reset.layout_mobile .pnm {
+			max-width: 100%;
+		}
+
+		/* 높이 150 이상 가로형: VIEW 왼쪽 */
+		@media (min-height: 150px) {
+			.mobon_reset.layout_horizontal[class] .shop_btn {
+				align-self: flex-start;
+			}
+		}
+
+		@media (max-height: 120px) {
+			.mobon_reset.layout_horizontal .kicker,
+			.mobon_reset.layout_mobile .kicker {
+				margin-bottom: 6px;
+			}
+		}
+
+		/* 높이 70 이하: 탭 숨김 */
+		@media (max-height: 70px) {
+			.mobon_reset.layout_horizontal[class] .kicker,
+			.mobon_reset.layout_mobile[class] .kicker {
+				display: none;
+			}
+		}
+
+		/* 폭 250·높이 109 이하 모바일: 탭 숨김 */
+		@media (max-width: 250px) and (max-height: 109px) {
+			.mobon_reset.layout_mobile[class] .kicker {
+				display: none;
+			}
+		}
+
+		/* 폭 170 이하 정방형: VIEW 숨김 */
+		@media (max-width: 170px) {
+			.mobon_reset.layout_square[class] .shop_btn {
+				display: none;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<!-- 배너 -->
+	<div class="mobon_reset">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+	</div>
+
+	<script>
+		(() => {
+			const frameWidth = window.innerWidth;
+			const frameHeight = window.innerHeight;
+			const allProducts = [
+				{
+					pcode: "test-pcode1",
+					pnm: "코튼 벨티드 셔츠 원피스 썸머 에디션 롱 슬리브 베이지 프리사이즈",
+					price: "1,980,000",
+					prdt_prmct: "1,485,000",
+					dc_rate: "25",
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					pcode: "test-pcode2",
+					pnm: "와이드 핏 데님 팬츠 라이트 블루 워싱 하이웨스트",
+					price: "1,290,000",
+					prdt_prmct: "1,032,000",
+					dc_rate: "20",
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/228785c2d74d7238046842d7afaab05b.webp",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				}
+			];
+
+			/* 테스트용: ?sale=0 → 정가 */
+			if (new URLSearchParams(window.location.search).get('sale') === '0') {
+				allProducts.forEach(p => { p.prdt_prmct = ''; p.dc_rate = ''; });
+			}
+
+			/* 상품 노출 수 */
+			let maxDisplayCount = 1;
+			if (frameWidth > frameHeight) {
+				if ((frameWidth / frameHeight > 1.5) || (frameHeight <= 150 && frameHeight > 50)) maxDisplayCount = 2;
+			} else if (frameHeight > frameWidth) {
+				maxDisplayCount = 2;
+			}
+			if (frameHeight <= 50 || frameWidth === frameHeight) maxDisplayCount = 1;
+			if (frameWidth <= 450 && frameHeight <= 150) maxDisplayCount = 1;
+			if (frameWidth <= 400 && frameWidth <= 900 || frameHeight <= 250) maxDisplayCount = 1;
+			if (frameWidth >= 800) maxDisplayCount = 2;
+			/* 긴 세로형: 2개 */
+			if (frameHeight >= 600 && frameHeight / frameWidth >= 2) maxDisplayCount = 2;
+			/* 전면형: 2개 */
+			if (frameHeight >= 600 && frameWidth >= 300) maxDisplayCount = 2;
+
+			const products = allProducts.slice(0, maxDisplayCount);
+			const mainBanner = document.querySelector('.mobon_reset');
+
+			if (!mainBanner || products.length === 0) return;
+
+			/* 렌더링 */
+			const renderProducts = () => {
+				const htmlStr = products.map((item, i) => {
+					const isSale = item.prdt_prmct ? "sale" : "";
+
+					let priceText = `${item.price}원`;
+					if (item.advrtsReplcCode === "02") {
+						priceText = item.advrtsReplcNm;
+					} else if (item.advrtsReplcCode === "03") {
+						priceText = `${item.advrtsReplcNm}${item.price}원`;
+					}
+
+					return `
+            <div class="mobon_banner" onclick="window.open('${item.purl}')">
+                <div class="img_wrap">
+                    <img class="img" src="${item.img}" data-pcode="${item.pcode}" alt="${item.pnm}">
+                </div>
+                <div class="text_wrap">
+                    <div class="flex">
+                        <p class="kicker">SNS 인기상품</p>
+                        <p class="pnm">${item.pnm}</p>
+                        <div class="price_box ${isSale}">
+                          ${item.dc_rate ? `<div class="sale_rate">-${item.dc_rate}<span>%</span></div>` : ''}
+                            ${item.prdt_prmct ? `<div class="sale_price">${item.prdt_prmct}원</div>` : ''}
+                            <div class="original_price">${priceText}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="shop_btn">View</button>
+                </div>
+            </div>`;
+				}).join('');
+
+				mainBanner.insertAdjacentHTML('beforeend', htmlStr);
+			};
+
+			/* 레이아웃 */
+			const setupLayout = () => {
+				mainBanner.style.width = `${frameWidth}px`;
+				mainBanner.style.height = `${frameHeight}px`;
+
+				const productCount = products.length;
+				let cellWidth = frameWidth;
+				let cellHeight = frameHeight;
+
+				if (productCount > 1) {
+					mainBanner.style.display = 'grid';
+					mainBanner.style.gap = '1px';
+
+					if (frameWidth > frameHeight) {
+						mainBanner.style.gridTemplateColumns = `repeat(${productCount}, 1fr)`;
+						mainBanner.style.gridTemplateRows = '1fr';
+						cellWidth = frameWidth / productCount;
+					} else {
+						mainBanner.style.gridTemplateColumns = '1fr';
+						mainBanner.style.gridTemplateRows = `repeat(${productCount}, 1fr)`;
+						cellHeight = frameHeight / productCount;
+					}
+				} else {
+					mainBanner.style.display = 'flex';
+				}
+
+				const cellRatio = cellWidth / cellHeight;
+
+				mainBanner.classList.remove('layout_square', 'layout_mobile', 'layout_horizontal', 'layout_vertical', 'layout_mini', 'layout_micro');
+				if (frameHeight <= 40 || frameWidth <= 100) {
+					mainBanner.classList.add('layout_micro');
+				} else if (frameWidth <= 200 && frameHeight <= 60) {
+					mainBanner.classList.add('layout_mini');
+				} else if (productCount === 1 && cellHeight <= 150 && cellWidth <= 450 && cellRatio >= 1.5) {
+					mainBanner.classList.add('layout_mobile');
+				} else if (cellRatio >= 1.9) {
+					mainBanner.classList.add('layout_horizontal');
+				} else if (cellRatio <= 0.7) {
+					mainBanner.classList.add('layout_vertical');
+				} else {
+					mainBanner.classList.add('layout_square');
+				}
+			};
+
+			/* 이미지 패닝 */
+			const initPanning = () => {
+				const images = document.querySelectorAll('.img');
+
+				/* 흰 여백 제외한 상품 영역 (CORS 시 null) */
+				const findContentBox = (src) => new Promise(resolve => {
+					const probe = new Image();
+					probe.crossOrigin = 'anonymous';
+					probe.onload = () => {
+						try {
+							const S = 120;
+							const r = probe.naturalWidth / probe.naturalHeight;
+							const w = r >= 1 ? S : Math.max(1, Math.round(S * r));
+							const h = r >= 1 ? Math.max(1, Math.round(S / r)) : S;
+							const c = document.createElement('canvas');
+							c.width = w;
+							c.height = h;
+							const ctx = c.getContext('2d', { willReadFrequently: true });
+							ctx.drawImage(probe, 0, 0, w, h);
+							const d = ctx.getImageData(0, 0, w, h).data;
+							const isWhite = (i) => d[i] > 240 && d[i + 1] > 240 && d[i + 2] > 240;
+							const rowHas = (y) => { let n = 0; for (let x = 0; x < w; x++) if (!isWhite((y * w + x) * 4)) n++; return n > w * 0.02; };
+							const colHas = (x) => { let n = 0; for (let y = 0; y < h; y++) if (!isWhite((y * w + x) * 4)) n++; return n > h * 0.02; };
+							let top = 0, bottom = h - 1, left = 0, right = w - 1;
+							while (top < bottom && !rowHas(top)) top++;
+							while (bottom > top && !rowHas(bottom)) bottom--;
+							while (left < right && !colHas(left)) left++;
+							while (right > left && !colHas(right)) right--;
+							resolve({ top: top / h, bottom: (bottom + 1) / h, left: left / w, right: (right + 1) / w });
+						} catch (e) {
+							resolve(null);
+						}
+					};
+					probe.onerror = () => resolve(null);
+					probe.src = src;
+				});
+
+				/* object-position 범위 */
+				const axisRange = (scaled, view, a, b) => {
+					const over = scaled - view;
+					if (over <= 0) return null;
+					const start = Math.min(Math.max(a * scaled, 0), over);
+					const end = Math.min(Math.max(b * scaled - view, 0), over);
+					if (end - start < 8) {
+						const mid = Math.min(Math.max((a + b) / 2 * scaled - view / 2, 0), over);
+						return { from: mid / over * 100, to: mid / over * 100, dist: 0 };
+					}
+					return { from: start / over * 100, to: end / over * 100, dist: end - start };
+				};
+
+				const checkPanning = async (img) => {
+					const wrap = img.parentElement;
+					if (!wrap.clientWidth || !wrap.clientHeight) return;
+
+					const wrapRatio = wrap.clientWidth / wrap.clientHeight;
+					const imgRatio = img.naturalWidth / img.naturalHeight;
+					const horizontal = imgRatio > wrapRatio;
+					const scaled = horizontal ? wrap.clientHeight * imgRatio : wrap.clientWidth / imgRatio;
+					const view = horizontal ? wrap.clientWidth : wrap.clientHeight;
+
+					const box = await findContentBox(img.currentSrc || img.src);
+					if (box) {
+						const range = horizontal ?
+							axisRange(scaled, view, box.left, box.right) :
+							axisRange(scaled, view, box.top, box.bottom);
+						img.classList.remove('is-panning');
+						if (img._pan) img._pan.cancel();
+						if (!range) return;
+						const pos = (p) => horizontal ? p + '% 50%' : '50% ' + p + '%';
+						if (range.dist === 0 || range.dist / view < 0.15) {
+							img.style.objectPosition = pos((range.from + range.to) / 2);
+							return;
+						}
+						img._pan = img.animate(
+							[{ objectPosition: pos(range.from) }, { objectPosition: pos(range.to) }],
+							{ duration: range.dist <= 40 ? 3000 : 5000, iterations: Infinity, direction: 'alternate', easing: 'ease-in-out' }
+						);
+						return;
+					}
+
+					/* 분석 불가 시 기본값 */
+					const overflowPx = scaled - view;
+					if (overflowPx / view > 0.3) {
+						img.classList.add('is-panning');
+						img.style.animationDuration = overflowPx <= 40 ? '3s' : '5s';
+					} else {
+						img.classList.remove('is-panning');
+						img.style.animationDuration = '';
+					}
+				};
+
+				images.forEach(img => {
+					if (img.complete && img.naturalWidth > 0) {
+						checkPanning(img);
+					} else {
+						img.addEventListener('load', () => checkPanning(img), {
+							once: true
+						});
+					}
+				});
+			};
+
+			renderProducts();
+			setupLayout();
+			initPanning();
+		})();
+	</script>
+</body>
+
+</html>
