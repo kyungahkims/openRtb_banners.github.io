@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Dashboard Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-mark">R</div>
+            <span class="brand-text">RTB Admin</span>
+        </div>
+        <nav>
+            <ul class="nav">
+                <li class="nav-label">Menu</li>
+                <li>
+                    <a href="#google" data-page="html/google_rtb_dashboard_page.html" data-help="구글 RTB 광고의 이번 달 성과입니다.&#10;노출 · 클릭 · 클릭률 · ROAS(광고비 대비 매출) · 소진금액을&#10;전일 대비 · 최근 7일 · 날짜별 표로 보여 줍니다." title="Google RTB Dashboard">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+                        <span>Google RTB</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#kakao" data-page="html/kakao_rtb_dashboard_page.html" data-help="카카오 RTB 광고의 이번 달 성과입니다.&#10;노출 · 클릭 · 클릭률 · ROAS(광고비 대비 매출) · 소진금액을&#10;전일 대비 · 최근 7일 · 날짜별 표로 보여 줍니다." title="Kakao RTB Dashboard">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
+                        <span>Kakao RTB</span>
+                    </a>
+                </li>
+                <li class="group open" data-group="frame">
+                    <a href="#frame-fixed" title="Google RTB 프레임 AB 테스트">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                        <span>Google RTB 프레임 AB 테스트</span>
+                        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </a>
+                    <ul class="sub" data-title="Google RTB 프레임 AB 테스트">
+                        <li><a href="#frame-fixed" data-page="html/frame_test_history_page.html" data-help="상품 고정 배너의 디자인 5종(블랙골드 가격 표시 · 블랙골드 가격 숨김 · 화이트레드 · 매거진 · 맥날)이&#10;각각 얼마나 클릭됐는지 비교합니다.&#10;사이즈별 · 테마와 사이즈 조합 순위 · 노출된 지면별로도 볼 수 있습니다." title="상품 고정 프레임"><span>상품 고정 프레임</span></a></li>
+                        <li><a href="#frame-auto-web" data-page="html/frame_auto_web_page.html" data-help="웹 · 모바일에서 쓰는 오토 배너의&#10;새 디자인(레드오토)과 기존 디자인(auto_origin)을 비교합니다.&#10;&#10;오토 배너: 광고 자리 크기에 따라 배너가 알아서 바뀌어&#10;어떤 크기에도 대응되는 배너" title="상품 오토 프레임 (웹, 모바일)"><span>상품 오토 프레임 (웹, 모바일)</span></a></li>
+                        <li><a href="#frame-auto-app" data-page="html/frame_auto_app_page.html" data-help="앱에서 쓰는 오토 배너의&#10;새 디자인(레드오토)과 기존 디자인(auto_origin)을 비교합니다.&#10;&#10;오토 배너: 광고 자리 크기에 따라 배너가 알아서 바뀌어&#10;어떤 크기에도 대응되는 배너" title="상품 오토 프레임 (앱)"><span>상품 오토 프레임 (앱)</span></a></li>
+                        <li><a href="#frame-nonproduct" data-page="html/frame_nonproduct_page.html" data-help="상품이 아닌 배너에서&#10;광고 자리 크기에 따라 알아서 바뀌는 오토 배너(iauto)와&#10;예전에 크기별로 따로 만들던 배너를 비교합니다." title="비상품 프레임"><span>비상품 프레임</span></a></li>
+                    </ul>
+                </li>
+                <li class="group open" data-group="kframe">
+                    <a href="#kframe-fixed" title="Kakao RTB 프레임 AB 테스트">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                        <span>Kakao RTB 프레임 AB 테스트</span>
+                        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </a>
+                    <ul class="sub" data-title="Kakao RTB 프레임 AB 테스트">
+                        <li><a href="#kframe-fixed" data-page="html/kakao_frame_test_history_page.html" data-help="카카오 상품 고정 배너의 디자인 8종(블랙골드 가격 표시 · 블랙골드 가격 숨김 · 화이트레드 · 매거진 · 맥날 · 젤리 · 화이트 젤리 · 스토리)과 기존 디자인 A~D가&#10;각각 얼마나 클릭됐는지 비교합니다.&#10;사이즈(300×250 · 728×90 · 250×250)별 · 지면(TAG ID)별로도 볼 수 있습니다." title="상품 고정 프레임"><span>상품 고정 프레임</span></a></li>
+                        <li><a href="#kframe-nonproduct" data-page="html/kakao_frame_nonproduct_page.html" data-help="카카오 비상품 배너의&#10;광고 자리 크기에 따라 알아서 바뀌는 오토 배너(iauto) 성과입니다.&#10;카카오는 크기별 고정 배너가 없어 iauto 하나만 집계됩니다." title="비상품 프레임"><span>비상품 프레임</span></a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#qna" data-page="html/qna_page.html" data-help="프레임 테스트에 대해 자주 나오는&#10;질문과 답을 모아 둔 페이지입니다." title="Q&amp;A">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
+                        <span>Q&amp;A</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <button class="toggle" type="button" aria-label="메뉴 접기/펼치기">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+            </button>
+            <h1 class="page-title"></h1>
+            <span class="page-help" id="pageHelp" tabindex="0" aria-label="페이지 설명">?</span>
+        </header>
+        <div class="frame-wrap">
+            <iframe id="content" title="page"></iframe>
+        </div>
+    </main>
+
+    <script>
+        const links = document.querySelectorAll('.nav a[data-page]');
+        const frame = document.getElementById('content');
+        const title = document.querySelector('.page-title');
+        const LEGACY = { '#frame-test': '#frame-fixed' };   // 예전 주소
+
+        function route() {
+            if (LEGACY[location.hash]) { location.replace(LEGACY[location.hash]); return; }
+            const link = [...links].find(a => a.hash === location.hash) || links[0];
+            links.forEach(a => a.classList.toggle('active', a === link));
+            // 하위 메뉴 선택 시 부모도 강조
+            document.querySelectorAll('.nav .group').forEach(g => {
+                const on = g.contains(link);
+                g.querySelector(':scope > a').classList.toggle('active', on);
+                if (on) g.classList.add('open');
+            });
+            const group = link.closest('.group');
+            const full = group ? `${group.querySelector(':scope > a').title} · ${link.title}` : link.title;
+            title.textContent = full;
+            document.getElementById('pageHelp').dataset.tip = link.dataset.help || '';
+            document.title = full + ' | RTB Admin';
+            if (frame.getAttribute('src') !== link.dataset.page) frame.src = link.dataset.page;
+        }
+
+        // 그룹 메뉴 펼치기/접기
+        document.querySelectorAll('.nav .group > a').forEach(a => a.addEventListener('click', e => {
+            const g = a.closest('.group');
+            if (document.body.classList.contains('collapsed')) return;      // 접힌 상태면 href로 이동
+            e.preventDefault();
+            g.classList.toggle('open');
+        }));
+
+        document.querySelector('.toggle').addEventListener('click', () => {
+            document.body.classList.toggle('collapsed');
+        });
+
+        window.addEventListener('hashchange', route);
+        route();
+    </script>
+</body>
+
+</html>
