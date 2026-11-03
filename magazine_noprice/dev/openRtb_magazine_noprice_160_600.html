@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글RTB 배너 (가격 없음)</title>
+	<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+	<script>
+		window.__mobonProducts = [{{productList}}];
+		window.__mobonPreload = (() => {
+			try {
+				const first = window.__mobonProducts[0];
+				if (!first || !first.img) return;
+				const link = document.createElement('link');
+				link.rel = 'preload';
+				link.as = 'image';
+				link.href = first.img;
+				link.fetchPriority = 'high';
+				document.head.appendChild(link);
+			} catch (e) {}
+		})();
+	</script>
+	<style>
+		/* 1. 웹 폰트 head 에서 비동기 로드 */
+
+		/* 2. 배너 & 이미지 규격 */
+		:root {
+			--width: 160px;
+			--height: 600px;
+			--active-banner-height: 200px;
+		}
+
+		/* 3. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		/* 4. 해당 사이즈 배너 */
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+			display: flex;
+			flex-direction: column;
+			background-color: #f4f5f7;
+			overflow: hidden;
+		}
+
+		.shop_logo {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 50px;
+			border-bottom: 2px solid #111;
+			background-color: #fff;
+			padding: 5px 16px;
+			cursor: pointer;
+		}
+
+		.shop_logo img {
+			max-width: 100%;
+			height: auto;
+		}
+
+		.mobon_banner_wrap {
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			gap: 4px;
+			min-height: 0;
+			padding: 4px;
+		}
+
+		.mobon_banner_wrap .mobon_banner {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			flex: 1 1 0%;
+			border: 1px solid #e0e0e0;
+			background-color: #fff;
+			transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border 0.3s;
+			overflow: hidden;
+			cursor: pointer;
+			box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px;
+		}
+
+		.mobon_banner_wrap .mobon_banner.active {
+			flex: 0 0 var(--active-banner-height);
+			border: 2px solid #ff2a2a;
+		}
+
+		.badge {
+			display: none;
+			position: absolute;
+			top: 0;
+			left: 0;
+			font-size: 10px;
+			font-weight: 700;
+			color: #fff;
+			background-color: #f23e2e;
+			padding: 4px 5px;
+			z-index: 2;
+		}
+
+		.mobon_banner_wrap .mobon_banner.active .badge {
+			display: block;
+		}
+
+		.slider_wrap {
+			flex: 1 1 auto;
+			width: 100%;
+			min-height: 0;
+			overflow: hidden;
+		}
+
+		.img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+		}
+
+		.img.is-panning {
+			object-position: left top;
+			animation: panImage 5s ease-in-out infinite alternate;
+		}
+
+		@keyframes panImage {
+			0% {
+				object-position: left top;
+			}
+
+			100% {
+				object-position: right bottom;
+			}
+		}
+
+		.bg {
+			display: flex;
+			flex-direction: column;
+			flex-shrink: 0;
+			height: 0;
+			opacity: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		.mobon_banner_wrap .mobon_banner.active .bg {
+			height: auto;
+			opacity: 1;
+			padding: 8px 6px;
+		}
+
+		.pnm {
+			font-size: 14px;
+			font-weight: 400;
+			color: #201e1d;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			margin-bottom: 6px;
+		}
+
+
+		/* 5. 가격 없음: 배지(비밀특가/SNS핫템) CTA */
+		.badge .b_sale {
+			display: none;
+		}
+
+		.badge.sale .b_sale {
+			display: inline;
+		}
+
+		.badge.sale .b_default {
+			display: none;
+		}
+
+		.badge_inline {
+			display: none;
+			flex-shrink: 0;
+			white-space: nowrap;
+		}
+
+		.cta {
+			display: inline-flex;
+			align-items: center;
+			gap: 3px;
+			white-space: nowrap;
+			color: #000;
+			transition: all 0.2s ease;
+		}
+
+		.cta .arrow {
+			flex-shrink: 0;
+		}
+
+		.cta_box {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 2px 4px;
+		}
+
+		.cta {
+			font-size: 12px;
+			font-weight: 700;
+			letter-spacing: -0.3px;
+		}
+
+		/* 카드 상단 배지(.badge) 공통 규칙이 인라인 배지에 적용되지 않도록 */
+		.mobon_banner_wrap .mobon_banner .badge_inline,
+		.mobon_banner_wrap .mobon_banner.active .badge_inline {
+			display: none;
+			position: static;
+			padding: 0;
+			background: none;
+		}
+
+		/* 대체 배너 */
+		.fallback_banner {
+			display: none;
+			position: relative;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		.fallback_link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.fallback_banner img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			background-position: center center;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset" id="noHiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+
+		<div class="shop_logo">
+			<img src="{{logo}}" alt="로고" onerror="this.onerror=null; this.src='{{HTTP}}/rtb/images/mobon.jpg'">
+		</div>
+
+		<div class="mobon_banner_wrap">
+			<!-- JS 동적 생성 -->
+		</div>
+	</div>
+
+
+	<!-- 노출 추적 태그 -->
+	{{wp_imgtag}}
+
+	<!-- 대체 배너 영역 -->
+	<div class="fallback_banner" id="hiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="fallback_link" onclick="window.open('https://mobon.net/bridge/')">
+			<img src="{{HTTP}}/servlet/image/mobon/160x600.png" alt="대체배너">
+		</div>
+	</div>
+
+	<script>
+		(() => {
+			const frameWidth = {{w}};
+			const frameHeight = {{h}};
+			const mainBanner = document.getElementById('noHiddenMobon');
+			const fallbackBanner = document.getElementById('hiddenMobon');
+			const mobonBannerWrap = document.querySelector('.mobon_banner_wrap');
+			const mobonReset = document.querySelector('.mobon_reset');
+			const allProducts = window.__mobonProducts;
+			if (allProducts.length > 4) allProducts.length = 4;
+			mobonBannerWrap.innerHTML = allProducts.map((item, index) => {
+				const isSale = item.prdt_prmct ? "sale" : "";
+
+				return `
+					<div class="mobon_banner ${index === 0 ? 'active' : ''}" data-index="${index}">
+						<div class="badge ${isSale}"><span class="b_default">SNS핫템</span><span class="b_sale">비밀특가</span></div>
+						<div class="slider_wrap">
+							<img class="img" src="${item.img}" data-pcode="${item.pcode}" alt="${item.pnm}" fetchpriority="${index === 0 ? 'high' : 'low'}" decoding="async">
+						</div>
+						<div class="bg">
+							<p class="pnm">${item.pnm}</p>
+							<div class="cta_box ${isSale}">
+								<span class="badge badge_inline ${isSale}"><span class="b_default">SNS핫템</span><span class="b_sale">비밀특가</span></span>
+								<span class="cta"><span class="cta_txt">지금 구매 찬스</span><svg class="arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+							</div>
+						</div>
+					</div>
+				`;
+			}).join('');
+
+			const mobonBanners = document.querySelectorAll('.mobon_banner_wrap .mobon_banner');
+			const totalCards = mobonBanners.length;
+			if (totalCards <= 1) {
+				const activeBanner = document.querySelector('.mobon_banner.active');
+				if (activeBanner) {
+					activeBanner.style.flex = '0 0 100%';
+				}
+			}
+			let currentIndex = 0;
+			let intervalId;
+
+			const checkPanning = (img) => {
+				const wrap = img.parentElement;
+				if (!wrap.clientWidth || !wrap.clientHeight) return;
+
+				const wrapRatio = wrap.clientWidth / wrap.clientHeight;
+				const imgRatio = img.naturalWidth / img.naturalHeight;
+
+				const overflowPx = imgRatio > wrapRatio ?
+					(wrap.clientHeight * imgRatio) - wrap.clientWidth :
+					(wrap.clientWidth / imgRatio) - wrap.clientHeight;
+
+				const overflowRatio = imgRatio > wrapRatio ?
+					overflowPx / wrap.clientWidth :
+					overflowPx / wrap.clientHeight;
+
+				if (overflowRatio > 0.3) {
+					img.classList.add('is-panning');
+					img.style.animationDuration = overflowPx <= 40 ? '3s' : '5s';
+				} else {
+					img.classList.remove('is-panning');
+					img.style.animationDuration = '';
+				}
+			};
+
+			function updatePanningForAll() {
+				mobonBanners.forEach(card => {
+					const img = card.querySelector('.img');
+					if (img.complete && img.naturalWidth > 0) {
+						checkPanning(img);
+					}
+				});
+			}
+
+			function showCard(index) {
+				mobonBanners.forEach((card, i) => {
+					if (i === index) {
+						card.classList.add('active');
+					} else {
+						card.classList.remove('active');
+					}
+				});
+
+				setTimeout(updatePanningForAll, 350);
+			}
+
+			function nextCard() {
+				currentIndex = (currentIndex + 1) % totalCards;
+				showCard(currentIndex);
+			}
+
+			function startSlider() {
+				if (totalCards <= 1) return;
+				stopSlider();
+				intervalId = setInterval(nextCard, 3000);
+			}
+
+			function stopSlider() {
+				clearInterval(intervalId);
+			}
+
+			let hoverTimeout;
+			mobonBanners.forEach(card => {
+				const img = card.querySelector('.img');
+				img.addEventListener('load', () => checkPanning(img), {
+					once: true
+				});
+
+				card.addEventListener('mouseenter', () => {
+					clearTimeout(hoverTimeout);
+					hoverTimeout = setTimeout(() => {
+						currentIndex = parseInt(card.getAttribute('data-index'));
+						showCard(currentIndex);
+					}, 150);
+				});
+
+				card.addEventListener('mouseleave', () => {
+					clearTimeout(hoverTimeout);
+				});
+
+				card.addEventListener('click', (e) => {
+					e.stopPropagation();
+					const index = parseInt(card.getAttribute('data-index'));
+					const purl = allProducts[index].purl;
+					if (purl && purl !== "javascript:void(0)") {
+						window.open(purl, '_blank');
+					}
+				});
+			});
+
+			mobonReset.addEventListener('mouseenter', stopSlider);
+			mobonReset.addEventListener('mouseleave', startSlider);
+
+
+			const shopLogo = document.querySelector('.shop_logo');
+			if (shopLogo) {
+				shopLogo.style.cursor = 'pointer';
+				shopLogo.addEventListener('click', (e) => {
+					e.stopPropagation();
+					const purl = allProducts[currentIndex].purl;
+					if (purl && purl !== "javascript:void(0)") {
+						window.open(purl, '_blank');
+					}
+				});
+			}
+
+			updatePanningForAll();
+			startSlider();
+
+			const handleImageErrors = () => {
+				const allBannerImages = document.querySelectorAll('.img');
+				let isFallbackTriggered = false;
+				const handleImageError = (event) => {
+					if (isFallbackTriggered) return;
+					isFallbackTriggered = true;
+					const pcode = event.target.dataset.pcode || '';
+					if (mainBanner) mainBanner.style.display = 'none';
+					if (fallbackBanner) {
+						fallbackBanner.style.display = 'block';
+						fallbackBanner.style.width = `${frameWidth}px`;
+						fallbackBanner.style.height = `${frameHeight}px`;
+					}
+					const errorUrl =
+						`{{HTTP_DR}}/rtbShop?uid=${encodeURIComponent("{{UUID}}")}&u={{USER}}&pc=${pcode}&itlTpCode={{ITL_TP_CODE}}`;
+					(new Image()).src = errorUrl;
+				};
+				allBannerImages.forEach(img => {
+					if (img.getAttribute('src') && img.complete && img.naturalHeight === 0) {
+						handleImageError({
+							target: img
+						});
+					} else {
+						img.addEventListener('error', handleImageError);
+					}
+				});
+			};
+			handleImageErrors();
+		})();
+	</script>
+</body>
+
+</html>

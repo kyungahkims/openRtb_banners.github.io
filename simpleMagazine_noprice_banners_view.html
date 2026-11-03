@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Simple Magazine (가격 없음) Banners Preview</title>
+	<style>
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: "pretendard";
+			background-color: #f4f5f7;
+			padding: 50px;
+		}
+
+		.control-panel {
+			position: sticky;
+			top: 0;
+			background: rgba(255, 255, 255, 0.75);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			padding: 16px 40px;
+			margin: -50px -50px 40px -50px;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+			z-index: 100;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 20px;
+			flex-wrap: wrap;
+		}
+
+		.toggle-switch {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			cursor: pointer;
+			gap: 12px;
+		}
+
+		.toggle-switch input[type="checkbox"] {
+			opacity: 0;
+			width: 0;
+			height: 0;
+			position: absolute;
+		}
+
+		.toggle-switch .slider {
+			position: relative;
+			width: 52px;
+			height: 28px;
+			background-color: #d1d5db;
+			border-radius: 34px;
+			transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		.toggle-switch .slider:before {
+			position: absolute;
+			content: "";
+			height: 22px;
+			width: 22px;
+			left: 3px;
+			bottom: 3px;
+			background-color: white;
+			border-radius: 50%;
+			transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+		}
+
+		.toggle-switch input[type="checkbox"]:checked+.slider {
+			background: linear-gradient(135deg, #FF416C, #FF4B2B);
+			box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		.toggle-switch input[type="checkbox"]:checked+.slider:before {
+			transform: translateX(24px);
+		}
+
+		.toggle-switch .label-text {
+			font-size: 15px;
+			font-weight: 700;
+			color: #1a1a1a;
+			user-select: none;
+			letter-spacing: -0.3px;
+		}
+
+		.items-tabs {
+			display: inline-flex;
+			gap: 2px;
+			padding: 3px;
+			background-color: #f1f3f5;
+			border-radius: 8px;
+		}
+
+		.item-tab {
+			border: 0;
+			background: transparent;
+			color: #717171;
+			font-family: inherit;
+			font-size: 13px;
+			font-weight: 600;
+			letter-spacing: -0.3px;
+			white-space: nowrap;
+			padding: 7px 12px;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: color 0.15s ease, background-color 0.15s ease;
+		}
+
+		.item-tab:hover {
+			color: #1a1a1a;
+		}
+
+		.item-tab.active {
+			background-color: #fff;
+			color: #1a1a1a;
+			font-weight: 700;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+		}
+
+		.item-tab:focus-visible {
+			outline: 2px solid #1a1a1a;
+			outline-offset: 1px;
+		}
+
+		.section {
+			margin-bottom: 60px;
+			scroll-margin-top: 115px;
+		}
+
+		.section-title {
+			font-size: 20px;
+			font-weight: 800;
+			color: #1a1a1a;
+			margin-bottom: 30px;
+			padding-bottom: 12px;
+			border-bottom: 1px solid #e0e0e0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.section-title .picked {
+			display: inline-block;
+			font-size: 13px;
+			font-weight: 700;
+			color: #fff;
+			background: #FF416C;
+			border-radius: 4px;
+			padding: 3px 8px;
+			margin-left: 4px;
+		}
+
+		.group-title {
+			font-size: 16px;
+			font-weight: 700;
+			color: #495057;
+			margin: 30px 0 15px;
+			padding-left: 10px;
+			border-left: 4px solid #1a1a1a;
+			line-height: 1.2;
+		}
+
+		.variant-desc {
+			font-size: 13px;
+			color: #555;
+			line-height: 1.6;
+			max-width: 820px;
+			margin-bottom: 14px;
+			word-break: keep-all;
+		}
+
+		.tooltip-wrap {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.tooltip-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: #e0e0e0;
+			color: #666;
+			font-size: 14px;
+			font-weight: bold;
+		}
+
+		.tooltip-wrap:hover .tooltip-icon {
+			background-color: #666;
+			color: #fff;
+		}
+
+		.tooltip-content {
+			display: none;
+			position: absolute;
+			left: 100%;
+			top: 50%;
+			transform: translateY(-50%);
+			margin-left: 10px;
+			background-color: #333;
+			color: #fff;
+			padding: 8px 12px;
+			border-radius: 6px;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 1.7;
+			white-space: nowrap;
+			z-index: 10;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.tooltip-content::before {
+			content: '';
+			position: absolute;
+			right: 100%;
+			top: 50%;
+			transform: translateY(-50%);
+			border-width: 5px;
+			border-style: solid;
+			border-color: transparent #333 transparent transparent;
+		}
+
+		.tooltip-wrap:hover .tooltip-content {
+			display: block;
+		}
+
+		.banner-grid {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 40px;
+			justify-content: flex-start;
+			align-items: flex-start;
+			margin-bottom: 20px;
+		}
+
+		.compare .banner-grid {
+			gap: 20px;
+		}
+
+		.banner-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background: #ffffff;
+			padding: 30px;
+			border-radius: 16px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+			transition: transform 0.2s ease;
+		}
+
+		.compare .banner-container {
+			padding: 16px;
+			border-radius: 10px;
+		}
+
+		.banner-container:hover {
+			transform: translateY(-5px);
+		}
+
+		.banner-title {
+			font-size: 18px;
+			font-weight: 700;
+			margin-bottom: 20px;
+			color: #1a1a1a;
+			letter-spacing: -0.5px;
+		}
+
+		.compare .banner-title {
+			font-size: 12px;
+			color: #717171;
+			margin-bottom: 10px;
+		}
+
+		iframe {
+			box-sizing: content-box;
+			display: block;
+			border: 1px solid #e6e6e6;
+			background-color: #fff;
+		}
+
+		@media (max-width: 600px) {
+			body {
+				padding: 20px 10px;
+			}
+
+			.section {
+				margin-bottom: 40px;
+			}
+
+			.section-title {
+				width: 100%;
+				font-size: 15px;
+				margin-bottom: 20px;
+				padding-bottom: 10px;
+				line-height: 1.4;
+			}
+
+			.tooltip-wrap {
+				display: none;
+			}
+
+			.banner-grid {
+				gap: 20px;
+			}
+
+			.banner-container {
+				width: 100%;
+				max-width: 100%;
+				padding: 30px 0;
+			}
+
+			.banner-title {
+				font-size: 14px;
+				margin-bottom: 15px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="control-panel">
+		<div style="display: flex; flex-direction: column; gap: 12px;">
+			<div style="display: flex; align-items: center; gap: 24px;">
+				<h1 style="font-size: 22px; font-weight: 800; color: #1a1a1a; margin: 0; letter-spacing: -0.5px;">Google RTB
+					Simple Magazine <span style="font-size: 15px; font-weight: 700; color: #FF416C;">가격 없음</span>
+				</h1>
+			</div>
+		</div>
+		<div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+			<div class="items-tabs">
+				<button class="item-tab active" data-items="4">상품 4개</button>
+				<button class="item-tab" data-items="3">상품 3개</button>
+				<button class="item-tab" data-items="2">상품 2개</button>
+				<button class="item-tab" data-items="1">상품 1개</button>
+			</div>
+
+			<label class="toggle-switch">
+				<input type="checkbox" id="toggle-long">
+				<span class="slider"></span>
+				<div style="display: flex; flex-direction: column; gap: 3px; margin-left: 4px;">
+					<span class="label-text" style="line-height: 1.2;">긴 상품명으로 보기</span>
+				</div>
+			</label>
+
+			<label class="toggle-switch">
+				<input type="checkbox" id="toggle-sale" checked>
+				<span class="slider"></span>
+				<div style="display: flex; flex-direction: column; gap: 3px; margin-left: 4px;">
+					<span class="label-text" style="line-height: 1.2;">할인 상품(비밀특가) UI로 보기</span>
+					<span style="font-size: 12px; color: #717171; font-weight: 500; letter-spacing: -0.3px;">스위치를 끄면 정가
+						상품(SNS핫템) UI로 변경됩니다.</span>
+				</div>
+			</label>
+		</div>
+	</div>
+
+	<!-- 시안 A 전체 사이즈 -->
+	<div id="variants-root"></div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const DIR = 'magazine_noprice/ui/';
+			const src = (size) => `${DIR}openRtb_magazine_noprice_${size}_ui.html`;
+
+			const VARIANTS = [
+				{ v: 'A', name: '라인', desc: '가격 대신 "지금 구매 찬스 >" CTA를 넣은 기본형. 할인 상품은 비밀특가, 정가 상품은 SNS핫템으로 표시.' }
+			];
+			const SIZE_GROUPS = [
+				{ title: '정방형 / 사각형', sizes: ['336_280', '300_250', '250_250', '200_200'] },
+				{ title: '가로형', sizes: ['970_250', '728_90', '468_60'] },
+				{ title: '세로형1', sizes: ['300_600'] },
+				{ title: '세로형2', sizes: ['160_600', '120_600'] },
+				{ title: '모바일형1', sizes: ['300_150', '320_100', '300_100'] },
+				{ title: '모바일형2', sizes: ['320_50', '300_50', '234_60'] }
+			];
+
+			let currentItems = '4';
+			const toggleSale = document.getElementById('toggle-sale');
+			const saleParam = () => toggleSale.checked ? '1' : '0';
+			const toggleLong = document.getElementById('toggle-long');
+
+			// 시안별 전체 사이즈 섹션 생성
+			document.getElementById('variants-root').innerHTML = VARIANTS.map(x => `
+				<div class="section" id="variant-${x.v}">
+					<p class="variant-desc">${x.desc}</p>
+					${SIZE_GROUPS.map(g => `
+						<h3 class="group-title">${g.title}</h3>
+						<div class="banner-grid">
+							${g.sizes.map(s => {
+								const [w, h] = s.split('_');
+								return `
+								<div class="banner-container">
+									<div class="banner-title">${w} x ${h}</div>
+									<iframe data-size="${s}" data-v="${x.v}" width="${w}" height="${h}" scrolling="no" loading="lazy"></iframe>
+								</div>`;
+							}).join('')}
+						</div>`).join('')}
+				</div>`).join('');
+
+			const iframes = document.querySelectorAll('iframe[data-size]');
+
+			function updateAllIframesSrc() {
+				iframes.forEach(iframe => {
+					iframe.src = `${src(iframe.getAttribute('data-size'))}?items=${currentItems}&sale=${saleParam()}${toggleLong.checked ? '&long=1' : ''}`;
+				});
+			}
+
+			document.querySelectorAll('.item-tab').forEach(tab => {
+				tab.addEventListener('click', () => {
+					document.querySelectorAll('.item-tab').forEach(t => t.classList.remove('active'));
+					tab.classList.add('active');
+					currentItems = tab.getAttribute('data-items');
+					updateAllIframesSrc();
+				});
+			});
+
+			toggleSale.addEventListener('change', updateAllIframesSrc);
+			toggleLong.addEventListener('change', updateAllIframesSrc);
+
+			updateAllIframesSrc();
+		});
+	</script>
+</body>
+
+</html>
