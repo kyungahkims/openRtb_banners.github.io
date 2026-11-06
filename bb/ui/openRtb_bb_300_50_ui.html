@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글RTB 배너 블랙프라이데이 블라인드 (가격 없음) 300x50</title>
+	<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+	<style>
+		/* 1. 웹 폰트 head 에서 비동기 로드 */
+
+		/* 2. 배너 & 이미지 규격 */
+		:root {
+			--width: 300px;
+			--height: 50px;
+			--gold: #e6e8eb;
+			--gold-dark: #7d828a;
+			--gold-rgb: 230, 232, 235;
+			--bg: #0b1730;
+			--bg-rgb: 11, 23, 48;
+			--panel: #162540;
+			--r: 30px;
+		}
+
+		/* 3. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		/* 4. 해당 사이즈 배너 */
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+			color: #fff;
+			background: var(--bg);
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			position: relative;
+			display: flex;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+		}
+
+		.img.is-panning {
+			object-position: left top;
+			animation: panImage 5s ease-in-out infinite alternate;
+		}
+
+		@keyframes panImage {
+			0% {
+				object-position: left top;
+			}
+
+			100% {
+				object-position: right bottom;
+			}
+		}
+
+		.slider_wrap {
+			position: relative;
+			flex-shrink: 0;
+			overflow: hidden;
+			background: var(--panel);
+			z-index: 1;
+		}
+
+		.slider_wrap .img {
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+
+		.slider_wrap > .img {
+			filter: brightness(.72) saturate(.8);
+		}
+
+		.lit {
+			position: absolute;
+			inset: 0;
+			animation: spot 7s ease-in-out infinite;
+		}
+
+		.lit .img {
+			filter: none;
+		}
+
+		@keyframes spot {
+			0%, 100% {
+				clip-path: circle(var(--r) at 35% 40%);
+			}
+
+			33% {
+				clip-path: circle(calc(var(--r) * .9) at 68% 32%);
+			}
+
+			66% {
+				clip-path: circle(calc(var(--r) * 1.1) at 55% 62%);
+			}
+		}
+
+		.slider_wrap.follow .lit {
+			animation: none;
+			clip-path: circle(var(--r) at var(--mx) var(--my));
+			transition: clip-path .12s ease-out;
+		}
+
+		.bg {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+			z-index: 2;
+		}
+
+		.head {
+			font-size: 12px;
+			font-weight: 900;
+			line-height: 1;
+			letter-spacing: -.5px;
+			white-space: nowrap;
+			background: linear-gradient(100deg, var(--gold-dark) 0%, var(--gold) 45%, var(--gold) 55%, var(--gold-dark) 100%);
+			background-size: 220% 100%;
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			animation: sweep 3.2s linear infinite;
+		}
+
+		@keyframes sweep {
+			0% {
+				background-position: 120% 0;
+			}
+
+			100% {
+				background-position: -120% 0;
+			}
+		}
+
+		.row {
+			display: flex;
+			align-items: center;
+			gap: 5px;
+		}
+
+		.badge {
+			flex-shrink: 0;
+			font-size: 8px;
+			font-weight: 800;
+			line-height: 1;
+			color: var(--gold);
+			border: 1px solid var(--gold);
+			padding: 2px 5px;
+			white-space: nowrap;
+		}
+
+		.badge .b_sale,
+		.head .b_sale {
+			display: none;
+		}
+
+		.head .hl {
+			white-space: nowrap;
+		}
+
+		.badge.sale .b_sale,
+		.head.sale .b_sale {
+			display: inline;
+		}
+
+		.badge.sale .b_default,
+		.head.sale .b_default {
+			display: none;
+		}
+
+		.cta {
+			display: inline-flex;
+			align-items: center;
+			gap: 3px;
+			font-size: 10px;
+			font-weight: 700;
+			color: #fff;
+			white-space: nowrap;
+		}
+
+		.cta .arrow {
+			flex-shrink: 0;
+			color: var(--gold);
+			animation: nudge .9s ease-in-out infinite;
+		}
+
+		@keyframes nudge {
+			0%, 100% {
+				transform: translateX(0);
+			}
+
+			50% {
+				transform: translateX(3px);
+			}
+		}
+
+		.thumb_wrap {
+			position: relative;
+			display: flex;
+			z-index: 2;
+		}
+
+		.thumb {
+			position: relative;
+			flex-shrink: 0;
+			overflow: hidden;
+			background: var(--panel);
+			border: 1px solid rgba(var(--gold-rgb), .35);
+			cursor: pointer;
+		}
+
+		.thumb.active {
+			border: 2px solid var(--gold);
+		}
+
+		.thumb .img {
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+
+		/* 5. tiny */
+		.mobon_banner {
+			align-items: center;
+		}
+
+		.slider_wrap {
+			flex: 0 0 128px;
+			height: 100%;
+			-webkit-mask-image: linear-gradient(90deg, #000 0%, #000 50%, rgba(0, 0, 0, .85) 62%, rgba(0, 0, 0, .55) 75%, rgba(0, 0, 0, .25) 87%, rgba(0, 0, 0, .07) 95%, transparent 100%);
+			mask-image: linear-gradient(90deg, #000 0%, #000 50%, rgba(0, 0, 0, .85) 62%, rgba(0, 0, 0, .55) 75%, rgba(0, 0, 0, .25) 87%, rgba(0, 0, 0, .07) 95%, transparent 100%);
+		}
+
+		.bg {
+			flex: 1 1 auto;
+			min-width: 0;
+			padding: 0 8px 0 4px;
+			justify-content: center;
+		}
+
+		.top_row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			
+		}
+
+		.thumb_wrap {
+			flex: 0 0 auto;
+			align-items: center;
+			gap: 7px;
+			padding: 2px 0;
+		}
+
+		.thumb.dot {
+			width: 4px;
+			height: 4px;
+			border-radius: 50%;
+			border: 0;
+			background: rgba(var(--gold-rgb), .35);
+			transition: background .2s, transform .2s;
+		}
+
+		.thumb.dot.active {
+			background: var(--gold);
+			transform: scale(1.3);
+		}
+
+		.look-ac .slider_wrap > .img {
+			filter: none;
+		}
+
+		.look-ac .lit {
+			display: none;
+		}
+
+		@property --bw {
+			syntax: '<length>';
+			inherits: false;
+			initial-value: 0px;
+		}
+
+		.look-ac .slider_wrap::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			--bw: 0px;
+			background: repeating-linear-gradient(90deg, rgba(var(--bg-rgb), .5) 0, rgba(var(--bg-rgb), .5) var(--bw), rgba(var(--gold-rgb), .5) var(--bw), rgba(var(--gold-rgb), .5) calc(var(--bw) + 1px), transparent calc(var(--bw) + 1px), transparent 14px);
+			opacity: 0;
+			pointer-events: none;
+			z-index: 2;
+		}
+
+		.look-ac .slider_wrap.rv::after {
+			animation: lookBlind 1s cubic-bezier(.6, 0, .3, 1);
+		}
+
+		@keyframes lookBlind {
+			0%, 15% {
+				--bw: 14px;
+				opacity: 1;
+			}
+
+			90% {
+				opacity: 1;
+			}
+
+			100% {
+				--bw: 0px;
+				opacity: 0;
+			}
+		}
+
+		.theme-r {
+			--gold: #f4b7a3;
+			--gold-dark: #8c4d3c;
+			--gold-rgb: 244, 183, 163;
+			--bg: #000;
+			--bg-rgb: 0, 0, 0;
+			--panel: #1a1a1a;
+		}
+
+		.theme-b {
+			--gold: #7fd3ff;
+			--gold-dark: #1f5f88;
+			--gold-rgb: 127, 211, 255;
+			--bg: #000;
+			--bg-rgb: 0, 0, 0;
+			--panel: #1a1a1a;
+		}
+
+		.theme-l {
+			--gold: #d6c2ff;
+			--gold-dark: #6a56a0;
+			--gold-rgb: 214, 194, 255;
+			--bg: #000;
+			--bg-rgb: 0, 0, 0;
+			--panel: #1a1a1a;
+		}
+
+		.theme-x {
+			--gold: #e6e8eb;
+			--gold-dark: #7d828a;
+			--gold-rgb: 230, 232, 235;
+			--bg: #0a1020;
+			--bg-rgb: 10, 16, 32;
+			--panel: #162036;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset look-ac">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+	<div class="mobon_banner">
+
+			<!-- 메인 이미지 -->
+			<div class="slider_wrap">
+				<img class="img main_img" src="" alt="메인 이미지" fetchpriority="high">
+				<div class="lit"><img class="img lit_img" src="" alt="" decoding="async"></div>
+			</div>
+
+			<!-- 텍스트 정보 영역 -->
+			<div class="bg">
+				<div class="top_row">
+					<div class="head"><span class="b_default">SNS HOT ITEM</span><span class="b_sale">BLACK FRIDAY</span></div>
+					<!-- 상품 점 (동적 생성) -->
+					<div class="thumb_wrap dots"></div>
+				</div>
+				<div class="row">
+					<span class="badge"><span class="b_default">구매 찬스</span><span class="b_sale">비밀특가</span></span>
+					<span class="cta"><span class="cta_txt">최종구매가 확인</span><svg class="arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		(() => {
+			const banner = document.querySelector('.mobon_banner');
+			const sliderWrap = document.querySelector('.slider_wrap');
+			const mainImgEl = document.querySelector('.main_img');
+			const litImgEl = document.querySelector('.lit_img');
+			const ambientImgEl = document.querySelector('.ambient_img');
+			const badgeEls = document.querySelectorAll('.badge, .head');
+			const thumbWrap = document.querySelector('.thumb_wrap');
+			const MAX_ITEMS = 4;
+
+			const allProducts = [{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp",
+					pnm: "코튼 벨티드 원피스",
+					dc_rate: "25",
+					prdt_prmct: "9,989,900",
+					price: "198,000",
+					pcode: "test1",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/34d5572c55d7962dc09e3688c031d90e.jpg",
+					pnm: "베이직 라운드 반팔 티셔츠",
+					dc_rate: "15",
+					prdt_prmct: "15,900",
+					price: "19,000",
+					pcode: "test2",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202607/228785c2d74d7238046842d7afaab05b.webp",
+					pnm: "와이드 핏 데님 팬츠",
+					dc_rate: "20",
+					prdt_prmct: "29,900",
+					price: "38,000",
+					pcode: "test3",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					img: "https://cafe24img.poxo.com/dabainsang/web/product/small/202605/4d1d0b5a8cb9825defe09be105af08cb.jpg",
+					pnm: "여름 린넨 밴딩 쇼츠",
+					dc_rate: "",
+					prdt_prmct: "",
+					price: "28,000",
+					pcode: "test4",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				},
+				{
+					img: "https://www.dabagirl.co.kr/web/product/big/202105/04ff60dbb9fa51e3c47fc8e4bdc27c08.jpg",
+					pnm: "쿨링 썸머 카라넥 원피스",
+					dc_rate: "30",
+					prdt_prmct: "39,900",
+					price: "57,000",
+					pcode: "test5",
+					purl: "javascript:void(0)",
+					advrtsReplcCode: "01",
+					advrtsReplcNm: ""
+				}
+			];
+			/* 미리보기 전용: ?sale=1|0 비밀특가/구매 찬스 강제, ?items=n 상품 수, ?theme=k 색상 시안 */
+			(() => {
+				const p = new URLSearchParams(window.location.search);
+				const theme = p.get('theme');
+				if (theme) document.querySelector('.mobon_reset').classList.add('theme-' + theme);
+				const sale = p.get('sale');
+				if (sale === '1') allProducts.forEach(x => { if (!x.prdt_prmct) x.prdt_prmct = x.price; });
+				if (sale === '0') allProducts.forEach(x => { x.prdt_prmct = ''; x.dc_rate = ''; });
+				const itemsCount = p.get('items');
+				if (itemsCount) allProducts.length = Math.min(allProducts.length, parseInt(itemsCount, 10));
+			})();
+
+			new MutationObserver(() => { sliderWrap.classList.remove('rv'); void sliderWrap.offsetWidth; sliderWrap.classList.add('rv'); }).observe(mainImgEl, { attributes: true, attributeFilter: ['src'] });
+			if (allProducts.length > MAX_ITEMS) allProducts.length = MAX_ITEMS;
+			const totalImages = allProducts.length;
+			document.querySelector('.mobon_reset').classList.add('items-' + totalImages);
+
+			const isDots = thumbWrap.classList.contains('dots');
+			thumbWrap.innerHTML = allProducts.map((item, index) =>
+				isDots ?
+				'<span class="thumb dot" data-index="' + index + '"></span>' :
+				'<div class="thumb" data-index="' + index + '">' +
+				'<img class="img" src="' + item.img + '" alt="' + item.pnm + '" data-pcode="' + item.pcode + '" fetchpriority="' + (index === 0 ? 'high' : 'low') + '" decoding="async">' +
+				'</div>'
+			).join('');
+			if (totalImages <= 1) thumbWrap.style.display = 'none';
+			if (isDots) {
+				allProducts.slice(1).forEach(item => { const im = new Image(); im.src = item.img; });
+			}
+			const thumbs = document.querySelectorAll('.thumb');
+
+			let currentIndex = 0;
+			let intervalId;
+
+			const checkPanning = (img) => {
+				const wrap = img.parentElement;
+				if (!wrap.clientWidth || !wrap.clientHeight) return;
+
+				const wrapRatio = wrap.clientWidth / wrap.clientHeight;
+				const imgRatio = img.naturalWidth / img.naturalHeight;
+
+				const overflowPx = imgRatio > wrapRatio ?
+					(wrap.clientHeight * imgRatio) - wrap.clientWidth :
+					(wrap.clientWidth / imgRatio) - wrap.clientHeight;
+
+				const overflowRatio = imgRatio > wrapRatio ?
+					overflowPx / wrap.clientWidth :
+					overflowPx / wrap.clientHeight;
+
+				if (overflowRatio > 0.3) {
+					img.classList.add('is-panning');
+					img.classList.toggle('pan-y', imgRatio <= wrapRatio);
+					img.style.animationDuration = overflowPx <= 40 ? '3s' : '5s';
+				} else {
+					img.classList.remove('is-panning', 'pan-y');
+					img.style.animationDuration = '';
+				}
+			};
+
+			const syncLit = () => {
+				const on = mainImgEl.classList.contains('is-panning');
+				const dur = mainImgEl.style.animationDuration;
+				const y = mainImgEl.classList.contains('pan-y');
+				[mainImgEl, litImgEl].forEach(img => {
+					img.classList.remove('is-panning');
+					void img.offsetWidth;
+					img.style.animationDuration = on ? dur : '';
+					img.classList.toggle('pan-y', on && y);
+					if (on) img.classList.add('is-panning');
+				});
+			};
+
+			const fitTower = () => {};
+
+			thumbs.forEach(thumb => {
+				const thumbImg = thumb.querySelector('.img');
+				if (!thumbImg) return;
+				if (thumbImg.complete && thumbImg.naturalWidth > 0) {
+					checkPanning(thumbImg);
+				} else {
+					thumbImg.addEventListener('load', () => checkPanning(thumbImg), { once: true });
+				}
+			});
+
+			function showProduct(index) {
+				thumbs.forEach(t => t.classList.remove('active'));
+				if (thumbs[index]) thumbs[index].classList.add('active');
+
+				const product = allProducts[index];
+				if (!product) return;
+
+				mainImgEl.src = product.img;
+				mainImgEl.alt = product.pnm;
+				mainImgEl.dataset.pcode = product.pcode;
+				litImgEl.src = product.img;
+				if (ambientImgEl) ambientImgEl.src = product.img;
+
+				const onReady = () => { checkPanning(mainImgEl); syncLit(); fitTower(); };
+				if (mainImgEl.complete && mainImgEl.naturalWidth > 0) {
+					onReady();
+				} else {
+					mainImgEl.addEventListener('load', onReady, { once: true });
+				}
+
+				const isSale = !!product.prdt_prmct;
+				badgeEls.forEach(b => b.classList.toggle('sale', isSale));
+				fitHead();
+			}
+
+			function fitHead() {
+				document.querySelectorAll('.head .hl').forEach(el => {
+					el.style.fontSize = '';
+					const max = el.closest('.head').clientWidth, w = el.offsetWidth;
+					if (w > max && max > 0) el.style.fontSize = Math.floor(parseFloat(getComputedStyle(el).fontSize) * max / w * 2) / 2 + 'px';
+				});
+			}
+			if (document.fonts) document.fonts.ready.then(fitHead);
+
+			function nextProduct() {
+				currentIndex = (currentIndex + 1) % totalImages;
+				showProduct(currentIndex);
+			}
+
+			function startSlider() {
+				if (totalImages <= 1) return;
+				stopSlider();
+				intervalId = setInterval(nextProduct, 3000);
+			}
+
+			function stopSlider() {
+				clearInterval(intervalId);
+			}
+
+			banner.addEventListener('mouseenter', stopSlider);
+			banner.addEventListener('mouseleave', startSlider);
+
+			thumbs.forEach(thumb => {
+				thumb.addEventListener('mouseenter', () => {
+					currentIndex = parseInt(thumb.getAttribute('data-index'));
+					showProduct(currentIndex);
+				});
+
+				thumb.addEventListener('click', (e) => {
+					e.stopPropagation();
+					const purl = allProducts[parseInt(thumb.getAttribute('data-index'))].purl;
+					if (purl && purl !== "javascript:void(0)") {
+						window.open(purl, '_blank');
+					}
+				});
+			});
+
+			banner.addEventListener('click', () => {
+				const purl = allProducts[currentIndex].purl;
+				if (purl && purl !== "javascript:void(0)") {
+					window.open(purl, '_blank');
+				}
+			});
+
+			banner.addEventListener('mousemove', (e) => {
+				const r = sliderWrap.getBoundingClientRect();
+				const x = e.clientX - r.left;
+				const y = e.clientY - r.top;
+				if (x < 0 || y < 0 || x > r.width || y > r.height) {
+					sliderWrap.classList.remove('follow');
+					return;
+				}
+				sliderWrap.style.setProperty('--mx', x + 'px');
+				sliderWrap.style.setProperty('--my', y + 'px');
+				sliderWrap.classList.add('follow');
+			});
+			banner.addEventListener('mouseleave', () => sliderWrap.classList.remove('follow'));
+
+			showProduct(currentIndex);
+			startSlider();
+		})();
+	</script>
+</body>
+
+</html>
