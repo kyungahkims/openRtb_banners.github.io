@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>카카오 배너</title>
+	<style>
+		/* 1. 웹 폰트 */
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+		@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap");
+
+		/* 2. 배너 & 이미지 규격 */
+		:root {
+			--width: 300px;
+			--height: 250px;
+		}
+
+		/* 3. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		/* 4. 해당 사이즈 배너 */
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+			color: #fff;
+			background: #111;
+			overflow: hidden;
+		}
+
+		.mobon_banner_wrap {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+			display: flex;
+			gap: 2px;
+			flex-direction: row;
+		}
+
+		img {
+			display: block;
+		}
+
+		.pnm {
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			max-width: 100%;
+			min-width: 0;
+			font-size: 12px !important;
+		}
+
+		.hero {
+			position: relative;
+			overflow: hidden;
+			flex-shrink: 0;
+			width: 198px;
+			height: 250px;
+		}
+
+		.hero img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.swap .hero .main_img {
+			animation: fade .8s ease-out;
+		}
+
+		@keyframes fade {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+		.dim {
+			position: absolute;
+			left: 0;
+			top: 0;
+			z-index: 2;
+			pointer-events: none;
+			width: 198px;
+			height: 250px;
+			background: linear-gradient(to top, rgba(0,0,0,.7) 0%, rgba(0,0,0,.2) 55%, rgba(0,0,0,0) 80%);
+		}
+
+		.txt {
+			position: absolute;
+			left: 0;
+			top: 0;
+			z-index: 3;
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+			pointer-events: none;
+			width: 198px;
+			height: 250px;
+			padding: 0 10px 12px 12px;
+			align-items: flex-start;
+			justify-content: flex-end;
+			text-align: left;
+		}
+
+		.txt .pnm {
+			font-size: 11px;
+			letter-spacing: .5px;
+			max-width: 100%;
+			color: rgba(255,255,255,.9);
+			margin-top: 2px;
+		}
+
+		.from {
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			font-size: 11px;
+			color: rgba(255,255,255,.75);
+			justify-content: flex-start;
+		}
+
+		.from .was {
+			text-decoration: line-through;
+			text-decoration-color: #e8232a;
+			text-decoration-thickness: 1.5px;
+		}
+
+		.from .dn {
+			font-weight: 800;
+			align-items: center;
+			gap: 1px;
+			background: #e8232a;
+			color: #fff;
+			border-radius: 2px;
+			font-family: Montserrat, pretendard, sans-serif;
+			display: inline-block;
+			font-size: 13px !important;
+			padding: 2px 7px;
+		}
+
+		.from .dn::before {
+			content: '';
+		}
+
+		.swap .from .dn {
+			animation: dnpop .5s .3s cubic-bezier(.2,1.8,.4,1) both;
+		}
+
+		@keyframes dnpop {
+			from {
+				transform: scale(.4);
+				opacity: 0;
+			}
+
+			to {
+				transform: scale(1);
+				opacity: 1;
+			}
+		}
+
+		.odo {
+			display: flex;
+			align-items: baseline;
+			line-height: 1;
+			color: #fff;
+			font-family: "Montserrat", "pretendard", sans-serif;
+			font-weight: 700;
+			letter-spacing: -1px;
+			justify-content: flex-start;
+			text-shadow: 0 2px 8px rgba(0,0,0,.45);
+			font-size: 19px !important;
+		}
+
+		.odo .d {
+			position: relative;
+			display: inline-block;
+			overflow: hidden;
+			height: 1em;
+		}
+
+		.odo .d .col {
+			display: flex;
+			flex-direction: column;
+			transition: transform .7s cubic-bezier(.2, .8, .2, 1);
+		}
+
+		.odo .d .col span {
+			display: block;
+			height: 1em;
+			line-height: 1;
+		}
+
+		.odo .s {
+			display: inline-block;
+		}
+
+		.odo .won {
+			font-weight: 700;
+			font-size: .68em;
+			margin-left: 2px;
+		}
+
+		img.is-panning {
+			animation: panImage var(--pd, 10s) ease-in-out infinite;
+		}
+
+		@keyframes panImage {
+			0%, 100% {
+				object-position: 50% 50%;
+			}
+
+			25% {
+				object-position: 0% 0%;
+			}
+
+			75% {
+				object-position: 100% 100%;
+			}
+		}
+
+		.swap .hero .main_img.is-panning {
+			animation: fade .8s ease-out, panImage var(--pd, 10s) ease-in-out infinite;
+		}
+
+		.side {
+			flex: 1;
+			display: flex;
+			gap: 2px;
+			flex-direction: column;
+		}
+
+		.side > div {
+			position: relative;
+			flex: 1;
+			overflow: hidden;
+		}
+
+		.side .thumb {
+			position: relative;
+			flex: 1;
+			overflow: hidden;
+		}
+
+		.side img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.swap .side img {
+			animation: fade .8s ease-out;
+		}
+
+		.thumb {
+			display: none;
+		}
+
+		.badge {
+			align-self: flex-start;
+			font-weight: 800;
+			color: #fff;
+			background: #e8232a;
+			padding: 2px 7px;
+			border-radius: 2px;
+			margin-bottom: 3px;
+			padding-left: 8px;
+			padding-right: 8px;
+			font-size: 11.5px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			height: 20px;
+			line-height: 1;
+			padding-top: 1px;
+			padding-bottom: 0;
+			box-sizing: border-box;
+		}
+
+		.badge.reg {
+			background: #111;
+		}
+
+		.badge:not(.reg) {
+			color: #e8232a;
+			background: #fff;
+			border: 1px solid #e8232a;
+			padding: 1px 6px;
+			padding-left: 8px;
+			padding-right: 8px;
+			padding-top: 2px;
+			padding-bottom: 0;
+		}
+
+		.hero::after {
+			content: '';
+			position: absolute;
+			inset: -30%;
+			z-index: 4;
+			pointer-events: none;
+			mix-blend-mode: soft-light;
+			background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.75), rgba(255,255,255,0) 35%);
+			animation: lxsp 5.6s ease-in-out infinite alternate;
+		}
+
+		@keyframes lxsp {
+			0% {
+				transform: translate(-22%, -18%);
+			}
+
+			100% {
+				transform: translate(22%, 12%);
+			}
+		}
+
+		.txt .badge {
+			position: absolute;
+			left: 12px;
+			top: 10px;
+			margin: 0;
+		}
+
+		.thumb_list {
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset">
+		<div class="mobonLogo"></div>
+		<div class="mobon_banner_wrap">
+			<!-- 메인 상품 -->
+			<div class="hero">
+				<img class="prev_img" src="https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp" alt="">
+				<img class="main_img" src="https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp" alt="코튼 벨티드 원피스">
+			</div>
+			<div class="dim"></div>
+			<!-- 가격 -->
+			<div class="txt">
+				<span class="badge"></span>
+				<div class="from"></div>
+				<div class="odo"></div>
+				<p class="pnm">코튼 벨티드 원피스</p>
+			</div>
+			<!-- 옆 상품 -->
+			<div class="side">
+				<div><img src="" alt=""></div>
+				<div><img src="" alt=""></div>
+			</div>
+			<!-- 썸네일 리스트 -->
+			<div class="thumb_list">
+				<div class="thumb active" data-pnm="코튼 벨티드 원피스" data-price="1,290,000" data-sale="967,500" data-rate="25"><img src="https://cafe24img.poxo.com/dabainsang/web/product/small/202607/e623213db5bca94aa297685e252f0857.webp" alt="코튼 벨티드 원피스"></div>
+				<div class="thumb" data-pnm="베이직 라운드 반팔 티셔츠" data-price="19,000" data-sale="15,900" data-rate="15"><img src="https://cafe24img.poxo.com/dabainsang/web/product/small/202607/34d5572c55d7962dc09e3688c031d90e.jpg" alt="베이직 라운드 반팔 티셔츠"></div>
+				<div class="thumb" data-pnm="와이드 핏 데님 팬츠" data-price="38,000" data-sale="" data-rate=""><img src="https://cafe24img.poxo.com/dabainsang/web/product/small/202607/228785c2d74d7238046842d7afaab05b.webp" alt="와이드 핏 데님 팬츠"></div>
+			</div>
+		</div>
+	</div>
+	<script>
+		// 상품 전환
+		(() => {
+			const reset = document.querySelector('.mobon_reset');
+			const mainImgs = Array.from(document.querySelectorAll('.main_img'));
+			const thumbs = Array.from(document.querySelectorAll('.thumb'));
+			const pnmEl = document.querySelector('.pnm');
+			let current = 0;
+			let timer = null;
+
+			const show = (i) => {
+				const t = thumbs[i];
+				if (!t) return;
+				current = i;
+				thumbs.forEach(x => x.classList.remove('active'));
+				t.classList.add('active');
+
+				const img = t.querySelector('img');
+				document.querySelectorAll('.prev_img').forEach(p => { if (mainImgs[0]) p.src = mainImgs[0].src; });
+				if (img) mainImgs.forEach(m => { m.src = img.src; m.alt = img.alt; });
+
+				// 전환 애니메이션 재시작
+				reset.classList.remove('swap');
+				void reset.offsetWidth;
+				reset.classList.add('swap');
+
+				if (pnmEl) pnmEl.textContent = t.dataset.pnm;
+				document.dispatchEvent(new CustomEvent('bshow', { detail: { i, d: t.dataset } }));
+			};
+
+			// 3초마다 다음 상품, 마우스 올리면 멈춤
+			const stop = () => {
+				clearInterval(timer);
+				timer = null;
+			};
+			const start = () => {
+				stop();
+				if (thumbs.length > 1) timer = setInterval(() => show((current + 1) % thumbs.length), 3000);
+			};
+
+			// 썸네일 호버 시 전환
+			let lastX = null;
+			let lastY = null;
+			const hover = (e, i) => {
+				const moved = e.clientX !== lastX || e.clientY !== lastY;
+				lastX = e.clientX;
+				lastY = e.clientY;
+				if (moved && i !== current) show(i);
+			};
+			thumbs.forEach((t, i) => {
+				t.addEventListener('mouseenter', e => hover(e, i));
+				t.addEventListener('mousemove', e => hover(e, i));
+			});
+			reset.addEventListener('mouseenter', stop);
+			reset.addEventListener('mouseleave', start);
+			show(0);
+			start();
+		})();
+
+		// 가격
+		(() => {
+			const odo = document.querySelector('.odo');
+			const from = document.querySelector('.from');
+			let cols = [];
+
+			const build = (str) => {
+				odo.innerHTML = '';
+				cols = [...str].map(ch => {
+					if (/[0-9]/.test(ch)) {
+						const d = document.createElement('span');
+						d.className = 'd';
+						const c = document.createElement('span');
+						c.className = 'col';
+						c.innerHTML = '0123456789'.split('').map(n => '<span>' + n + '</span>').join('');
+						d.appendChild(c);
+						odo.appendChild(d);
+						return c;
+					}
+					const s = document.createElement('span');
+					s.className = 's';
+					s.textContent = ch;
+					odo.appendChild(s);
+					return null;
+				});
+				const w = document.createElement('span');
+				w.className = 'won';
+				w.textContent = '원';
+				odo.appendChild(w);
+			};
+
+			const set = (str) => {
+				[...str].forEach((ch, i) => {
+					const c = cols[i];
+					if (c) c.style.transform = 'translateY(-' + (+ch) + 'em)';
+				});
+			};
+
+			const apply = (d) => {
+				const sale = !!d.sale;
+				const target = sale ? d.sale : d.price;
+				const same = cols.length === target.length && [...target].every((ch, i) => (/[0-9]/.test(ch)) === !!cols[i]);
+				if (!same) {
+					build(target);
+					set(sale ? d.price : target);
+				} else if (sale) {
+					set(d.price);
+				}
+				requestAnimationFrame(() => requestAnimationFrame(() => set(target)));
+				from.innerHTML = sale ?
+					'<span class="was">' + d.price + '원</span><span class="dn">' + d.rate + '%</span>' :
+					'<span>정상가</span>';
+			};
+
+			document.addEventListener('bshow', e => apply(e.detail.d));
+			const first = document.querySelector('.thumb');
+			if (first) apply(first.dataset);
+		})();
+
+		// 옆 상품
+		(() => {
+			const thumbs = Array.from(document.querySelectorAll('.thumb'));
+			const side = Array.from(document.querySelectorAll('.side img'));
+
+			const apply = (i) => {
+				side.forEach((im, k) => {
+					const t = thumbs[(i + k + 1) % thumbs.length];
+					im.src = t.querySelector('img').src;
+					im.parentElement.dataset.purl = t.dataset.purl || '';
+				});
+			};
+
+			side.forEach(im => {
+				im.parentElement.addEventListener('click', e => {
+					const u = im.parentElement.dataset.purl;
+					if (u) {
+						e.stopPropagation();
+						window.open(u);
+					}
+				});
+			});
+
+			document.addEventListener('bshow', e => apply(e.detail.i));
+			apply(0);
+		})();
+
+		// 배지
+		(() => {
+			const badge = document.querySelector('.badge');
+			const setBadge = (d) => {
+				badge.textContent = d.sale ? '비밀특가' : 'SNS 핫템';
+				badge.classList.toggle('reg', !d.sale);
+			};
+			document.addEventListener('bshow', e => setBadge(e.detail.d));
+			const first = document.querySelector('.thumb');
+			if (first) setBadge(first.dataset);
+		})();
+
+		// 이미지 패닝
+		(() => {
+			const check = (img, fresh) => {
+				const wrap = img.parentElement;
+				if (!img.naturalWidth || !wrap.clientWidth || !wrap.clientHeight) return;
+				const wrapRatio = wrap.clientWidth / wrap.clientHeight;
+				const imgRatio = img.naturalWidth / img.naturalHeight;
+				const overflowPx = imgRatio > wrapRatio ?
+					wrap.clientHeight * imgRatio - wrap.clientWidth :
+					wrap.clientWidth / imgRatio - wrap.clientHeight;
+				const overflowRatio = imgRatio > wrapRatio ? overflowPx / wrap.clientWidth : overflowPx / wrap.clientHeight;
+				if (overflowRatio > 0.3) {
+					if (!img.classList.contains('is-panning')) {
+						img.style.setProperty('--pd', overflowPx <= 40 ? '6s' : '10s');
+						img.classList.add('is-panning');
+					}
+				} else if (fresh) {
+					img.classList.remove('is-panning');
+				}
+			};
+			const imgs = () => Array.from(document.querySelectorAll('.mobon_banner_wrap img')).filter(i => i.offsetParent !== null);
+			const all = () => imgs().forEach(check);
+			document.querySelectorAll('.mobon_banner_wrap img').forEach(i => i.addEventListener('load', () => check(i, true)));
+			document.addEventListener('bshow', () => {
+				all();
+				setTimeout(all, 760);
+			});
+			all();
+		})();
+	</script>
+</body>
+
+</html>
