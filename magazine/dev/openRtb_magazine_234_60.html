@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>구글RTB 배너</title>
+	<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+	<script>
+		window.__mobonProducts = [{{productList}}];
+		window.__mobonPreload = (() => {
+			try {
+				const first = window.__mobonProducts[0];
+				if (!first || !first.img) return;
+				const link = document.createElement('link');
+				link.rel = 'preload';
+				link.as = 'image';
+				link.href = first.img;
+				link.fetchPriority = 'high';
+				document.head.appendChild(link);
+			} catch (e) {}
+		})();
+	</script>
+	<style>
+		/* 1. 웹 폰트 head 에서 비동기 로드 */
+
+		/* 2. 배너 & 이미지 규격 */
+		:root {
+			--width: 234px;
+			--height: 60px;
+		}
+
+		/* 3. 공통사항 */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		.mobonLogo {
+			position: absolute;
+			top: 2px;
+			right: 2px;
+			width: 11px;
+			height: 11px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo02.png') center center;
+			background-size: 11px 11px;
+			opacity: 0.8;
+			z-index: 1001;
+			cursor: pointer;
+		}
+
+		.mobonLogo:hover {
+			width: 73px;
+			height: 15px;
+			background: url('https://img.mobon.net/newAd/img/logoImg/mobonLogo_over02.png') center center;
+			background-size: 73px 15px;
+		}
+
+		/* 4. 해당 사이즈 배너 */
+		.mobon_reset {
+			position: relative;
+			width: var(--width);
+			height: var(--height);
+			font-family: "pretendard", -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+			overflow: hidden;
+		}
+
+		.mobon_banner {
+			display: flex;
+			width: 100%;
+			height: 100%;
+			background-color: #fff;
+			cursor: pointer;
+		}
+
+		.slider_wrap {
+			position: relative;
+			flex-shrink: 0;
+			width: 60px;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		.img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+			opacity: 0;
+			transition: opacity 0.5s ease;
+		}
+
+		.img.active {
+			opacity: 1;
+		}
+
+		.img.is-panning {
+			object-position: left top;
+			animation: panImage 5s ease-in-out infinite alternate;
+		}
+
+		@keyframes panImage {
+			0% {
+				object-position: left top;
+			}
+
+			100% {
+				object-position: right bottom;
+			}
+		}
+
+		.bg {
+			display: flex;
+			flex: 1;
+			min-width: 0;
+		}
+
+		.text_wrap {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			flex: 1;
+			min-width: 0;
+			padding: 0 10px;
+		}
+
+		.pnm {
+			font-size: 11px;
+			font-weight: 400;
+			line-height: 1.2;
+			letter-spacing: -0.5px;
+			color: #201e1d;
+			word-break: break-all;
+			display: -webkit-box;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			margin-bottom: 3px;
+		}
+
+
+
+		.price_box {
+			display: flex;
+			align-items: baseline;
+			column-gap: 3px;
+		}
+
+		.sale .sale_rate,
+		.sale .sale_price {
+			display: block;
+		}
+
+		.sale .original_price {
+			display: none;
+		}
+
+		.sale_rate {
+			display: none;
+			font-size: 10px;
+			font-weight: bold;
+			letter-spacing: -0.5px;
+			color: #ff2a2a;
+		}
+
+		.sale_price {
+			display: none;
+			font-size: 14px;
+			letter-spacing: -0.5px;
+			font-weight: 600;
+			color: #000;
+		}
+
+		.original_price {
+			display: block;
+			font-size: 14px;
+			letter-spacing: -0.5px;
+			font-weight: 600;
+			color: #000;
+		}
+
+		.link_txt {
+			font-size: 9px;
+			letter-spacing: 1px;
+			color: #201e1d;
+			align-self: flex-end;
+			margin-top: 2px;
+		}
+
+		.link_txt svg {
+			animation: arrowSlide 1s infinite ease-in-out;
+		}
+
+		@keyframes arrowSlide {
+
+			0%,
+			100% {
+				transform: translateX(0);
+			}
+
+			50% {
+				transform: translateX(2px);
+			}
+		}
+
+
+
+		.progress_bar {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 2px;
+			background-color: transparent;
+			z-index: 9999;
+		}
+
+		.progress_fill {
+			height: 100%;
+			width: 0%;
+			background-color: #ff2a2a;
+		}
+
+		.progress_fill.animate {
+			width: 100%;
+			transition: width 3s linear;
+		}
+
+		/* 대체 배너 */
+		.fallback_banner {
+			display: none;
+			position: relative;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		.fallback_link {
+			display: block;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.fallback_banner img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			background-position: center center;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="mobon_reset" id="noHiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="mobon_banner">
+			<div class="slider_wrap">
+			</div>
+
+			<div class="bg">
+				<div class="text_wrap">
+					<p class="pnm"></p>
+					<!-- 할인 상품인 경우 .price_box에 .sale 추가 -->
+					<div class="price_box sale">
+						<div class="sale_rate"></div>
+						<div class="sale_price"></div>
+						<div class="original_price"></div>
+					</div>
+					<div class="link_txt">
+						SNS 핫템 보기
+						<svg width="10" height="6" viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="1.5">
+							<path d="M0,4.5 L11.5,4.5 M8.5,2.5 L11.5,4.5 L8.5,6.5" />
+						</svg>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="progress_bar">
+				<div class="progress_fill"></div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 노출 추적 태그 -->
+	{{wp_imgtag}}
+
+	<!-- 대체 배너 영역 -->
+	<div class="fallback_banner" id="hiddenMobon">
+		<div class="mobonLogo" onclick="window.open('{{HTTP}}/ad/linfo.php')"></div>
+		<div class="fallback_link" onclick="window.open('https://mobon.net/bridge/')">
+			<img src="{{HTTP}}/servlet/image/mobon/300x65.png" alt="대체배너">
+		</div>
+	</div>
+
+	<script>
+		(() => {
+			const frameWidth = {{w}};
+			const frameHeight = {{h}};
+			const mainBanner = document.getElementById('noHiddenMobon');
+			const fallbackBanner = document.getElementById('hiddenMobon');
+			const sliderWrap = document.querySelector('.slider_wrap');
+			const pnmEl = document.querySelector('.pnm');
+			const priceBoxEl = document.querySelector('.price_box');
+			const saleRateEl = document.querySelector('.sale_rate');
+			const salePriceEl = document.querySelector('.sale_price');
+			const originalPriceEl = document.querySelector('.original_price');
+			const allProducts = window.__mobonProducts;
+
+			const imageHtml = allProducts.map((item, index) => {
+				const activeClass = index === 0 ? 'active' : '';
+				const srcAttr = index === 0 ?
+					`src="${item.img}" fetchpriority="high"` :
+					`data-src="${item.img}"`;
+				return `<img class="img ${activeClass}" ${srcAttr} decoding="async" data-pcode="${item.pcode}" alt="${item.pnm}">`;
+			}).join('');
+
+			sliderWrap.innerHTML = imageHtml;
+
+			const images = document.querySelectorAll('.slider_wrap .img');
+
+			const loadRestImages = () => {
+				images.forEach(img => {
+					if (img.dataset.src) {
+						img.src = img.dataset.src;
+						delete img.dataset.src;
+					}
+				});
+			};
+
+			if (images[0]) {
+				if (images[0].complete) {
+					loadRestImages();
+				} else {
+					images[0].addEventListener('load', loadRestImages, { once: true });
+					images[0].addEventListener('error', loadRestImages, { once: true });
+				}
+			}
+
+			const handleImageErrors = () => {
+				let isFallbackTriggered = false;
+				const handleImageError = (event) => {
+					if (isFallbackTriggered) return;
+					isFallbackTriggered = true;
+					const pcode = event.target.dataset.pcode || '';
+					if (mainBanner) mainBanner.style.display = 'none';
+					if (fallbackBanner) {
+						fallbackBanner.style.display = 'block';
+						fallbackBanner.style.width = `${frameWidth}px`;
+						fallbackBanner.style.height = `${frameHeight}px`;
+					}
+					const errorUrl =
+						`{{HTTP_DR}}/rtbShop?uid=${encodeURIComponent("{{UUID}}")}&u={{USER}}&pc=${pcode}&itlTpCode={{ITL_TP_CODE}}`;
+					(new Image()).src = errorUrl;
+				};
+				images.forEach(img => {
+					if (img.getAttribute('src') && img.complete && img.naturalHeight === 0) {
+						handleImageError({
+							target: img
+						});
+					} else {
+						img.addEventListener('error', handleImageError);
+					}
+				});
+			};
+			handleImageErrors();
+
+
+			let currentIndex = 0;
+			const totalImages = images.length;
+			let intervalId;
+			const progressFill = document.querySelector('.progress_fill');
+
+			const checkPanning = (img) => {
+				const wrap = img.parentElement;
+				if (!wrap.clientWidth || !wrap.clientHeight) return;
+
+				const wrapRatio = wrap.clientWidth / wrap.clientHeight;
+				const imgRatio = img.naturalWidth / img.naturalHeight;
+
+				const overflowPx = imgRatio > wrapRatio ?
+					(wrap.clientHeight * imgRatio) - wrap.clientWidth :
+					(wrap.clientWidth / imgRatio) - wrap.clientHeight;
+
+				const overflowRatio = imgRatio > wrapRatio ?
+					overflowPx / wrap.clientWidth :
+					overflowPx / wrap.clientHeight;
+
+				if (overflowRatio > 0.3) {
+					img.classList.add('is-panning');
+					img.style.animationDuration = overflowPx <= 40 ? '3s' : '5s';
+				} else {
+					img.classList.remove('is-panning');
+					img.style.animationDuration = '';
+				}
+			};
+
+			function showImage(index) {
+				images.forEach(img => img.classList.remove('active'));
+				if (images[index]) {
+					images[index].classList.add('active');
+
+					if (images[index].complete && images[index].naturalWidth > 0) {
+						checkPanning(images[index]);
+					} else {
+						images[index].addEventListener('load', () => checkPanning(images[index]), {
+							once: true
+						});
+					}
+				}
+
+				const product = allProducts[index];
+				if (product) {
+					pnmEl.textContent = product.pnm;
+
+					let priceText = `${product.price}원`;
+
+					if (product.prdt_prmct) {
+						priceBoxEl.classList.add('sale');
+						saleRateEl.innerHTML = (product.dc_rate ? product.dc_rate + '<span>%</span>' : '');
+						salePriceEl.textContent = `${product.prdt_prmct}원`;
+						originalPriceEl.textContent = priceText;
+					} else {
+						priceBoxEl.classList.remove('sale');
+						saleRateEl.innerHTML = '';
+						salePriceEl.textContent = '';
+						originalPriceEl.textContent = priceText;
+					}
+
+					if (pnmEl.animate) {
+						pnmEl.animate([{
+								opacity: 0,
+								transform: 'translateY(4px)'
+							},
+							{
+								opacity: 1,
+								transform: 'translateY(0)'
+							}
+						], {
+							duration: 400,
+							easing: 'ease-out'
+						});
+
+						priceBoxEl.animate([{
+								opacity: 0,
+								transform: 'translateY(4px)'
+							},
+							{
+								opacity: 1,
+								transform: 'translateY(0)'
+							}
+						], {
+							duration: 400,
+							delay: 50,
+							easing: 'ease-out',
+							fill: 'backwards'
+						});
+					}
+				}
+			}
+
+			function nextImage() {
+				currentIndex = (currentIndex + 1) % totalImages;
+				showImage(currentIndex);
+			}
+
+			let sliderAnim = null;
+
+			function startSlider() {
+				if (totalImages <= 1) return;
+
+				if (sliderAnim) {
+					sliderAnim.play();
+					return;
+				}
+
+				if (progressFill) {
+					progressFill.style.width = '0%';
+					sliderAnim = progressFill.animate([{
+							width: '0%',
+							offset: 0
+						},
+						{
+							width: '100%',
+							offset: 3000 / 3500
+						},
+						{
+							width: '100%',
+							offset: 1
+						}
+					], {
+						duration: 3500,
+						easing: 'linear',
+						fill: 'forwards'
+					});
+
+					sliderAnim.onfinish = () => {
+						nextImage();
+						sliderAnim = null;
+						startSlider();
+					};
+				}
+			}
+
+			function stopSlider() {
+				if (sliderAnim) {
+					sliderAnim.pause();
+				}
+			}
+
+			const bannerContainer = document.querySelector('.mobon_banner');
+			bannerContainer.addEventListener('mouseenter', stopSlider);
+			bannerContainer.addEventListener('mouseleave', startSlider);
+			bannerContainer.addEventListener('click', () => {
+				const product = allProducts[currentIndex];
+				if (product && product.purl) {
+					window.open(product.purl);
+				}
+			});
+
+			showImage(currentIndex);
+
+			startSlider();
+		})();
+	</script>
+</body>
+
+</html>
