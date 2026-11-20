@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>모비믹서 6사이즈 배너</title>
+	<style>
+		@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: "pretendard", -apple-system, sans-serif;
+			background: #f1f2f5;
+			color: #1a1a1a;
+			padding: 0 32px 60px;
+		}
+
+		/* 상단 패널 */
+		.control-panel {
+			position: sticky;
+			top: 0;
+			z-index: 100;
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 14px;
+			margin: 0 -32px 32px;
+			padding: 16px 32px;
+			background: rgba(255, 255, 255, .8);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+			border-bottom: 1px solid rgba(0, 0, 0, .06);
+		}
+
+		.control-panel h1 {
+			font-size: 22px;
+			font-weight: 800;
+			letter-spacing: -.5px;
+			white-space: nowrap;
+		}
+
+		.control-panel .sizes {
+			display: flex;
+			gap: 6px;
+			flex-wrap: wrap;
+		}
+
+		.control-panel .sizes span {
+			padding: 4px 10px;
+			border-radius: 999px;
+			background: #e9ebf0;
+			font-size: 12px;
+			font-weight: 600;
+			color: #444;
+		}
+
+		/* 컨트롤 : 상품 수 탭 · 할인/정가 토글 */
+		.controls {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			flex-wrap: wrap;
+			margin-left: auto;
+		}
+
+		.items-tabs {
+			display: inline-flex;
+			gap: 2px;
+			padding: 3px;
+			background: #e9ebf0;
+			border-radius: 8px;
+		}
+
+		.item-tab {
+			border: 0;
+			background: transparent;
+			color: #717171;
+			font-family: inherit;
+			font-size: 13px;
+			font-weight: 600;
+			letter-spacing: -.3px;
+			white-space: nowrap;
+			padding: 7px 12px;
+			border-radius: 6px;
+			cursor: pointer;
+		}
+
+		.item-tab:hover {
+			color: #1a1a1a;
+		}
+
+		.item-tab.active {
+			background: #fff;
+			color: #1a1a1a;
+			font-weight: 700;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+		}
+
+		.toggle-switch {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			cursor: pointer;
+		}
+
+		.toggle-switch input {
+			position: absolute;
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		.toggle-switch .slider {
+			position: relative;
+			width: 46px;
+			height: 26px;
+			background: #d1d5db;
+			border-radius: 34px;
+			transition: .3s;
+		}
+
+		.toggle-switch .slider:before {
+			content: "";
+			position: absolute;
+			left: 3px;
+			bottom: 3px;
+			width: 20px;
+			height: 20px;
+			background: #fff;
+			border-radius: 50%;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+			transition: .3s;
+		}
+
+		.toggle-switch input:checked+.slider {
+			background: #1a1a1a;
+		}
+
+		.toggle-switch input:checked+.slider:before {
+			transform: translateX(20px);
+		}
+
+		.toggle-switch .label-text {
+			font-size: 14px;
+			font-weight: 700;
+			color: #1a1a1a;
+			user-select: none;
+		}
+
+		/* 종류별 섹션 (전체 폭) */
+		.section {
+			margin: 0 0 32px;
+			padding: 24px 32px 32px;
+			background: #fff;
+			border-radius: 16px;
+			box-shadow: 0 8px 30px rgba(0, 0, 0, .05);
+			scroll-margin-top: 90px;
+		}
+
+		.section-head {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 8px;
+			padding-bottom: 16px;
+			border-bottom: 2px solid #1a1a1a;
+		}
+
+		.section-head .tag {
+			width: 10px;
+			height: 26px;
+			border-radius: 3px;
+		}
+
+		.section-head h2 {
+			font-size: 21px;
+			font-weight: 800;
+			letter-spacing: -.5px;
+		}
+
+		.section-head small {
+			font-size: 13px;
+			font-weight: 500;
+			color: #888;
+		}
+
+
+		/* 제목 태그 · 탭 버튼 색 통일 */
+		.section-head .tag {
+			background: #1a1a1a;
+		}
+
+		/* 줄 : 정방형 · 세로형 · 모바일형 한 줄씩, 왼쪽 라벨 */
+		.row {
+			display: flex;
+			align-items: flex-start;
+			gap: 28px;
+			padding: 24px 0;
+		}
+
+		.row+.row {
+			border-top: 1px solid #e8e8e8;
+		}
+
+		.row-label {
+			flex: 0 0 80px;
+			padding-top: 2px;
+			font-size: 15px;
+			font-weight: 700;
+			color: #555;
+		}
+
+		.banners {
+			display: flex;
+			align-items: flex-start;
+			gap: 28px;
+			flex-wrap: wrap;
+		}
+
+		.banner {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.banner-title {
+			font-size: 14px;
+			font-weight: 700;
+			color: #333;
+		}
+
+		iframe {
+			box-sizing: content-box;
+			display: block;
+			border: 1px solid #e3e3e3;
+			border-radius: 4px;
+			background: #fff;
+			box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
+		}
+
+		/* 반응형 : 1600 이하 컨트롤 둘째 줄, 1200 이하 모양 라벨 위로, 700 이하 모바일 */
+		@media (max-width: 1600px) {
+			.control-panel {
+				gap: 10px 14px;
+				padding: 12px 24px;
+			}
+
+			.controls {
+				flex: 0 0 100%;
+				margin-left: 0;
+			}
+		}
+
+		@media (max-width: 1200px) {
+			.row {
+				flex-direction: column;
+				gap: 10px;
+			}
+
+			.row-label {
+				flex: none;
+			}
+
+			.banners {
+				gap: 20px;
+			}
+		}
+
+		@media (max-width: 700px) {
+			body {
+				padding: 0 12px 40px;
+			}
+
+			.control-panel {
+				margin: 0 -12px 20px;
+				padding: 10px 14px;
+			}
+
+			.control-panel h1 {
+				font-size: 18px;
+				white-space: normal;
+				line-height: 1.3;
+			}
+
+			.control-panel .sizes {
+				display: none;
+			}
+
+			.controls {
+				gap: 10px 14px;
+			}
+
+			.item-tab {
+				padding: 6px 9px;
+				font-size: 12px;
+			}
+
+			.section {
+				margin-bottom: 20px;
+				padding: 16px 14px 20px;
+				border-radius: 14px;
+			}
+
+			.section-head h2 {
+				font-size: 18px;
+			}
+
+			.row {
+				padding: 16px 0;
+			}
+
+			.row-label {
+				font-size: 13px;
+			}
+
+			/* 배너는 세로로 쌓고, 화면보다 넓은 배너만 가로 스크롤 */
+			.banners {
+				max-width: 100%;
+				gap: 16px;
+				overflow-x: auto;
+				padding-bottom: 6px;
+				-webkit-overflow-scrolling: touch;
+			}
+
+			.banner {
+				flex: 0 0 auto;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="control-panel">
+		<h1>모비믹서 배너 3종 <span style="font-weight: 600; font-size: 15px; color: #555; position: relative; top: -2px;">(매거진
+				가격 있음, 매거진 가격 없음,
+				비비 가격 있음)</span>&nbsp;&nbsp;6개 사이즈 </h1>
+		<div class="sizes">
+			<span>336×280</span><span>300×250</span><span>250×250</span><span>320×480</span><span>320×100</span><span>320×50</span>
+		</div>
+		<div class="controls">
+			<div class="items-tabs">
+				<button class="item-tab active" data-items="4">상품 4개</button>
+				<button class="item-tab" data-items="3">상품 3개</button>
+				<button class="item-tab" data-items="2">상품 2개</button>
+				<button class="item-tab" data-items="1">상품 1개</button>
+			</div>
+			<label class="toggle-switch">
+				<input type="checkbox" id="toggle-sale" checked>
+				<span class="slider"></span>
+				<span class="label-text">할인 상품 UI로 보기</span>
+			</label>
+		</div>
+	</div>
+
+
+	<!-- 매거진 가격 있음 -->
+	<div class="section" id="section-magazine">
+		<div class="section-head">
+			<span class="tag"></span>
+			<h2>매거진</h2><small>가격 있음</small>
+		</div>
+		<div class="row">
+			<div class="row-label">정방형</div>
+			<div class="banners">
+				<div class="banner">
+					<div class="banner-title">336 × 280</div>
+					<iframe data-src="magazine/ui/openRtb_magazine_336_280_ui.html" width="336" height="280"
+						scrolling="no"></iframe>
+				</div>
+				<div class="banner">
+					<div class="banner-title">300 × 250</div>
+					<iframe data-src="magazine/ui/openRtb_magazine_300_250_ui.html" width="300" height="250"
+						scrolling="no"></iframe>
+				</div>
+				<div class="banner">
+					<div class="banner-title">250 × 250</div>
+					<iframe data-src="magazine/ui/openRtb_magazine_250_250_ui.html" width="250" height="250"
+						scrolling="no"></iframe>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row-label">세로형</div>
+			<div class="banners">
+				<div class="banner">
+					<div class="banner-title">320 × 480</div>
+					<iframe data-src="magazine/ui/openRtb_magazine_320_480_ui.html" width="320" height="480"
+						scrolling="no"></iframe>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row-label">모바일형</div>
+			<div class="banners">
+				<div class="banner">
+					<div class="banner-title">320 × 100</div>
+					<iframe data-src="magazine/ui/openRtb_magazine_320_100_ui.html" width="320" height="100"
+						scrolling="no"></iframe>
+				</div>
+				<div class="banner">
+					<div class="banner-title">320 × 50</div>
+					<iframe data-src="magazine/ui/openRtb_magazine_320_50_ui.html" width="320" height="50"
+						scrolling="no"></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 매거진 가격 없음 -->
+	<div class="section" id="section-magazine-noprice">
+		<div class="section-head">
+			<span class="tag"></span>
+			<h2>매거진</h2><small>가격 없음</small>
+		</div>
+		<div class="row">
+			<div class="row-label">정방형</div>
+			<div class="banners">
+				<div class="banner">
+					<div class="banner-title">336 × 280</div>
+					<iframe data-src="magazine_noprice/ui/openRtb_magazine_noprice_336_280_ui.html" width="336"
+						height="280" scrolling="no"></iframe>
+				</div>
+				<div class="banner">
+					<div class="banner-title">300 × 250</div>
+					<iframe data-src="magazine_noprice/ui/openRtb_magazine_noprice_300_250_ui.html" width="300"
+						height="250" scrolling="no"></iframe>
+				</div>
+				<div class="banner">
+					<div class="banner-title">250 × 250</div>
+					<iframe data-src="magazine_noprice/ui/openRtb_magazine_noprice_250_250_ui.html" width="250"
+						height="250" scrolling="no"></iframe>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row-label">세로형</div>
+			<div class="banners">
+				<div class="banner">
+					<div class="banner-title">320 × 480</div>
+					<iframe data-src="magazine_noprice/ui/openRtb_magazine_noprice_320_480_ui.html" width="320"
+						height="480" scrolling="no"></iframe>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row-label">모바일형</div>
+			<div class="banners">
+				<div class="banner">
+					<div class="banner-title">320 × 100</div>
+					<iframe data-src="magazine_noprice/ui/openRtb_magazine_noprice_320_100_ui.html" width="320"
+						height="100" scrolling="no"></iframe>
+				</div>
+				<div class="banner">
+					<div class="banner-title">320 × 50</div>
+					<iframe data-src="magazine_noprice/ui/openRtb_magazine_noprice_320_50_ui.html" width="320"
+						height="50" scrolling="no"></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 비비 가격 있음 -->
+	<div class="section" id="section-bbprice">
+		<div class="section-head">
+			<span class="tag"></span>
+			<h2>비비</h2><small>가격 있음</small>
+		</div>
+		<div class="row">
+			<div class="row-label">정방형</div>
+			<div class="banners">
+				<div class="banner">
+					<div class="banner-title">336 × 280</div>
+					<iframe data-src="bb_price/ui/openRtb_bbprice_336_280_ui.html" width="336" height="280"
+						scrolling="no"></iframe>
+				</div>
+				<div class="banner">
+					<div class="banner-title">300 × 250</div>
+					<iframe data-src="bb_price/ui/openRtb_bbprice_300_250_ui.html" width="300" height="250"
+						scrolling="no"></iframe>
+				</div>
+				<div class="banner">
+					<div class="banner-title">250 × 250</div>
+					<iframe data-src="bb_price/ui/openRtb_bbprice_250_250_ui.html" width="250" height="250"
+						scrolling="no"></iframe>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row-label">세로형</div>
+			<div class="banners">
+				<div class="banner">
+					<div class="banner-title">320 × 480</div>
+					<iframe data-src="bb_price/ui/openRtb_bbprice_320_480_ui.html" width="320" height="480"
+						scrolling="no"></iframe>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="row-label">모바일형</div>
+			<div class="banners">
+				<div class="banner">
+					<div class="banner-title">320 × 100</div>
+					<iframe data-src="bb_price/ui/openRtb_bbprice_320_100_ui.html" width="320" height="100"
+						scrolling="no"></iframe>
+				</div>
+				<div class="banner">
+					<div class="banner-title">320 × 50</div>
+					<iframe data-src="bb_price/ui/openRtb_bbprice_320_50_ui.html" width="320" height="50"
+						scrolling="no"></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		(() => {
+			const iframes = document.querySelectorAll('iframe');
+			const tabs = document.querySelectorAll('.item-tab');
+			const toggleSale = document.getElementById('toggle-sale');
+			let items = '4';
+
+			const update = () => {
+				const q = '?items=' + items + '&sale=' + (toggleSale.checked ? '1' : '0');
+				iframes.forEach(f => { f.src = f.getAttribute('data-src') + q; });
+			};
+
+			tabs.forEach(tab => tab.addEventListener('click', () => {
+				tabs.forEach(t => t.classList.remove('active'));
+				tab.classList.add('active');
+				items = tab.getAttribute('data-items');
+				update();
+			}));
+			toggleSale.addEventListener('change', update);
+			update();
+		})();
+	</script>
+</body>
+
+</html>
